@@ -1,0 +1,20 @@
+<svg width="1600" height="720" viewBox="0 0 1600 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title description">
+  <title id="title">First Person Viewpoint</title>
+  <desc id="description">Local-first interactive fiction. You choose. The world remembers.</desc>
+  <rect width="1600" height="720" fill="#0B0D0D"/>
+  <rect x="48" y="48" width="1504" height="624" stroke="#2A3030"/>
+  <path d="M0 539C175 461 312 488 448 419C584 350 713 356 847 275C998 184 1142 194 1279 115C1391 51 1488 60 1600 18" stroke="#D9FF72" stroke-opacity=".92" stroke-width="3"/>
+  <path d="M0 579C179 504 300 552 447 485C592 419 720 450 880 363C1001 297 1159 319 1285 247C1427 165 1501 191 1600 127" stroke="#71D9CA" stroke-opacity=".54" stroke-width="2"/>
+  <path d="M78 563H574" stroke="#2A3030"/>
+  <path d="M1027 154H1518" stroke="#2A3030"/>
+  <circle cx="1034" cy="154" r="7" fill="#D9FF72"/>
+  <circle cx="574" cy="563" r="7" fill="#71D9CA"/>
+  <text x="112" y="164" fill="#D9FF72" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" letter-spacing="5">FIRST PERSON VIEWPOINT</text>
+  <text x="112" y="311" fill="#F1F4F1" font-family="Georgia, Times New Roman, serif" font-size="88" font-weight="400">Your choices move</text>
+  <text x="112" y="407" fill="#F1F4F1" font-family="Georgia, Times New Roman, serif" font-size="88" font-weight="400">the story forward.</text>
+  <text x="112" y="475" fill="#A6B0AC" font-family="Arial, Helvetica, sans-serif" font-size="27">Local-first interactive fiction for desktop.</text>
+  <rect x="112" y="555" width="188" height="48" fill="#D9FF72"/>
+  <text x="135" y="587" fill="#0B0D0D" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="1.6">OPEN SOURCE</text>
+  <text x="329" y="586" fill="#A6B0AC" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="1.5">LOCAL PLAY · NO ACCOUNT REQUIRED</text>
+  <text x="1208" y="615" fill="#71D9CA" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">THE WORLD REMEMBERS</text>
+</svg>

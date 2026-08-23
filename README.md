@@ -13,7 +13,7 @@
   ![Status](https://img.shields.io/badge/Status-v0.0.1%20in%20release%20preparation-8ca1b3?style=flat-square&labelColor=111111)
 </div>
 
-![A lone traveler facing a lightning-lit mountain — a Worldlines story image](.github/assets/fpv-worldlines-hero.jpg)
+![First Person Viewpoint — Your choices move the story forward. Local-first interactive fiction for desktop. Open source. Local play, no account required.](.github/assets/fpv-worldlines-banner.svg)
 
 ## What is FPV?
 

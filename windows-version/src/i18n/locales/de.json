@@ -1,0 +1,730 @@
+{
+  "ui": {
+    "delete-character-failed": "Failed to delete character",
+    "rename-failed": "Failed to rename session",
+    "a-brief-description-of-your-world-the-setting-to": "Eine kurze Beschreibung deiner Welt — Schauplatz, Ton und Atmosphäre...",
+    "accept": "Akzeptieren",
+    "active": "Aktiv",
+    "add-character": "Charakter hinzufügen",
+    "add-entry": "Eintrag hinzufügen",
+    "advanced-controls": "Erweiterte Steuerung",
+    "always-remembered": "Immer berücksichtigt",
+    "anime": "Anime",
+    "application-settings-and-local-ai-configuration": "Anwendungseinstellungen und lokale KI-Konfiguration",
+    "automatically-illustrate-new-scenes": "Neue Szenen automatisch illustrieren",
+    "back-to-library": "Zurück zur Bibliothek",
+    "backstory": "Hintergrundgeschichte",
+    "backstory-and-background": "Hintergrundgeschichte und Hintergrund...",
+    "balanced": "Ausgewogen",
+    "cancel": "Abbrechen",
+    "character-name": "Charaktername",
+    "chatgpt-plus-pro-via-codex": "ChatGPT Plus / Pro via Codex",
+    "cinematic": "Filmisch",
+    "clear-metrics": "Metriken zurücksetzen",
+    "click-to-add-the-first-one": "Klicken, um den ersten hinzuzufügen",
+    "close": "Schließen",
+    "close-panel": "Panel schließen",
+    "close-settings": "Einstellungen schließen",
+    "close-story-map": "Storykarte schließen",
+    "cloud-turns": "Cloud-Züge",
+    "codex-entries": "Codex-Einträge",
+    "codex-entries-define-key-concepts-characters-loc": "Codex-Einträge definieren Schlüsselkonzepte, Charaktere, Orte und\n              Lore, auf die die KI während der Erzählung verweist.",
+    "codex-narrator": "Codex-Erzähler",
+    "comma-separated-keywords-that-trigger-this-codex": "Durch Kommas getrennte Schlüsselwörter, die diesen Codex-Eintrag auslösen.",
+    "concise": "Prägnant",
+    "content": "Inhalt",
+    "context-panel": "Kontext-Panel",
+    "context-sampling-memory-and-scene-settings": "Kontext-, Sampling-, Speicher- und Szenen-Einstellungen.",
+    "context-window": "Kontextfenster",
+    "continue": "Fortfahren",
+    "continuity-facts-for-this-story": "Kontinuitätsfakten für diese Geschichte.",
+    "copy-story-as-markdown": "Geschichte als Markdown kopieren",
+    "cost-estimate-uses-reference-rates-of-3-m-input": "Die Kostenschätzung verwendet Referenzpreise von $3/M für Eingabe und $15/M für Ausgabe. Sie ist nur lokal und keine Rechnung.",
+    "could-not-load-this-section": "Dieser Abschnitt konnte nicht geladen werden.",
+    "could-not-load-this-story-for-editing": "Diese Geschichte konnte nicht zum Bearbeiten geladen werden.",
+    "create-a-new-story-branch": "Neuen Geschichtszweig erstellen",
+    "create-story": "Geschichte erstellen",
+    "current-location": "Aktueller Ort",
+    "custom": "Benutzerdefiniert…",
+    "custom-model-name": "Benutzerdefinierter Modellname",
+    "daily-cloud-limit-in-usd": "Tägliches Cloud-Limit in USD",
+    "daily-cloud-limit-usd": "Tägliches Cloud-Limit (USD)",
+    "dark-fantasy": "Dark Fantasy",
+    "default": "Standard",
+    "delete": "Löschen?",
+    "delete-2": "Löschen",
+    "delete-all-local-data": "Alle lokalen Daten löschen",
+    "delete-character": "Charakter löschen",
+    "delete-model": "{{name}} löschen",
+    "delete-story": "Geschichte löschen",
+    "delete-world": "Welt löschen",
+    "delete-world-name": "{{name}} löschen",
+    "describe-this-element-of-your-world": "Beschreibe dieses Element deiner Welt...",
+    "description": "Beschreibung",
+    "draft-faster": "Entwurf · schneller",
+    "dramatic": "Dramatisch",
+    "edit": "Bearbeiten",
+    "edit-character": "Charakter bearbeiten",
+    "edit-narration": "Erzählung bearbeiten",
+    "edit-player-action": "Spieleraktion bearbeiten",
+    "edit-world": "Welt bearbeiten",
+    "embedding": "Embedding",
+    "enable-advanced-generation-controls": "Erweiterte Generierungssteuerung aktivieren",
+    "every-2-turns": "Alle 2 Züge",
+    "every-3-turns": "Alle 3 Züge",
+    "every-save-point-and-alternate-choice-stays-conn": "Jeder Speicherpunkt und jede alternative Entscheidung bleibt mit dem Moment verbunden, aus dem sie stammt.",
+    "every-scene": "Jede Szene",
+    "export-world": "Welt exportieren",
+    "fact-to-pin-as-canon": "Als Kanon zu fixierende Tatsache",
+    "fast-paced": "Rasant",
+    "find-a-scene": "Szene suchen...",
+    "first-person-viewpoint": "Ich-Perspektive",
+    "first-scene-only": "Nur erste Szene",
+    "fork-from-here": "Ab hier abzweigen",
+    "fpv-is-an-ai-powered-interactive-narrative-app-c": "FPV ist eine KI-gestützte App für interaktive Erzählungen. Erstelle\n          immersive Geschichten in jedem Genre — Fantasy, Sci-Fi, Horror, Romantik und mehr —\n           die standardmäßig lokal auf deinem Computer laufen. Optionale BYOK-Cloud-Anbieter\n           werden nur verwendet, wenn du sie explizit verbindest und auswählst.",
+    "fpv-is-built-on-open-source-work-local-models-ru": "FPV basiert auf Open-Source-Arbeit. Lokale Modelle laufen über Ollama und\n          stable-diffusion.cpp. Die vollständigen Lizenzbedingungen werden mit jedem Modell mitgeliefert.",
+    "free": "Frei",
+    "generate-cover": "Cover generieren",
+    "generation": "Generierung",
+    "generation-diagnostics": "Generierungsdiagnose",
+    "generations": "Generierungen",
+    "genre": "Genre",
+    "github": "GitHub",
+    "guided": "Geführt",
+    "high-quality-slower": "Hohe Qualität · langsamer",
+    "home": "Start",
+    "image-style": "Bildstil",
+    "important-scenes-only": "Nur wichtige Szenen",
+    "indexed-past-scenes": "Indexierte frühere Szenen",
+    "ink": "Tinte",
+    "input-mode": "Eingabemodus",
+    "input-tokens-est": "Eingabe-Tokens (geschätzt)",
+    "inventory": "Inventar",
+    "keep-generated-scenes-visually-consistent-these": "Sorgt dafür, dass generierte Szenen visuell konsistent bleiben. Diese Notizen leiten jede Illustration in dieser Welt.",
+    "key-saved": "Schlüssel gespeichert",
+    "keyboard-shortcuts": "Tastenkürzel",
+    "literary": "Literarisch",
+    "loading": "Lädt...",
+    "loading-lore": "Lore wird geladen...",
+    "loading-quants": "Quantisierungen werden geladen…",
+    "main-timeline": "Hauptzeitstrahl",
+    "manga": "Manga",
+    "mature-content-18": "Erwachseneninhalte (18+)",
+    "maximize": "Maximieren",
+    "minimize": "Minimieren",
+    "model-name": "Modellname",
+    "more-dialogue": "Mehr Dialog",
+    "more-tension": "Mehr Spannung",
+    "name": "Name",
+    "narrator": "Erzähler",
+    "navigation-panel": "Navigations-Panel",
+    "new-path": "Neuer Pfad",
+    "new-variation": "Neue Variation",
+    "new-world": "Neue Welt",
+    "no": "Nein",
+    "no-characters-defined-for-this-world": "Für diese Welt sind keine Charaktere definiert.",
+    "no-characters-yet-add-characters-to-define-who-l": "Noch keine Charaktere. Füge Charaktere hinzu, um festzulegen, wer in dieser Welt lebt.",
+    "no-codex-entries-for-this-world": "Keine Codex-Einträge für diese Welt.",
+    "no-codex-entries-yet": "Noch keine Codex-Einträge",
+    "no-models-returned-enter-one-manually-below": "Keine Modelle zurückgegeben — gib unten eines manuell ein.",
+    "no-details-set": "Keine Details festgelegt.",
+    "no-gguf-files-in-this-repo": "Keine GGUF-Dateien in diesem Repository.",
+    "no-gguf-models-found": "Keine GGUF-Modelle gefunden.",
+    "no-key": "Kein Schlüssel",
+    "quick-fill": "Schnellauswahl:",
+    "no-lore-entries-for-this-world": "Keine Lore-Einträge für diese Welt.",
+    "no-models-in-catalog-check-your-ollama-connectio": "Keine Modelle im Katalog. Überprüfe deine Ollama-Verbindung.",
+    "no-saved-paths-yet": "Noch keine gespeicherten Pfade.",
+    "no-scenes-yet-your-story-map-will-appear-here-as": "Noch keine Szenen. Deine Storykarte erscheint hier, während du spielst.",
+    "no-sessions-yet-start-a-story-to-begin": "Noch keine Sitzungen. Starte eine Geschichte, um zu beginnen.",
+    "no-story-selected": "Keine Geschichte ausgewählt.",
+    "noir": "Noir",
+    "npc": "NPC",
+    "off": "Aus",
+    "open": "Öffnen",
+    "open-huggingface-co": "huggingface.co öffnen",
+    "open-path": "{{name}} öffnen",
+    "open-print-or-pdf-preview": "Druck- oder PDF-Vorschau öffnen",
+    "open-print-pdf": "Drucken/PDF öffnen",
+    "output-tokens-est": "Ausgabe-Tokens (geschätzt)",
+    "performance-profile": "Leistungsprofil",
+    "pin-a-fact-when-it-must-never-be-lost": "Fixiere eine Tatsache, wenn sie niemals verloren gehen darf.",
+    "pin-fact": "Tatsache fixieren",
+    "pinned-canon": "Fixierter Kanon",
+    "pinned-canon-is-always-included-story-state-summ": "Fixierter Kanon ist immer enthalten. Story State, Zusammenfassung, aktuelle Züge und relevante frühere Szenen liefern den Rest jedes Prompts.",
+    "play": "Spielen",
+    "player": "Spieler",
+    "predefined": "Vordefiniert",
+    "preset-name": "Preset-Name",
+    "project-backup": "Projekt-Backup",
+    "proposed-changes": "Vorgeschlagene Änderungen",
+    "quest-log": "Quest-Log",
+    "realistic": "Realistisch",
+    "reference-cloud-cost": "Referenz-Cloud-Kosten",
+    "refresh-metrics": "Metriken aktualisieren",
+    "refresh-model-catalog": "Modellkatalog aktualisieren",
+    "regenerate": "Neu generieren",
+    "reject": "Ablehnen",
+    "relationships": "Beziehungen",
+    "remove-entry": "Eintrag entfernen",
+    "remove-key": "Schlüssel entfernen",
+    "remove-key-api": "{{name}}-API-Schlüssel entfernen",
+    "remove-pinned-canon": "Fixierten Kanon entfernen",
+    "removes-worlds-stories-generated-assets-download": "Entfernt Welten, Geschichten, generierte Assets, heruntergeladene lokale Modelle, Protokolle und gespeicherte API-Schlüssel.",
+    "rename": "Umbenennen",
+    "rename-story": "Geschichte umbenennen",
+    "response-length": "Antwortlänge",
+    "retry-illustration": "Illustration erneut versuchen",
+    "review-continuity": "Kontinuität prüfen",
+    "role": "Rolle",
+    "same-seed": "Gleicher Seed",
+    "save": "Speichern",
+    "save-a-named-checkpoint": "Benannten Prüfpunkt speichern",
+    "save-as-html-file": "Als HTML-Datei speichern",
+    "save-point": "Speicherpunkt",
+    "save-story-as-html-file": "Geschichte als HTML-Datei speichern",
+    "save-worlds-adventures-codex-story-state-paths-a": "Speichert Welten, Abenteuer, Codex, Story State, Pfade und generierte Bilder. API-Schlüssel, Modellgewichte und Anbietereinstellungen sind niemals enthalten.",
+    "saved-presets": "Gespeicherte Presets",
+    "search-story-scenes": "Storyszenen durchsuchen",
+    "searching": "Suche…",
+    "select-a-world-to-see-its-lore-characters-and-de": "Wähle eine Welt aus, um ihre Lore, Charaktere und Details zu sehen.",
+    "semantic-recall-is-empty-or-turned-off": "Semantischer Abruf ist leer oder deaktiviert.",
+    "settings": "Einstellungen",
+    "settings-ai-cloud-connection": "Einstellungen → KI-Cloud-Verbindung",
+    "slower": "Langsamer",
+    "start-story": "Geschichte starten",
+    "starting": "Wird gestartet…",
+    "step-inside-the-story": "Tritt in die Geschichte ein",
+    "step-number": "Schritt {{n}}: {{title}}",
+    "stop": "Stopp",
+    "stop-generation": "Generierung stoppen",
+    "stories": "Geschichten",
+    "story-map": "Storykarte",
+    "story-narration": "Story-Erzählung",
+    "story-paths": "Story-Pfade",
+    "story-privacy": "Story-Datenschutz",
+    "story-so-far": "Bisherige Geschichte",
+    "story-so-far-2": "Bisherige Geschichte…",
+    "story-state": "Story State",
+    "story-state-is-not-available-yet": "Story State ist noch nicht verfügbar.",
+    "submit-action": "Aktion absenden",
+    "system-prompt": "System-Prompt",
+    "the-narrator-noticed-these-possible-changes-acce": "Der Erzähler hat diese möglichen Änderungen bemerkt. Akzeptiere nur, was Kanon werden soll.",
+    "the-story-continues": "Die Geschichte geht weiter…",
+    "this-instructs-the-ai-on-how-to-narrate-your-sto": "Dies weist die KI an, wie sie deine Geschichte erzählen soll.",
+    "this-policy-controls-whether-story-text-may-be-s": "Diese Richtlinie steuert, ob Story-Text an einen Cloud-Erzähler gesendet werden darf. Die lokale Bilderzeugung bleibt lokal.",
+    "this-tab-failed-to-load": "Dieser Tab konnte nicht geladen werden.",
+    "title": "Titel",
+    "total-inference-time": "Gesamte Inferenzzeit",
+    "traits": "Eigenschaften",
+    "traits-comma-separated": "Eigenschaften (durch Kommas getrennt)",
+    "triggers": "Auslöser",
+    "try-again": "Erneut versuchen",
+    "type-your-genre": "Gib dein Genre ein...",
+    "undo": "Rückgängig",
+    "unlimited": "Unbegrenzt",
+    "unpredictability": "Unberechenbarkeit",
+    "upload-cover": "Cover hochladen",
+    "use-model": "Modell verwenden",
+    "use-semantic-memory-when-available": "Semantisches Gedächtnis verwenden, wenn verfügbar",
+    "used-only-when-relevant": "Nur bei Relevanz verwendet",
+    "view-world": "Welt ansehen →",
+    "visual-bible": "Visuelle Bibel",
+    "vocabulary-range": "Wortschatzumfang",
+    "watercolor": "Aquarell",
+    "website": "Website",
+    "what-the-narrator-knows": "Was der Erzähler weiß",
+    "working": "Arbeitet...",
+    "write-your-first-action-below-to-step-into-the-w": "Schreibe unten deine erste Aktion, um in die Welt einzutreten. Jede Geschichte beginnt mit einer einzigen Entscheidung.",
+    "your-action": "Deine Aktion",
+    "your-story-has-been-saved-start-playing-or-add-a": "Deine Geschichte wurde gespeichert. Beginne zu spielen oder füge unten ein Coverbild hinzu.",
+    "delete-session": "Sitzung löschen",
+    "delete-session-confirm": "Diesen Abenteuerverlauf löschen? Das kann nicht rückgängig gemacht werden.",
+    "name-this-story-branch": "Diesen Geschichtszweig benennen",
+    "alternative-path": "Alternativer Pfad",
+    "could-not-create-story-branch": "Geschichtszweig konnte nicht erstellt werden",
+    "name-this-checkpoint": "Diesen Prüfpunkt benennen",
+    "before-the-next-choice": "Vor der nächsten Entscheidung",
+    "could-not-create-checkpoint": "Prüfpunkt konnte nicht erstellt werden",
+    "name-this-alternate-path": "Diesen alternativen Pfad benennen",
+    "retcon": "Retcon",
+    "could-not-fork-from-this-turn": "Von diesem Zug aus konnte nicht abgezweigt werden",
+    "project-backup-created": "Projekt-Backup erstellt",
+    "backup-summary": "{{worlds}} Welten, {{sessions}} Abenteuer, {{assets}} Assets.",
+    "project-backup-failed": "Projekt-Backup fehlgeschlagen",
+    "restore-project-confirm": "Dieses Projekt wiederherstellen? Aktuelle Welten, Abenteuer und Story-Daten werden ersetzt.",
+    "project-restored": "Projekt wiederhergestellt",
+    "project-restore-failed": "Projektwiederherstellung fehlgeschlagen",
+    "reset-all-data-confirm-1": "Alle FPV-Welten, Geschichten, Bilder, Modelle, Protokolle und gespeicherte API-Schlüssel löschen? Das kann nicht rückgängig gemacht werden.",
+    "reset-all-data-confirm-2": "Letzte Bestätigung: alle lokalen FPV-Daten dauerhaft löschen?",
+    "all-local-data-deleted": "Alle lokalen FPV-Daten wurden gelöscht",
+    "reset-failed": "Zurücksetzen fehlgeschlagen",
+    "visualization-failed": "Visualisierung fehlgeschlagen. Überprüfe, ob das Bildmodell installiert ist.",
+    "could-not-save-edited-message": "Die bearbeitete Nachricht konnte nicht gespeichert werden",
+    "story-copied": "Geschichte kopiert",
+    "messages-copied-to-clipboard": "{{count}} Nachrichten in die Zwischenablage kopiert.",
+    "failed-to-copy-story": "Geschichte konnte nicht kopiert werden.",
+    "html-copied": "HTML kopiert",
+    "popup-blocked-html-copied": "Popup wurde blockiert. HTML in die Zwischenablage kopiert.",
+    "failed-to-export": "Export fehlgeschlagen.",
+    "scene-generation-failed": "Szenengenerierung fehlgeschlagen. Überprüfe, ob das Bildmodell installiert ist.",
+    "could-not-start-story": "Diese Geschichte konnte nicht gestartet werden.",
+    "world-exported": "Welt exportiert",
+    "world-data-copied": "\"{{name}}\"-Daten in die Zwischenablage kopiert.",
+    "world-export-failed": "Weltexport fehlgeschlagen",
+    "failed-to-delete-world": "Welt konnte nicht gelöscht werden.",
+    "failed-to-save-character": "Charakter konnte nicht gespeichert werden.",
+    "cover-generation-failed": "Covergenerierung fehlgeschlagen. Installiere zuerst ein Bildmodell unter Einstellungen → Bildmodell.",
+    "cover-upload-failed": "Cover-Upload fehlgeschlagen.",
+    "story-updated": "Geschichte aktualisiert",
+    "story-created": "Geschichte erstellt",
+    "preference-not-saved": "Diese Einstellung konnte nicht gespeichert werden — sie könnte nach einem Neustart zurückgesetzt werden."
+  },
+  "app": {
+    "autoinstall": {
+      
+      
+      
+      
+      
+      
+      
+      
+    },
+    "search": {
+      
+      
+      
+      
+      
+      
+      
+    },
+    "feedback": {
+      
+      
+      
+      
+      
+      
+      "reason": {
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "update": {
+      
+      
+      
+      
+      
+      
+    },
+    "modeldl": {
+      "downloading": "{{model}} wird heruntergeladen"
+    },
+    "titlebar": {
+      
+      
+      
+      
+    },
+    "layout": {
+      
+      
+      "show_right_panel": "Profilbereich einblenden",
+      "hide_right_panel": "Profilbereich ausblenden"
+    },
+    "gpu_setup": {
+      "downloading": "GPU-Beschleunigung wird eingerichtet…",
+      "ready": "GPU-Beschleunigung bereit",
+      "error": "Einrichtung der GPU-Beschleunigung fehlgeschlagen — weiter mit CPU"
+    }
+  },
+  "navigation": {
+    "home": "Startseite",
+    "new_story": "Neue Geschichte erstellen",
+    "explore": "Vorgegebene Geschichten entdecken"
+    ,
+    "continue": "Abenteuer fortsetzen",
+    "featured": "Empfohlene Welten",
+    "featured_desc": "Eine handverlesene Auswahl aus verschiedenen Stimmungen und Genres.",
+    "settings": "Einstellungen",
+    "new_story_short": "Neue Geschichte"
+    ,
+    "adventures": "Deine Abenteuer",
+    "browse_stories": "Alle Geschichten durchsuchen",
+    "new_adventure": "Neues Abenteuer",
+    "no_adventures": "Noch keine Abenteuer. Wähle eine Geschichte, um zu beginnen."
+    
+    
+  },
+  "library": {
+    "title": "Story-Bibliothek",
+    "import": "Importieren",
+    "importing": "Import wird importiert...",
+    "search": "Suchen..."
+    
+    ,
+    "source": "Quelle",
+    "genre": "Genre",
+    "all": "Alle",
+    "predefined": "Vorgegeben",
+    "custom": "Eigene",
+    "click_to_filter": "zum Filtern klicken",
+    "no_search_match": "Keine Geschichten passen zu \"{{query}}\"",
+    "no_search_hint": "Versuche eine andere Suche oder lösche die Filter.",
+    "no_filter_match": "Keine Geschichten passen zu den Filtern",
+    "no_filter_hint": "Lösche einen Filter oder erstelle eine eigene Geschichte.",
+    "clear_filters": "Alle Filter löschen",
+    "create_own": "Eigene erstellen",
+    "no_worlds": "Deine Geschichten warten",
+    "no_worlds_desc": "Erstelle eine Geschichte, importiere JSON oder erkunde die Vorgaben.",
+    "import_json": "Aus JSON importieren"
+    
+    
+  },
+  "errors": {
+    "title": "Etwas ist schiefgelaufen",
+    "body": "Ein Teil der Oberfläche ist abgestürzt. Deine Geschichten und Welten sind sicher. Versuche es erneut oder lade das Fenster neu.",
+    "diagnostic": "Eine Diagnose wurde lokal gespeichert.",
+    "retry": "Erneut versuchen",
+    "reload": "Fenster neu laden"
+  },
+  "settings": {
+    "drawer": {
+      "title": "Einstellungen",
+      "general": "Allgemein",
+      "appearance": "Erscheinungsbild & Chat",
+      "chat": "Narration & Display"
+      ,
+      "about": "Über",
+      "byok": "KI-Cloud-Verbindung",
+      "image_model": "Bildmodell",
+      "narrative_model": "Erzählmodell"
+    },
+    "general": {
+      
+      
+      "language": {
+        "title": "Sprache"
+        
+        
+        
+        
+        
+        
+        
+        
+      },
+      "startup": {
+        
+        
+      },
+      "tray": {
+        "title": "In die Menüleiste ausblenden",
+        "desc": "App beim Schließen in der Menüleiste weiterlaufen lassen"
+      },
+      "low_power": {
+        "title": "Energiesparmodus",
+        "desc": "Lokale Modelle schnell entladen und Speicherverbrauch reduzieren"
+      },
+      "images_ac": {
+        "title": "Automatische Bilder nur am Netz",
+        "desc": "Automatische Bilder im Batteriebetrieb pausieren"
+      },
+      "semantic_memory": {
+        "title": "Semantisches Gedächtnis",
+        "desc": "Zusätzliches lokales Modell für langfristige Story-Erinnerungen verwenden"
+      },
+      "notifications": {
+        
+        
+      },
+      "updates": {
+        
+        
+      }
+      ,
+      "autostart": "Beim Anmelden starten",
+      "blur": "Hintergrund weichzeichnen"
+    },
+    "chat": {
+      "textSize": {
+        "title": "Textgröße",
+        "desc": "Größe der Chat-Blasen anpassen",
+        "small": "Klein",
+        "normal": "Normal",
+        "large": "Groß"
+      },
+      "markdown": {
+        
+        
+      },
+      "reasoning": {
+        
+        
+      },
+      "inputBehavior": {
+        "title": "Eingabeverhalten"
+      },
+      "sendOnEnter": {
+        "title": "Mit Enter senden",
+        "desc": "Enter zum Senden, Umschalt+Enter für neue Zeile"
+      }
+    },
+    "models": {
+      "delete_failed": "Failed to delete model",
+      "set_default_failed": "Failed to set default model",
+      "loading": "Wird geladen…",
+      "load_error": "Modelle konnten nicht geladen werden.",
+      "no_data": "Keine Daten."
+      
+      
+      
+      
+      
+      ,
+      "catalog": "Katalog",
+      "set_default": "Als aktiv festlegen"
+      ,
+      "installed": "Installiert"
+      
+      
+      
+      
+      ,
+      "retry": "Erneut versuchen"
+      
+      ,
+      "install": "Installieren"
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "hf_title": "Hugging Face durchsuchen"
+      ,
+      "hf_placeholder": "Suchen oder eine huggingface.co-Modell-URL einfügen"
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "active_narrator": "Aktiver Erzähler",
+      "cloud_hint": "Optionales Cloud-Modell",
+      "cloud_narrator": "Cloud-Erzähler",
+      "hf_hint": "GGUF-Modell lokal ausführen",
+      "no_models": "Keine Modelle installiert.",
+      "delete_confirm": "Modell \"{{name}}\" löschen? Dies kann nicht rückgängig gemacht werden.",
+      "cloud_list_error": "Modelle konnten nicht geladen werden.",
+      "gpu_title": "GPU-Beschleunigung",
+      "gpu_none": "Keine unterstützte GPU erkannt — läuft auf CPU.",
+      "gpu_ready": "Beschleunigt ({{vendor}})",
+      "gpu_not_ready": "{{vendor}} erkannt — noch nicht beschleunigt",
+      "gpu_retrying": "Wird eingerichtet…",
+      "gpu_retry": "GPU-Einrichtung wiederholen",
+      "gpu_retry_failed": "Wiederholung der GPU-Einrichtung fehlgeschlagen — weiter mit CPU."
+    },
+    "appearance": {
+      "desc": "Passe das Hintergrundthema deines Dashboards an.",
+      "theme": {
+        
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "about": {
+      "ai": {
+        
+        
+        
+      },
+      "credits": {
+        
+        
+      }
+    },
+    "byok": {"save_failed": "Failed to save API key", "delete_failed": "Failed to remove API key",
+      "title": "KI-Cloud-Verbindung",
+      "desc": "Verbinde deinen eigenen API-Schlüssel für optionale Cloud-Erzähler.",
+      "delete_confirm": "{{name}}-Schlüssel entfernen?"
+    },
+    "image": {
+      "title": "Bildgenerierung",
+      "desc": "Erzeuge Story-Illustrationen lokal.",
+      "active_model": "Aktives Bildmodell:",
+      "catalog": "Bildmodelle",
+      "sdcpp_status": "Lokale Bild-Engine ist enthalten.",
+      "ready": "Bereit",
+      "not_installed": "Nicht installiert - unten herunterladen",
+      "test": "Bildgenerierung testen",
+      "testing": "Wird getestet...",
+      "works": "Funktioniert",
+      "test_failed": "Bildgenerierung fehlgeschlagen - zuerst ein Modell installieren.",
+      "test_failed_short": "Fehlgeschlagen - unten ein Modell installieren",
+      "story_images": "Story-Bilder",
+      "story_images_desc": "Steuere, wann Szenen automatisch illustriert werden. Manuelle Illustrationen bleiben verfügbar.",
+      "automatic": "Automatische Illustrationen",
+      "style": "Standardstil",
+      "quality": "Bildqualität",
+      "max_auto": "Max. automatische Bilder",
+      "refresh": "Bildmodelle aktualisieren",
+      "loading": "Bildmodelle werden geladen...",
+      "load_error": "Bildmodelle konnten nicht geladen werden.",
+      "empty_catalog": "Keine Bildmodelle im Katalog. Verbindung prüfen und aktualisieren.",
+      "large": "groß",
+      "needs_ram": "Benötigt {{gb}} GB RAM - unter deiner Hardware-Stufe.",
+      "active": "Aktiv",
+      "use": "Verwenden",
+      "delete": "{{id}} löschen",
+      "delete_confirm": "Bildmodell-Gewichte \"{{id}}\" löschen? Dies kann nicht rückgängig gemacht werden.",
+      "download_failed": "Download des Bildmodells fehlgeschlagen.",
+      "downloading": "Gewichte für {{model}} werden heruntergeladen...",
+      "cancel_download": "Download abbrechen",
+      "provider": "Bildanbieter",
+      "provider_desc": "Wähle lokale Generierung oder deine verbundene OpenAI Image API.",
+      "provider_local": "Lokales sd.cpp",
+      "provider_local_desc": "Private lokale Generierung.",
+      "provider_local_ready": "Bereit",
+      "provider_local_setup": "Lade ein Modell herunter, um zu beginnen",
+      "provider_openai": "OpenAI Image API",
+      "provider_openai_desc": "Verwendet deinen gespeicherten OpenAI-API-Schlüssel.",
+      "provider_openai_ready": "API-Schlüssel verbunden",
+      "provider_openai_setup": "OpenAI-Schlüssel in BYOK hinzufügen",
+      "provider_error": "Bildanbieter konnte nicht geändert werden.",
+      "gpu_title": "GPU-Beschleunigung",
+      "gpu_none": "Keine unterstützte GPU erkannt — läuft auf CPU.",
+      "gpu_ready": "Beschleunigt ({{vendor}})",
+      "gpu_not_ready": "{{vendor}} erkannt — noch nicht beschleunigt",
+      "gpu_retrying": "Wird eingerichtet…",
+      "gpu_retry": "GPU-Einrichtung wiederholen",
+      "gpu_retry_failed": "Wiederholung der GPU-Einrichtung fehlgeschlagen — weiter mit CPU."
+    },
+    "narrative": {
+      "title": "Erzählpräferenzen",
+      "style": "Erzählstil",
+      "styleDesc": "Wähle den Prosastil.",
+      "freedom": "Erzählfreiheit",
+      "freedomDesc": "Wähle, wie stark die Geschichte dich führt."
+    },
+    "reading": {
+      "title": "Lesen",
+      "serifFont": "Serifenschrift für die Erzählung",
+      "serifFontDesc": "Verwende eine buchartige Serifenschrift."
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "body": "{{count}} Welten warten. Geschichten laufen standardmäßig lokal - kein Konto und keine Cloud ohne eigenen Schlüssel.",
+      "body_generic": "Geschichten laufen standardmäßig lokal - kein Konto und keine Cloud ohne eigenen Schlüssel.",
+      "begin": "Beginnen",
+      "trust_local": "Läuft auf deinem Gerät",
+      "trust_account": "Kein Konto",
+      "trust_private": "Lokal als Standard"
+    },
+    "prefs": {
+      "title": "Forme deine Geschichte",
+      "story_type": "Was zieht dich in eine Geschichte?",
+      "freedom": "Wie viel Freiheit möchtest du?",
+      "style": "Welcher Erzählstil?",
+      "continue": "Weiter",
+      "skip": "Überspringen",
+      "epic": "Epische Abenteuer",
+      "intrigue": "Politische Intrige",
+      "drama": "Persönliches Drama",
+      "mystery": "Mystery & Entdeckung",
+      "dark": "Dunkel & atmosphärisch",
+      "surprise": "Überrasche mich",
+      "guided": "Führe mich",
+      "balanced": "Ausgewogen",
+      "free": "Volle Freiheit",
+      "literary": "Literarisch & bildhaft",
+      "fast": "Schnell & pointiert",
+      "cinematic": "Cinematisch & visuell"
+    },
+    "world": {
+      "title": "Wo beginnt es?",
+      "subtitle": "{{shown}} zum Start. {{rest}} weitere sind bereits auf deinem Gerät.",
+      "show_all": "Alle {{count}} anzeigen ->",
+      "skip": "Überspringen ->",
+      "preparing": "Dein Erzähler wird vorbereitet"
+    },
+    "model": {
+      "title": "Wähle deine Story-Engine",
+      "subtitle": "Wähle ein lokales KI-Modell für deine Geschichten.",
+      "recommended": "Empfohlen",
+      "pulling": "Wird heruntergeladen...",
+      "install": "Installieren",
+      "waiting": "Download läuft noch...",
+      "needs_install": "Installiere ein Modell, um fortzufahren",
+      "continue": "Geschichten schreiben",
+      "change": "Anderes Modell verwenden",
+      "ready_title": "Dein Erzähler ist bereit",
+      "ready_body": "{{model}} - läuft vollständig lokal.",
+      "enter_world": "{{world}} betreten"
+    },
+    "cloud": {
+      
+      
+      
+      
+      
+      
+      
+    }
+  },
+  "tutorial": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "got_it": "Verstanden",
+    "left_title": "Deine Geschichten",
+    "left_body": "Kehre zurück, durchsuche Welten oder setze ein Abenteuer fort.",
+    "right_title": "Weltkontext",
+    "right_body": "Figuren, Cover und Codex bleiben neben deiner Geschichte verfügbar.",
+    "input_title": "Deine Handlung",
+    "input_body": "Wähle Do, Say oder Story und beschreibe den Versuch deiner Figur."
+  }
+}

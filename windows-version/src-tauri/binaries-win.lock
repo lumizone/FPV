@@ -1,0 +1,14 @@
+# Windows x64 release inputs. This manifest is intentionally separate from
+# binaries.lock, which belongs only to the macOS direct-download bundle.
+# Update pins only after independently verifying the upstream artifacts.
+TARGET=x86_64-pc-windows-msvc
+OLLAMA_VERSION=v0.30.8
+OLLAMA_URL=https://github.com/ollama/ollama/releases/download/v0.30.8/ollama-windows-amd64.zip
+OLLAMA_CHECKSUM_URL=https://github.com/ollama/ollama/releases/download/v0.30.8/sha256sum.txt
+# Resolved from OLLAMA_CHECKSUM_URL by fetch-binaries-win.ps1; never use a
+# macOS checksum from binaries.lock here.
+OLLAMA_SHA256_SOURCE=upstream
+SD_CLI_TAG=master-769-cc73429
+SD_CLI_ASSET=sd-master-cc73429-bin-win-cpu-x64.zip
+SD_CLI_URL=https://github.com/leejet/stable-diffusion.cpp/releases/download/master-769-cc73429/sd-master-cc73429-bin-win-cpu-x64.zip
+SD_CLI_RELEASE_URL=https://api.github.com/repos/leejet/stable-diffusion.cpp/releases/tags/master-769-cc73429

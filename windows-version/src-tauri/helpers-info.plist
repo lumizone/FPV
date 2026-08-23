@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>com.lumizone.fpvdesktop.helper</string>
+    <key>CFBundleName</key>
+    <string>FPV Helper</string>
+    <!-- TCC usage strings, embedded so EventKit's macOS 14+ full-access
+         prompt has a description even when the helper is spawned as a
+         child process. The modern *FullAccess* keys are required by
+         requestFullAccessToEvents / requestFullAccessToReminders on
+         macOS 14+; the legacy keys stay for the macOS 13 fallback path. -->
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>FPV reads your calendar so you can recall events in your stories.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>FPV reads your calendar so you can recall events in your stories.</string>
+    <key>NSRemindersFullAccessUsageDescription</key>
+    <string>FPV reads your reminders to help you stay on top of your tasks.</string>
+    <key>NSRemindersUsageDescription</key>
+    <string>FPV reads your reminders to help you stay on top of your tasks.</string>
+</dict>
+</plist>

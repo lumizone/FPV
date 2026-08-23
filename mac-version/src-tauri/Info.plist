@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.entertainment</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <!-- The UI is localized via i18next and this keeps bundle metadata aligned
+         with the supported languages. -->
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>pl</string>
+        <string>de</string>
+        <string>es</string>
+        <string>ja</string>
+        <string>ko</string>
+        <string>zh</string>
+    </array>
+</dict>
+</plist>

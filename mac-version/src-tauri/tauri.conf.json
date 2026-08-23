@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "FPV",
+  "version": "0.1.0",
+  "identifier": "com.lumizone.fpvdesktop",
+  "build": {
+    "beforeDevCommand": "bash scripts/compile-helpers.sh && npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bash scripts/compile-helpers.sh && npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "FPV",
+        "width": 1180,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "transparent": true,
+        "decorations": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "fullscreen": false,
+        "resizable": true,
+        "shadow": true,
+        "acceptFirstMouse": true,
+        "windowEffects": {
+          "effects": ["sidebar"],
+          "state": "active"
+        }
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' tauri: asset: ipc:; img-src 'self' tauri: asset: data: blob: ipc: https:; media-src 'self' tauri: asset: data: blob: ipc: https:; style-src 'self' 'unsafe-inline' tauri: asset:; font-src 'self' tauri: asset: data:; connect-src 'self' tauri: asset: ipc: ws: wss: https: http://localhost:11434; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$APPDATA/portraits/*",
+          "$DATA/com.lumizone.fpvdesktop/portraits/*",
+          "$APPDATA/images/*",
+          "$DATA/com.lumizone.fpvdesktop/images/*",
+          "$APPDATA/images/covers/*",
+          "$DATA/com.lumizone.fpvdesktop/images/covers/*",
+          "$APPDATA/covers/*",
+          "$DATA/com.lumizone.fpvdesktop/covers/*"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app"],
+    "externalBin": ["binaries/ollama", "binaries/sd-cli"],
+    "resources": ["resources/seed-images/**/*", "resources/seed-data/**/*"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "26.0",
+      "entitlements": "entitlements.plist",
+      "exceptionDomain": "localhost",
+      "infoPlist": "./Info.plist"
+    }
+  }
+}

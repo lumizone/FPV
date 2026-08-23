@@ -1,0 +1,37 @@
+# JavaScript / Next / Vite
+node_modules/
+.next/
+dist/
+dist-ssr/
+*.log
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.local
+*.p12
+*.p8
+*.cer
+scripts/.supabase-secret
+
+# Rust / Tauri build output and downloaded runtimes
+**/src-tauri/target/
+**/src-tauri/gen/
+**/src-tauri/binaries/
+**/src-tauri/ollama-runtime/
+**/src-tauri/image-runtime/
+**/src-tauri/helpers/
+
+# Python virtual environments and caches
+**/.venv/
+**/.venv-tts/
+**/__pycache__/
+**/*.pyc
+
+# QA, tooling, and editor files
+**/qa-reports/
+**/graphify-out/
+.DS_Store
+.idea/
+.vscode/

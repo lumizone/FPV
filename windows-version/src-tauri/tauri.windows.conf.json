@@ -1,0 +1,34 @@
+{
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "FPV",
+        "width": 1180,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "transparent": false,
+        "decorations": false,
+        "shadow": true,
+        "resizable": true,
+        "fullscreen": false,
+        "acceptFirstMouse": true
+      }
+    ]
+  },
+  "bundle": {
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": false,
+    "externalBin": [],
+    "resources": {
+      "ollama-runtime": "ollama-runtime",
+      "image-runtime": "image-runtime",
+      "resources/seed-images/**/*": "resources/seed-images",
+      "resources/seed-data/**/*": "resources/seed-data"
+    }
+  }
+}

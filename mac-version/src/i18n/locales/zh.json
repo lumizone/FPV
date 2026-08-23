@@ -1,0 +1,711 @@
+{
+  "ui": {
+    "delete-character-failed": "Failed to delete character",
+    "rename-failed": "Failed to rename session",
+    "a-brief-description-of-your-world-the-setting-to": "简要描述你的世界——设定、基调与氛围...",
+    "accept": "接受",
+    "active": "启用中",
+    "add-character": "添加角色",
+    "add-entry": "添加条目",
+    "advanced-controls": "高级控制",
+    "always-remembered": "始终记住",
+    "anime": "动漫",
+    "application-settings-and-local-ai-configuration": "应用设置与本地 AI 配置",
+    "automatically-illustrate-new-scenes": "自动为新的场景配图",
+    "back-to-library": "返回作品库",
+    "backstory": "背景故事",
+    "backstory-and-background": "背景故事与设定...",
+    "balanced": "均衡",
+    "cancel": "取消",
+    "character-name": "角色名称",
+    "chatgpt-plus-pro-via-codex": "ChatGPT Plus / Pro（通过 Codex）",
+    "cinematic": "电影感",
+    "clear-metrics": "清除指标",
+    "click-to-add-the-first-one": "点击添加第一个",
+    "close": "关闭",
+    "close-panel": "关闭面板",
+    "close-settings": "关闭设置",
+    "close-story-map": "关闭故事地图",
+    "cloud-turns": "云端回合",
+    "codex-entries": "Codex 条目",
+    "codex-entries-define-key-concepts-characters-loc": "Codex 条目定义了 AI 在叙述时会引用的关键概念、角色、地点与传说。",
+    "codex-narrator": "Codex 叙述者",
+    "comma-separated-keywords-that-trigger-this-codex": "触发此 Codex 条目的关键词（以逗号分隔）。",
+    "concise": "简洁",
+    "content": "内容",
+    "context-panel": "上下文面板",
+    "context-sampling-memory-and-scene-settings": "上下文、采样、记忆与场景设置。",
+    "context-window": "上下文窗口",
+    "continue": "继续",
+    "continuity-facts-for-this-story": "此故事的连续性事实。",
+    "copy-story-as-markdown": "以 Markdown 复制故事",
+    "cost-estimate-uses-reference-rates-of-3-m-input": "费用估算采用每百万输入 3 美元、每百万输出 15 美元的参考费率。该估算仅在本地进行，并非账单。",
+    "could-not-load-this-section": "无法加载此部分。",
+    "could-not-load-this-story-for-editing": "无法加载此故事进行编辑。",
+    "create-a-new-story-branch": "创建新的故事分支",
+    "create-story": "创建故事",
+    "current-location": "当前位置",
+    "custom": "自定义…",
+    "custom-model-name": "自定义模型名称",
+    "daily-cloud-limit-in-usd": "每日云端限额（以 USD 计）",
+    "daily-cloud-limit-usd": "每日云端限额（USD）",
+    "dark-fantasy": "黑暗奇幻",
+    "default": "默认",
+    "delete": "删除？",
+    "delete-2": "删除",
+    "delete-all-local-data": "删除所有本地数据",
+    "delete-character": "删除角色",
+    "delete-model": "删除 {{name}}",
+    "delete-story": "删除故事",
+    "delete-world": "删除世界",
+    "delete-world-name": "删除 {{name}}",
+    "describe-this-element-of-your-world": "描述你世界的这个元素...",
+    "description": "描述",
+    "draft-faster": "草稿 · 更快",
+    "dramatic": "戏剧性",
+    "edit": "编辑",
+    "edit-character": "编辑角色",
+    "edit-narration": "编辑叙述",
+    "edit-player-action": "编辑玩家行动",
+    "edit-world": "编辑世界",
+    "embedding": "嵌入",
+    "enable-advanced-generation-controls": "启用高级生成控制",
+    "every-2-turns": "每 2 回合",
+    "every-3-turns": "每 3 回合",
+    "every-save-point-and-alternate-choice-stays-conn": "每个存档点与替代选择都与其来源时刻保持连接。",
+    "every-scene": "每个场景",
+    "export-world": "导出世界",
+    "fact-to-pin-as-canon": "要固定为正典的事实",
+    "fast-paced": "快节奏",
+    "find-a-scene": "查找场景...",
+    "first-person-viewpoint": "第一人称视角",
+    "first-scene-only": "仅首个场景",
+    "fork-from-here": "从此处分叉",
+    "fpv-is-an-ai-powered-interactive-narrative-app-c": "FPV 是一款 AI 驱动的互动叙事应用。你可以创作任何类型的沉浸式故事——奇幻、科幻、恐怖、爱情等——默认在你自己的电脑上本地运行。可选的 BYOK 云服务仅在你明确连接并选择后才会使用。",
+    "fpv-is-built-on-open-source-work-local-models-ru": "FPV 基于开源成果构建。本地模型通过 Ollama 与 stable-diffusion.cpp 运行。每个模型都随附完整许可条款。",
+    "free": "自由",
+    "generate-cover": "生成封面",
+    "generation": "生成",
+    "generation-diagnostics": "生成诊断",
+    "generations": "生成次数",
+    "genre": "题材",
+    "github": "GitHub",
+    "guided": "引导式",
+    "high-quality-slower": "高质量 · 更慢",
+    "home": "主页",
+    "image-style": "图像风格",
+    "important-scenes-only": "仅重要场景",
+    "indexed-past-scenes": "已索引的过往场景",
+    "ink": "水墨",
+    "input-mode": "输入模式",
+    "input-tokens-est": "输入 Token 估算",
+    "inventory": "物品栏",
+    "keep-generated-scenes-visually-consistent-these": "让生成的场景在视觉上保持一致。这些备注会指导此世界中的每一张插图。",
+    "key-saved": "密钥已保存",
+    "keyboard-shortcuts": "键盘快捷键",
+    "literary": "文学性",
+    "loading": "加载中...",
+    "loading-lore": "加载设定...",
+    "loading-quants": "加载量化…",
+    "main-timeline": "主线时间线",
+    "manga": "漫画",
+    "mature-content-18": "成人内容（18+）",
+    "maximize": "最大化",
+    "minimize": "最小化",
+    "model-name": "模型名称",
+    "more-dialogue": "更多对话",
+    "more-tension": "更多张力",
+    "name": "名称",
+    "narrator": "叙述者",
+    "navigation-panel": "导航面板",
+    "new-path": "新路径",
+    "new-variation": "新变体",
+    "new-world": "新世界",
+    "no": "否",
+    "no-characters-defined-for-this-world": "此世界尚未定义角色。",
+    "no-characters-yet-add-characters-to-define-who-l": "还没有角色。添加角色来定义谁生活在这个世界。",
+    "no-codex-entries-for-this-world": "此世界没有 Codex 条目。",
+    "no-codex-entries-yet": "暂无 Codex 条目",
+    "no-models-returned-enter-one-manually-below": "未返回任何模型——请在下方手动输入。",
+    "no-details-set": "未设置详细信息。",
+    "no-gguf-files-in-this-repo": "此仓库中没有 GGUF 文件。",
+    "no-gguf-models-found": "未找到 GGUF 模型。",
+    "no-key": "无密钥",
+    "quick-fill": "快速填入：",
+    "no-lore-entries-for-this-world": "此世界没有设定条目。",
+    "no-models-in-catalog-check-your-ollama-connectio": "目录中没有模型。请检查你的 Ollama 连接。",
+    "no-saved-paths-yet": "暂无已保存的路径。",
+    "no-scenes-yet-your-story-map-will-appear-here-as": "还没有场景。随着你的游玩，故事地图将显示在这里。",
+    "no-sessions-yet-start-a-story-to-begin": "还没有会话。开始一个故事即可。",
+    "no-story-selected": "未选择故事。",
+    "noir": "黑色电影",
+    "npc": "NPC",
+    "off": "关闭",
+    "open": "打开",
+    "open-huggingface-co": "打开 huggingface.co",
+    "open-path": "打开 {{name}}",
+    "open-print-or-pdf-preview": "打开打印或 PDF 预览",
+    "open-print-pdf": "打开打印/PDF",
+    "output-tokens-est": "输出 Token 估算",
+    "performance-profile": "性能配置",
+    "pin-a-fact-when-it-must-never-be-lost": "当某一事实绝不能被遗忘时，将其固定。",
+    "pin-fact": "固定事实",
+    "pinned-canon": "已固定正典",
+    "pinned-canon-is-always-included-story-state-summ": "已固定的正典始终会被包含。故事状态、摘要、最近回合以及相关的过往场景则构成每个提示的其余部分。",
+    "play": "游玩",
+    "player": "玩家",
+    "predefined": "预定义",
+    "preset-name": "预设名称",
+    "project-backup": "项目备份",
+    "proposed-changes": "建议的更改",
+    "quest-log": "任务日志",
+    "realistic": "写实",
+    "reference-cloud-cost": "参考云端费用",
+    "refresh-metrics": "刷新指标",
+    "refresh-model-catalog": "刷新模型目录",
+    "regenerate": "重新生成",
+    "reject": "拒绝",
+    "relationships": "关系",
+    "remove-entry": "移除条目",
+    "remove-key": "移除密钥",
+    "remove-key-api": "移除 {{name}} 的 API 密钥",
+    "remove-pinned-canon": "移除已固定正典",
+    "removes-worlds-stories-generated-assets-download": "删除世界、故事、生成的资源、下载的本地模型、日志以及已保存的 API 密钥。",
+    "rename": "重命名",
+    "rename-story": "重命名故事",
+    "response-length": "回复长度",
+    "retry-illustration": "重试插图",
+    "review-continuity": "审阅连续性",
+    "role": "身份",
+    "same-seed": "相同种子",
+    "save": "保存",
+    "save-a-named-checkpoint": "保存一个命名检查点",
+    "save-as-html-file": "另存为 HTML 文件",
+    "save-point": "存档点",
+    "save-story-as-html-file": "将故事另存为 HTML 文件",
+    "save-worlds-adventures-codex-story-state-paths-a": "保存世界、冒险、Codex、故事状态、路径以及生成的图像。API 密钥、模型权重与服务商设置绝不会被包含。",
+    "saved-presets": "已保存的预设",
+    "search-story-scenes": "搜索故事场景",
+    "searching": "搜索中…",
+    "select-a-world-to-see-its-lore-characters-and-de": "选择一个世界以查看其设定、角色与详细信息。",
+    "semantic-recall-is-empty-or-turned-off": "语义召回为空或已关闭。",
+    "settings": "设置",
+    "settings-ai-cloud-connection": "设置 → AI 云连接",
+    "slower": "更慢",
+    "start-story": "开始故事",
+    "starting": "启动中…",
+    "step-inside-the-story": "踏入故事",
+    "step-number": "第 {{n}} 步：{{title}}",
+    "stop": "停止",
+    "stop-generation": "停止生成",
+    "stories": "故事",
+    "story-map": "故事地图",
+    "story-narration": "故事叙述",
+    "story-paths": "故事路径",
+    "story-privacy": "故事隐私",
+    "story-so-far": "目前为止的故事",
+    "story-so-far-2": "目前为止的故事…",
+    "story-state": "故事状态",
+    "story-state-is-not-available-yet": "故事状态尚不可用。",
+    "submit-action": "提交行动",
+    "system-prompt": "系统提示",
+    "the-narrator-noticed-these-possible-changes-acce": "叙述者注意到了这些可能的变化。仅接受应当成为正典的内容。",
+    "the-story-continues": "故事继续…",
+    "this-instructs-the-ai-on-how-to-narrate-your-sto": "这会指示 AI 如何叙述你的故事。",
+    "this-policy-controls-whether-story-text-may-be-s": "此策略控制故事文本是否可以发送至云端叙述者。本地图像生成仍保持本地进行。",
+    "this-tab-failed-to-load": "此标签页加载失败。",
+    "title": "标题",
+    "total-inference-time": "总推理时间",
+    "traits": "特质",
+    "traits-comma-separated": "特质（以逗号分隔）",
+    "triggers": "触发词",
+    "try-again": "重试",
+    "type-your-genre": "输入你的题材...",
+    "undo": "撤销",
+    "unlimited": "不限",
+    "unpredictability": "不可预测性",
+    "upload-cover": "上传封面",
+    "use-model": "使用模型",
+    "use-semantic-memory-when-available": "可用时使用语义记忆",
+    "used-only-when-relevant": "仅在相关时使用",
+    "view-world": "查看世界 →",
+    "visual-bible": "视觉圣经",
+    "vocabulary-range": "词汇范围",
+    "watercolor": "水彩",
+    "website": "网站",
+    "what-the-narrator-knows": "叙述者所知",
+    "working": "处理中...",
+    "write-your-first-action-below-to-step-into-the-w": "在下方写下你的第一个行动，踏入这个世界。每个故事都始于一个选择。",
+    "your-action": "你的行动",
+    "your-story-has-been-saved-start-playing-or-add-a": "你的故事已保存。开始游玩，或在下方添加封面图像。",
+    "delete-session": "删除会话",
+    "delete-session-confirm": "删除这段冒险？此操作无法撤销。",
+    "name-this-story-branch": "为这个故事分支命名",
+    "alternative-path": "备选路径",
+    "could-not-create-story-branch": "无法创建故事分支",
+    "name-this-checkpoint": "为这个检查点命名",
+    "before-the-next-choice": "在下一个选择之前",
+    "could-not-create-checkpoint": "无法创建检查点",
+    "name-this-alternate-path": "为这条备选路径命名",
+    "retcon": "改写设定",
+    "could-not-fork-from-this-turn": "无法从此回合分叉",
+    "project-backup-created": "项目备份已创建",
+    "backup-summary": "{{worlds}} 个世界，{{sessions}} 段冒险，{{assets}} 个资源。",
+    "project-backup-failed": "项目备份失败",
+    "restore-project-confirm": "恢复此项目？当前的世界、冒险和故事数据将被替换。",
+    "project-restored": "项目已恢复",
+    "project-restore-failed": "项目恢复失败",
+    "reset-all-data-confirm-1": "删除所有 FPV 世界、故事、图像、模型、日志以及已保存的服务商密钥？此操作无法撤销。",
+    "reset-all-data-confirm-2": "最终确认：永久删除所有本地 FPV 数据？",
+    "all-local-data-deleted": "所有本地 FPV 数据已删除",
+    "reset-failed": "重置失败",
+    "visualization-failed": "可视化失败。请检查图像模型是否已安装。",
+    "could-not-save-edited-message": "无法保存已编辑的消息",
+    "story-copied": "故事已复制",
+    "messages-copied-to-clipboard": "已将 {{count}} 条消息复制到剪贴板。",
+    "failed-to-copy-story": "复制故事失败。",
+    "html-copied": "HTML 已复制",
+    "popup-blocked-html-copied": "弹出窗口被阻止。HTML 已复制到剪贴板。",
+    "failed-to-export": "导出失败。",
+    "scene-generation-failed": "场景生成失败。请检查图像模型是否已安装。",
+    "could-not-start-story": "无法开始此故事。",
+    "world-exported": "世界已导出",
+    "world-data-copied": "“{{name}}”数据已复制到剪贴板。",
+    "world-export-failed": "世界导出失败",
+    "failed-to-delete-world": "删除世界失败。",
+    "failed-to-save-character": "保存角色失败。",
+    "cover-generation-failed": "封面生成失败。请先在设置 → 图像模型中安装图像模型。",
+    "cover-upload-failed": "封面上传失败。",
+    "story-updated": "故事已更新",
+    "story-created": "故事已创建",
+    "preference-not-saved": "无法保存此设置——重启后可能会被重置。"
+  },
+  "app": {
+    "autoinstall": {
+      
+      
+      
+      
+      
+      
+      
+      
+    },
+    "search": {
+      
+      
+      
+      
+      
+      
+      
+    },
+    "feedback": {
+      
+      
+      
+      
+      
+      
+      "reason": {
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "update": {
+      
+      
+      
+      
+      
+      
+    },
+    "modeldl": {
+      "downloading": "正在下载 {{model}}"
+    },
+    "titlebar": {
+      
+      
+      
+      
+    },
+    "layout": {
+      
+      
+      "show_right_panel": "显示资料面板",
+      "hide_right_panel": "隐藏资料面板"
+    }
+  },
+  "navigation": {
+    "home": "主页",
+    "new_story": "创建新故事",
+    "explore": "探索预设故事"
+    ,
+    "continue": "继续冒险",
+    "featured": "精选世界",
+    "featured_desc": "从不同氛围和类型中精选的故事。",
+    "settings": "设置",
+    "new_story_short": "新故事"
+    ,
+    "adventures": "你的冒险",
+    "browse_stories": "浏览所有故事",
+    "new_adventure": "新冒险",
+    "no_adventures": "还没有冒险。选择一个故事开始吧。"
+    
+    
+  },
+  "library": {
+    "title": "故事库",
+    "import": "导入",
+    "importing": "正在导入...",
+    "search": "搜索..."
+    
+    ,
+    "source": "来源",
+    "genre": "类型",
+    "all": "全部",
+    "predefined": "预设",
+    "custom": "自定义",
+    "click_to_filter": "点击筛选",
+    "no_search_match": "没有匹配“{{query}}”的故事",
+    "no_search_hint": "请尝试其他关键词或清除筛选。",
+    "no_filter_match": "没有匹配筛选条件的故事",
+    "no_filter_hint": "清除筛选或创建自己的故事。",
+    "clear_filters": "清除全部筛选",
+    "create_own": "创建自己的",
+    "no_worlds": "你的故事正在等待",
+    "no_worlds_desc": "创建故事、导入 JSON 或探索预设世界。",
+    "import_json": "从 JSON 导入"
+    
+    
+  },
+  "errors": {
+    "title": "出现问题",
+    "body": "界面的一部分发生错误。你的故事和世界是安全的。请重试或重新加载窗口。",
+    "diagnostic": "诊断信息已保存在本地。",
+    "retry": "重试",
+    "reload": "重新加载窗口"
+  },
+  "settings": {
+    "drawer": {
+      "title": "设置",
+      "general": "通用",
+      "appearance": "外观与聊天",
+      "chat": "Narration & Display"
+      ,
+      "about": "关于",
+      "byok": "AI 云端连接",
+      "image_model": "图像模型",
+      "narrative_model": "叙事模型"
+    },
+    "general": {
+      
+      
+      "language": {
+        "title": "语言"
+        
+        
+        
+        
+        
+        
+        
+        
+      },
+      "startup": {
+        
+        
+      },
+      "tray": {
+        "title": "隐藏到托盘",
+        "desc": "关闭时让应用在菜单栏中继续运行"
+      },
+      "low_power": {
+        "title": "低功耗模式",
+        "desc": "快速卸载本地模型并减少内存占用"
+      },
+      "images_ac": {
+        "title": "仅接通电源时自动生成图像",
+        "desc": "使用电池时暂停自动图像生成"
+      },
+      "semantic_memory": {
+        "title": "语义记忆",
+        "desc": "使用额外的本地模型进行长期故事回忆"
+      },
+      "notifications": {
+        
+        
+      },
+      "updates": {
+        
+        
+      }
+      ,
+      "autostart": "登录时启动",
+      "blur": "背景模糊"
+    },
+    "chat": {
+      "textSize": {
+        "title": "文字大小",
+        "desc": "调整聊天气泡的缩放比例",
+        "small": "小",
+        "normal": "正常",
+        "large": "大"
+      },
+      "markdown": {
+        
+        
+      },
+      "reasoning": {
+        
+        
+      },
+      "inputBehavior": {
+        "title": "输入行为"
+      },
+      "sendOnEnter": {
+        "title": "按 Enter 发送",
+        "desc": "按 Enter 发送，Shift+Enter 换行"
+      }
+    },
+    "models": {
+      "delete_failed": "Failed to delete model",
+      "set_default_failed": "Failed to set default model",
+      "loading": "加载中…",
+      "load_error": "无法加载模型。",
+      "no_data": "无数据。"
+      
+      
+      
+      
+      
+      ,
+      "catalog": "目录",
+      "set_default": "设为使用中"
+      ,
+      "installed": "已安装"
+      
+      
+      
+      
+      ,
+      "retry": "重试"
+      
+      ,
+      "install": "安装"
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "hf_title": "浏览 Hugging Face"
+      ,
+      "hf_placeholder": "搜索，或粘贴 huggingface.co 模型链接"
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "active_narrator": "当前叙事者",
+      "cloud_hint": "可选云端模型",
+      "cloud_narrator": "云端叙事者",
+      "hf_hint": "在本地运行 GGUF 模型",
+      "no_models": "没有安装模型。",
+      "delete_confirm": "删除模型 \"{{name}}\"？此操作无法撤销。",
+      "cloud_list_error": "无法加载模型。"
+    },
+    "appearance": {
+      "desc": "自定义仪表盘的背景主题。",
+      "theme": {
+        
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "about": {
+      "ai": {
+        
+        
+        
+      },
+      "credits": {
+        
+        
+      }
+    },
+    "byok": {"save_failed": "Failed to save API key", "delete_failed": "Failed to remove API key",
+      "title": "AI 云端连接",
+      "desc": "连接自己的 API 密钥以使用可选的云端叙事者。",
+      "delete_confirm": "移除 {{name}} 密钥？"
+    },
+    "image": {
+      "title": "图像生成",
+      "desc": "在本地生成故事插图。",
+      "active_model": "当前图像模型：",
+      "catalog": "图像模型",
+      "sdcpp_status": "已内置本地图像引擎。",
+      "ready": "就绪",
+      "not_installed": "未安装 - 请在下方下载",
+      "test": "测试图像生成",
+      "testing": "测试中...",
+      "works": "运行正常",
+      "test_failed": "图像生成失败 - 请先安装模型。",
+      "test_failed_short": "失败 - 请在下方安装模型",
+      "story_images": "故事图像",
+      "story_images_desc": "控制场景何时自动生成插图。故事中仍可手动生成。",
+      "automatic": "自动插图",
+      "style": "默认视觉风格",
+      "quality": "图像质量",
+      "max_auto": "自动图像上限",
+      "refresh": "刷新图像模型",
+      "loading": "正在加载图像模型...",
+      "load_error": "无法加载图像模型。",
+      "empty_catalog": "目录中没有图像模型。请检查连接并刷新。",
+      "large": "大型",
+      "needs_ram": "需要 {{gb}} GB RAM - 低于你的硬件等级。",
+      "active": "当前使用",
+      "use": "使用",
+      "delete": "删除 {{id}}",
+      "delete_confirm": "删除图像模型 \"{{id}}\" 的权重？此操作无法撤销。",
+      "download_failed": "图像模型下载失败。",
+      "downloading": "正在下载 {{model}} 权重...",
+      "cancel_download": "取消下载",
+      "provider": "图像提供商",
+      "provider_desc": "选择本地生成或已连接的 OpenAI 图像 API。",
+      "provider_local": "本地 sd.cpp",
+      "provider_local_desc": "在本设备上私密生成。",
+      "provider_local_ready": "就绪",
+      "provider_local_setup": "下载模型即可开始",
+      "provider_openai": "OpenAI 图像 API",
+      "provider_openai_desc": "使用你保存的 OpenAI API 密钥。",
+      "provider_openai_ready": "API 密钥已连接",
+      "provider_openai_setup": "在 BYOK 中添加 OpenAI 密钥",
+      "provider_error": "无法更改图像提供商。"
+    },
+    "narrative": {
+      "title": "叙事偏好",
+      "style": "叙事风格",
+      "styleDesc": "选择文字风格。",
+      "freedom": "叙事自由度",
+      "freedomDesc": "选择故事引导你的程度。"
+    },
+    "reading": {
+      "title": "阅读",
+      "serifFont": "叙事使用衬线字体",
+      "serifFontDesc": "使用像书籍一样的衬线字体。"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "body": "{{count}}个世界正在等待。故事默认在本地运行，无需账户；除非连接自己的密钥，否则不会使用云端。",
+      "body_generic": "故事默认在本地运行，无需账户；除非连接自己的密钥，否则不会使用云端。",
+      "begin": "开始",
+      "trust_local": "在本设备上运行",
+      "trust_account": "无需账户",
+      "trust_private": "默认本地运行"
+    },
+    "prefs": {
+      "title": "塑造你的故事",
+      "story_type": "什么样的故事吸引你？",
+      "freedom": "你想要多少自由？",
+      "style": "选择叙事风格",
+      "continue": "继续",
+      "skip": "跳过",
+      "epic": "史诗冒险",
+      "intrigue": "政治阴谋",
+      "drama": "个人戏剧",
+      "mystery": "谜团与发现",
+      "dark": "黑暗而有氛围",
+      "surprise": "给我惊喜",
+      "guided": "引导我",
+      "balanced": "平衡",
+      "free": "完全自由",
+      "literary": "文学与细腻描写",
+      "fast": "快速有力",
+      "cinematic": "电影感与视觉化"
+    },
+    "world": {
+      "title": "从哪里开始？",
+      "subtitle": "先展示 {{shown}} 个。你的设备上还有 {{rest}} 个。",
+      "show_all": "显示全部 {{count}} 个 ->",
+      "skip": "跳过 ->",
+      "preparing": "正在准备叙事者"
+    },
+    "model": {
+      "title": "选择故事引擎",
+      "subtitle": "选择用于生成故事的本地 AI 模型。",
+      "recommended": "推荐",
+      "pulling": "下载中...",
+      "install": "安装",
+      "waiting": "仍在下载...",
+      "needs_install": "请安装模型后继续",
+      "continue": "开始写故事",
+      "change": "使用其他模型",
+      "ready_title": "叙事者已准备好",
+      "ready_body": "{{model}} - 完全在本设备上运行。",
+      "enter_world": "进入 {{world}}"
+    },
+    "cloud": {
+      
+      
+      
+      
+      
+      
+      
+    }
+  },
+  "tutorial": {
+    "back": "返回",
+    "next": "下一步",
+    "got_it": "知道了",
+    "left_title": "你的故事",
+    "left_body": "在这里返回主页、浏览世界或继续冒险。",
+    "right_title": "世界背景",
+    "right_body": "角色、封面和 Codex 会显示在故事旁边。",
+    "input_title": "你的行动",
+    "input_body": "选择 Do、Say 或 Story，然后描述角色的尝试。"
+  }
+}

@@ -1,0 +1,78 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/gen/
+src-tauri/binaries/
+!src-tauri/binaries/.gitkeep
+
+# Windows-bundled Ollama runtime (fetched by scripts/fetch-binaries-win.ps1,
+# bundled as a tauri.windows.conf.json resource — not source, not portable
+# across platforms, ~1 GB+ with GPU runners).
+src-tauri/ollama-runtime/
+
+# Windows-bundled stable-diffusion.cpp CPU runtime (fetched by the same
+# script, bundled as a tauri.windows.conf.json resource — same reasoning:
+# a downloaded upstream binary, not source, not portable across platforms).
+src-tauri/image-runtime/
+
+# Compiled Swift helpers (build artifact — produced by
+# scripts/compile-helpers.sh from src-tauri/scripts/*.swift).
+src-tauri/helpers/
+
+# Local secrets (Polar IDs, keygen pubkey, etc.)
+.env.local
+*.env.local
+
+# Supabase service key used only by the one-shot community-content export.
+scripts/.supabase-secret
+
+# TTS sidecar build artifacts (binary lives in src-tauri/binaries/, already ignored).
+# Match anywhere — pyinstaller spec used to live in scripts/ but the venv
+# itself ended up under src-tauri/scripts/.venv-tts in dev tree.
+scripts/.venv-tts/
+scripts/build/
+**/.venv-tts/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+
+# Apple Developer cert / signing material — public .cer is harmless to
+# track but there's no reason to; private .p12/.p8 must never land here.
+*.cer
+*.p12
+*.p8
+
+# Stray screenshots / scratch files dropped into the repo root
+ChatGPT Image*.png
+*.original.md
+
+# Claude Code IDE local config (per-machine launch settings)
+.claude/
+
+CLAUDE.md.original.md
+graphify-out/
+qa-reports/

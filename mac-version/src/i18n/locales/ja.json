@@ -1,0 +1,711 @@
+{
+  "ui": {
+    "delete-character-failed": "Failed to delete character",
+    "rename-failed": "Failed to rename session",
+    "a-brief-description-of-your-world-the-setting-to": "世界の簡単な説明 — 舞台、トーン、雰囲気...",
+    "accept": "承認",
+    "active": "有効",
+    "add-character": "キャラクターを追加",
+    "add-entry": "項目を追加",
+    "advanced-controls": "詳細設定",
+    "always-remembered": "常に記憶",
+    "anime": "アニメ",
+    "application-settings-and-local-ai-configuration": "アプリケーション設定とローカルAI設定",
+    "automatically-illustrate-new-scenes": "新しいシーンを自動で挿絵生成",
+    "back-to-library": "ライブラリに戻る",
+    "backstory": "バックストーリー",
+    "backstory-and-background": "バックストーリーと背景...",
+    "balanced": "バランス",
+    "cancel": "キャンセル",
+    "character-name": "キャラクター名",
+    "chatgpt-plus-pro-via-codex": "Codex経由のChatGPT Plus / Pro",
+    "cinematic": "シネマティック",
+    "clear-metrics": "メトリクスをクリア",
+    "click-to-add-the-first-one": "クリックして最初の1つを追加",
+    "close": "閉じる",
+    "close-panel": "パネルを閉じる",
+    "close-settings": "設定を閉じる",
+    "close-story-map": "ストーリーマップを閉じる",
+    "cloud-turns": "クラウドターン",
+    "codex-entries": "Codexエントリ",
+    "codex-entries-define-key-concepts-characters-loc": "Codexエントリは、ナレーション中にAIが参照する主要な概念、キャラクター、場所、設定を定義します。",
+    "codex-narrator": "Codexナレーター",
+    "comma-separated-keywords-that-trigger-this-codex": "このCodexエントリを呼び出すキーワード（カンマ区切り）。",
+    "concise": "簡潔",
+    "content": "内容",
+    "context-panel": "コンテキストパネル",
+    "context-sampling-memory-and-scene-settings": "コンテキスト、サンプリング、メモリ、シーンの設定。",
+    "context-window": "コンテキストウィンドウ",
+    "continue": "続行",
+    "continuity-facts-for-this-story": "この物語の継続性に関する事実。",
+    "copy-story-as-markdown": "ストーリーをMarkdownとしてコピー",
+    "cost-estimate-uses-reference-rates-of-3-m-input": "コスト見積もりは、入力$3/M、出力$15/Mの参考レートを使用します。ローカルでのみ計算され、請求書ではありません。",
+    "could-not-load-this-section": "このセクションを読み込めませんでした。",
+    "could-not-load-this-story-for-editing": "このストーリーを編集用に読み込めませんでした。",
+    "create-a-new-story-branch": "新しいストーリー分岐を作成",
+    "create-story": "ストーリーを作成",
+    "current-location": "現在地",
+    "custom": "カスタム…",
+    "custom-model-name": "カスタムモデル名",
+    "daily-cloud-limit-in-usd": "1日のクラウド上限（USD）",
+    "daily-cloud-limit-usd": "1日のクラウド上限（USD）",
+    "dark-fantasy": "ダークファンタジー",
+    "default": "デフォルト",
+    "delete": "削除しますか？",
+    "delete-2": "削除",
+    "delete-all-local-data": "すべてのローカルデータを削除",
+    "delete-character": "キャラクターを削除",
+    "delete-model": "{{name}}を削除",
+    "delete-story": "ストーリーを削除",
+    "delete-world": "ワールドを削除",
+    "delete-world-name": "{{name}}を削除",
+    "describe-this-element-of-your-world": "ワールドのこの要素を説明...",
+    "description": "説明",
+    "draft-faster": "下書き · 高速",
+    "dramatic": "ドラマティック",
+    "edit": "編集",
+    "edit-character": "キャラクターを編集",
+    "edit-narration": "ナレーションを編集",
+    "edit-player-action": "プレイヤーの行動を編集",
+    "edit-world": "ワールドを編集",
+    "embedding": "埋め込み",
+    "enable-advanced-generation-controls": "詳細な生成コントロールを有効にする",
+    "every-2-turns": "2ターンごと",
+    "every-3-turns": "3ターンごと",
+    "every-save-point-and-alternate-choice-stays-conn": "すべてのセーブポイントと別の選択肢は、それが生まれた瞬間とつながり続けます。",
+    "every-scene": "すべてのシーン",
+    "export-world": "ワールドをエクスポート",
+    "fact-to-pin-as-canon": "正史として固定する事実",
+    "fast-paced": "テンポ速め",
+    "find-a-scene": "シーンを検索...",
+    "first-person-viewpoint": "一人称視点",
+    "first-scene-only": "最初のシーンのみ",
+    "fork-from-here": "ここから分岐",
+    "fpv-is-an-ai-powered-interactive-narrative-app-c": "FPVはAI搭載のインタラクティブ・ナラティブ・アプリです。ファンタジー、SF、ホラー、ロマンスなど、あらゆるジャンルの没入型ストーリーを作成でき、デフォルトではお使いのコンピュータ上でローカルに実行されます。オプションのBYOKクラウドプロバイダーは、明示的に接続して選択した場合にのみ使用されます。",
+    "fpv-is-built-on-open-source-work-local-models-ru": "FPVはオープンソースの成果の上に構築されています。ローカルモデルはOllamaとstable-diffusion.cppで動作します。完全なライセンス条項は各モデルに付属します。",
+    "free": "無料",
+    "generate-cover": "カバーを生成",
+    "generation": "生成",
+    "generation-diagnostics": "生成診断",
+    "generations": "生成回数",
+    "genre": "ジャンル",
+    "github": "GitHub",
+    "guided": "ガイド付き",
+    "high-quality-slower": "高品質 · 低速",
+    "home": "ホーム",
+    "image-style": "画像スタイル",
+    "important-scenes-only": "重要なシーンのみ",
+    "indexed-past-scenes": "インデックス化された過去のシーン",
+    "ink": "インク",
+    "input-mode": "入力モード",
+    "input-tokens-est": "入力トークン（概算）",
+    "inventory": "所持品",
+    "keep-generated-scenes-visually-consistent-these": "生成されたシーンを視覚的に一貫させます。これらのメモは、このワールドのすべての挿絵を導きます。",
+    "key-saved": "キーを保存しました",
+    "keyboard-shortcuts": "キーボードショートカット",
+    "literary": "文学的",
+    "loading": "読み込み中...",
+    "loading-lore": "設定資料を読み込み中...",
+    "loading-quants": "量子化モデルを読み込み中…",
+    "main-timeline": "メインタイムライン",
+    "manga": "マンガ",
+    "mature-content-18": "成人向けコンテンツ（18+）",
+    "maximize": "最大化",
+    "minimize": "最小化",
+    "model-name": "モデル名",
+    "more-dialogue": "会話多め",
+    "more-tension": "緊張感多め",
+    "name": "名前",
+    "narrator": "ナレーター",
+    "navigation-panel": "ナビゲーションパネル",
+    "new-path": "新しいパス",
+    "new-variation": "新しいバリエーション",
+    "new-world": "新しいワールド",
+    "no": "いいえ",
+    "no-characters-defined-for-this-world": "このワールドにキャラクターが定義されていません。",
+    "no-characters-yet-add-characters-to-define-who-l": "まだキャラクターがいません。キャラクターを追加して、このワールドに誰が住んでいるかを定義しましょう。",
+    "no-codex-entries-for-this-world": "このワールドにCodexエントリがありません。",
+    "no-codex-entries-yet": "まだCodexエントリがありません",
+    "no-models-returned-enter-one-manually-below": "モデルが返されませんでした — 下に手動で入力してください。",
+    "no-details-set": "詳細は未設定です。",
+    "no-gguf-files-in-this-repo": "このリポジトリにGGUFファイルがありません。",
+    "no-gguf-models-found": "GGUFモデルが見つかりませんでした。",
+    "no-key": "キーなし",
+    "quick-fill": "クイック入力：",
+    "no-lore-entries-for-this-world": "このワールドに設定資料のエントリがありません。",
+    "no-models-in-catalog-check-your-ollama-connectio": "カタログにモデルがありません。Ollama接続を確認してください。",
+    "no-saved-paths-yet": "保存されたパスはまだありません。",
+    "no-scenes-yet-your-story-map-will-appear-here-as": "まだシーンがありません。プレイすると、ストーリーマップがここに表示されます。",
+    "no-sessions-yet-start-a-story-to-begin": "まだセッションがありません。ストーリーを開始して始めましょう。",
+    "no-story-selected": "ストーリーが選択されていません。",
+    "noir": "ノワール",
+    "npc": "NPC",
+    "off": "オフ",
+    "open": "開く",
+    "open-huggingface-co": "huggingface.co を開く",
+    "open-path": "{{name}}を開く",
+    "open-print-or-pdf-preview": "印刷またはPDFプレビューを開く",
+    "open-print-pdf": "印刷/PDFを開く",
+    "output-tokens-est": "出力トークン（概算）",
+    "performance-profile": "パフォーマンスプロファイル",
+    "pin-a-fact-when-it-must-never-be-lost": "絶対に失われてはならない事実を固定します。",
+    "pin-fact": "事実を固定",
+    "pinned-canon": "固定された正史",
+    "pinned-canon-is-always-included-story-state-summ": "固定された正史は常に含まれます。ストーリーステート、要約、最近のターン、関連する過去のシーンが各プロンプトの残りを補います。",
+    "play": "プレイ",
+    "player": "プレイヤー",
+    "predefined": "定義済み",
+    "preset-name": "プリセット名",
+    "project-backup": "プロジェクトのバックアップ",
+    "proposed-changes": "提案された変更",
+    "quest-log": "クエストログ",
+    "realistic": "リアル",
+    "reference-cloud-cost": "参考クラウドコスト",
+    "refresh-metrics": "メトリクスを更新",
+    "refresh-model-catalog": "モデルカタログを更新",
+    "regenerate": "再生成",
+    "reject": "拒否",
+    "relationships": "関係",
+    "remove-entry": "エントリを削除",
+    "remove-key": "キーを削除",
+    "remove-key-api": "{{name}}のAPIキーを削除",
+    "remove-pinned-canon": "固定された正史を削除",
+    "removes-worlds-stories-generated-assets-download": "ワールド、ストーリー、生成されたアセット、ダウンロードしたローカルモデル、ログ、保存されたAPIキーを削除します。",
+    "rename": "名前を変更",
+    "rename-story": "ストーリー名を変更",
+    "response-length": "応答の長さ",
+    "retry-illustration": "挿絵を再試行",
+    "review-continuity": "継続性を確認",
+    "role": "役割",
+    "same-seed": "同じシード",
+    "save": "保存",
+    "save-a-named-checkpoint": "名前付きチェックポイントを保存",
+    "save-as-html-file": "HTMLファイルとして保存",
+    "save-point": "セーブポイント",
+    "save-story-as-html-file": "ストーリーをHTMLファイルとして保存",
+    "save-worlds-adventures-codex-story-state-paths-a": "ワールド、冒険、Codex、ストーリーステート、パス、生成された画像を保存します。APIキー、モデルの重み、プロバイダー設定は含まれません。",
+    "saved-presets": "保存済みプリセット",
+    "search-story-scenes": "ストーリーのシーンを検索",
+    "searching": "検索中…",
+    "select-a-world-to-see-its-lore-characters-and-de": "ワールドを選択すると、その設定資料、キャラクター、詳細が表示されます。",
+    "semantic-recall-is-empty-or-turned-off": "セマンティックリコールは空であるか、オフになっています。",
+    "settings": "設定",
+    "settings-ai-cloud-connection": "設定 → AIクラウド接続",
+    "slower": "低速",
+    "start-story": "ストーリーを開始",
+    "starting": "開始中…",
+    "step-inside-the-story": "物語の中へ",
+    "step-number": "ステップ{{n}}: {{title}}",
+    "stop": "停止",
+    "stop-generation": "生成を停止",
+    "stories": "ストーリー",
+    "story-map": "ストーリーマップ",
+    "story-narration": "ストーリーナレーション",
+    "story-paths": "ストーリーパス",
+    "story-privacy": "ストーリーのプライバシー",
+    "story-so-far": "これまでのストーリー",
+    "story-so-far-2": "これまでのストーリー…",
+    "story-state": "ストーリーステート",
+    "story-state-is-not-available-yet": "ストーリーステートはまだ利用できません。",
+    "submit-action": "行動を送信",
+    "system-prompt": "システムプロンプト",
+    "the-narrator-noticed-these-possible-changes-acce": "ナレーターがこれらの変更の可能性に気づきました。正史にするべきものだけを承認してください。",
+    "the-story-continues": "物語は続く…",
+    "this-instructs-the-ai-on-how-to-narrate-your-sto": "これは、AIがストーリーをどう語るかを指示します。",
+    "this-policy-controls-whether-story-text-may-be-s": "このポリシーは、ストーリーテキストをクラウドナレーターに送信できるかどうかを制御します。ローカルの画像生成はローカルのままです。",
+    "this-tab-failed-to-load": "このタブを読み込めませんでした。",
+    "title": "タイトル",
+    "total-inference-time": "合計推論時間",
+    "traits": "特徴",
+    "traits-comma-separated": "特徴（カンマ区切り）",
+    "triggers": "トリガー",
+    "try-again": "再試行",
+    "type-your-genre": "ジャンルを入力...",
+    "undo": "元に戻す",
+    "unlimited": "無制限",
+    "unpredictability": "予測不能性",
+    "upload-cover": "カバーをアップロード",
+    "use-model": "モデルを使用",
+    "use-semantic-memory-when-available": "利用可能な場合セマンティックメモリを使用",
+    "used-only-when-relevant": "関連する場合のみ使用",
+    "view-world": "ワールドを表示 →",
+    "visual-bible": "ビジュアルバイブル",
+    "vocabulary-range": "語彙の範囲",
+    "watercolor": "水彩",
+    "website": "ウェブサイト",
+    "what-the-narrator-knows": "ナレーターが知っていること",
+    "working": "処理中...",
+    "write-your-first-action-below-to-step-into-the-w": "下に最初の行動を書いて、世界に踏み出しましょう。すべての物語は、たった一つの選択から始まります。",
+    "your-action": "あなたの行動",
+    "your-story-has-been-saved-start-playing-or-add-a": "ストーリーが保存されました。プレイを開始するか、下にカバー画像を追加してください。",
+    "delete-session": "セッションを削除",
+    "delete-session-confirm": "この冒険を削除しますか？この操作は元に戻せません。",
+    "name-this-story-branch": "このストーリー分岐に名前を付ける",
+    "alternative-path": "代替パス",
+    "could-not-create-story-branch": "ストーリー分岐を作成できませんでした",
+    "name-this-checkpoint": "このチェックポイントに名前を付ける",
+    "before-the-next-choice": "次の選択の前",
+    "could-not-create-checkpoint": "チェックポイントを作成できませんでした",
+    "name-this-alternate-path": "この代替パスに名前を付ける",
+    "retcon": "レトコン",
+    "could-not-fork-from-this-turn": "このターンから分岐できませんでした",
+    "project-backup-created": "プロジェクトのバックアップを作成しました",
+    "backup-summary": "ワールド{{worlds}}件、冒険{{sessions}}件、アセット{{assets}}件。",
+    "project-backup-failed": "プロジェクトのバックアップに失敗しました",
+    "restore-project-confirm": "このプロジェクトを復元しますか？現在のワールド、冒険、ストーリーデータは置き換えられます。",
+    "project-restored": "プロジェクトを復元しました",
+    "project-restore-failed": "プロジェクトの復元に失敗しました",
+    "reset-all-data-confirm-1": "すべてのFPVのワールド、ストーリー、画像、モデル、ログ、保存されたプロバイダーキーを削除しますか？この操作は元に戻せません。",
+    "reset-all-data-confirm-2": "最終確認：すべてのローカルFPVデータを完全に削除しますか？",
+    "all-local-data-deleted": "すべてのローカルFPVデータが削除されました",
+    "reset-failed": "リセットに失敗しました",
+    "visualization-failed": "ビジュアライズに失敗しました。画像モデルがインストールされていることを確認してください。",
+    "could-not-save-edited-message": "編集したメッセージを保存できませんでした",
+    "story-copied": "ストーリーをコピーしました",
+    "messages-copied-to-clipboard": "{{count}}件のメッセージをクリップボードにコピーしました。",
+    "failed-to-copy-story": "ストーリーのコピーに失敗しました。",
+    "html-copied": "HTMLをコピーしました",
+    "popup-blocked-html-copied": "ポップアップがブロックされました。HTMLをクリップボードにコピーしました。",
+    "failed-to-export": "エクスポートに失敗しました。",
+    "scene-generation-failed": "シーンの生成に失敗しました。画像モデルがインストールされていることを確認してください。",
+    "could-not-start-story": "このストーリーを開始できませんでした。",
+    "world-exported": "ワールドをエクスポートしました",
+    "world-data-copied": "「{{name}}」のデータをクリップボードにコピーしました。",
+    "world-export-failed": "ワールドのエクスポートに失敗しました",
+    "failed-to-delete-world": "ワールドの削除に失敗しました。",
+    "failed-to-save-character": "キャラクターの保存に失敗しました。",
+    "cover-generation-failed": "カバー画像の生成に失敗しました。まず設定 → 画像モデルで画像モデルをインストールしてください。",
+    "cover-upload-failed": "カバー画像のアップロードに失敗しました。",
+    "story-updated": "ストーリーを更新しました",
+    "story-created": "ストーリーを作成しました",
+    "preference-not-saved": "この設定を保存できませんでした。再起動後にリセットされる場合があります。"
+  },
+  "app": {
+    "autoinstall": {
+      
+      
+      
+      
+      
+      
+      
+      
+    },
+    "search": {
+      
+      
+      
+      
+      
+      
+      
+    },
+    "feedback": {
+      
+      
+      
+      
+      
+      
+      "reason": {
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "update": {
+      
+      
+      
+      
+      
+      
+    },
+    "modeldl": {
+      "downloading": "{{model}}をダウンロード中"
+    },
+    "titlebar": {
+      
+      
+      
+      
+    },
+    "layout": {
+      
+      
+      "show_right_panel": "プロフィールパネルを表示",
+      "hide_right_panel": "プロフィールパネルを非表示"
+    }
+  },
+  "navigation": {
+    "home": "ホーム",
+    "new_story": "新しい物語を作成",
+    "explore": "既成の物語を探す"
+    ,
+    "continue": "冒険を続ける",
+    "featured": "おすすめの世界",
+    "featured_desc": "さまざまな雰囲気とジャンルから選んだおすすめです。",
+    "settings": "設定",
+    "new_story_short": "新しい物語"
+    ,
+    "adventures": "あなたの冒険",
+    "browse_stories": "すべての物語を見る",
+    "new_adventure": "新しい冒険",
+    "no_adventures": "まだ冒険はありません。物語を選んで始めましょう。"
+    
+    
+  },
+  "library": {
+    "title": "ストーリーライブラリ",
+    "import": "インポート",
+    "importing": "インポート中...",
+    "search": "検索..."
+    
+    ,
+    "source": "出典",
+    "genre": "ジャンル",
+    "all": "すべて",
+    "predefined": "既成",
+    "custom": "カスタム",
+    "click_to_filter": "クリックして絞り込み",
+    "no_search_match": "「{{query}}」に一致する物語はありません",
+    "no_search_hint": "別の検索語を試すか、フィルターを解除してください。",
+    "no_filter_match": "フィルターに一致する物語はありません",
+    "no_filter_hint": "フィルターを解除するか、物語を作成してください。",
+    "clear_filters": "フィルターを解除",
+    "create_own": "自分で作る",
+    "no_worlds": "あなたの物語を待っています",
+    "no_worlds_desc": "物語を作成、JSONをインポート、既成の世界を探してください。",
+    "import_json": "JSONからインポート"
+    
+    
+  },
+  "errors": {
+    "title": "問題が発生しました",
+    "body": "インターフェースの一部で問題が発生しました。物語と世界は安全です。もう一度試すかウィンドウを再読み込みしてください。",
+    "diagnostic": "診断情報をローカルに保存しました。",
+    "retry": "再試行",
+    "reload": "ウィンドウを再読み込み"
+  },
+  "settings": {
+    "drawer": {
+      "title": "設定",
+      "general": "一般",
+      "appearance": "外観とチャット",
+      "chat": "Narration & Display"
+      ,
+      "about": "情報",
+      "byok": "AIクラウド接続",
+      "image_model": "画像モデル",
+      "narrative_model": "物語モデル"
+    },
+    "general": {
+      
+      
+      "language": {
+        "title": "言語"
+        
+        
+        
+        
+        
+        
+        
+        
+      },
+      "startup": {
+        
+        
+      },
+      "tray": {
+        "title": "トレイに隠す",
+        "desc": "閉じてもメニューバーでアプリを動かし続ける"
+      },
+      "low_power": {
+        "title": "低電力モード",
+        "desc": "ローカルモデルをすばやく解放し、メモリ使用量を削減します"
+      },
+      "images_ac": {
+        "title": "自動画像は電源接続時のみ",
+        "desc": "バッテリー使用中は自動画像生成を一時停止します"
+      },
+      "semantic_memory": {
+        "title": "セマンティックメモリ",
+        "desc": "長期的な物語の記憶に追加のローカルモデルを使用します"
+      },
+      "notifications": {
+        
+        
+      },
+      "updates": {
+        
+        
+      }
+      ,
+      "autostart": "ログイン時に起動",
+      "blur": "背景をぼかす"
+    },
+    "chat": {
+      "textSize": {
+        "title": "文字サイズ",
+        "desc": "チャットの吹き出しの大きさを調整",
+        "small": "小",
+        "normal": "標準",
+        "large": "大"
+      },
+      "markdown": {
+        
+        
+      },
+      "reasoning": {
+        
+        
+      },
+      "inputBehavior": {
+        "title": "入力の動作"
+      },
+      "sendOnEnter": {
+        "title": "Enterで送信",
+        "desc": "Enterで送信、Shift+Enterで改行"
+      }
+    },
+    "models": {
+      "delete_failed": "Failed to delete model",
+      "set_default_failed": "Failed to set default model",
+      "loading": "読み込み中…",
+      "load_error": "モデルを読み込めませんでした。",
+      "no_data": "データがありません。"
+      
+      
+      
+      
+      
+      ,
+      "catalog": "カタログ",
+      "set_default": "使用中にする"
+      ,
+      "installed": "インストール済み"
+      
+      
+      
+      
+      ,
+      "retry": "再試行"
+      
+      ,
+      "install": "インストール"
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "hf_title": "Hugging Face を見る"
+      ,
+      "hf_placeholder": "検索、または huggingface.co のモデルURLを貼り付け"
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "active_narrator": "アクティブなナレーター",
+      "cloud_hint": "任意のクラウドモデル",
+      "cloud_narrator": "クラウドナレーター",
+      "hf_hint": "GGUFモデルをローカルで実行",
+      "no_models": "インストールされたモデルはありません。",
+      "delete_confirm": "モデル \"{{name}}\" を削除しますか？元に戻せません。",
+      "cloud_list_error": "モデルを読み込めませんでした。"
+    },
+    "appearance": {
+      "desc": "ダッシュボードの背景テーマをカスタマイズします。",
+      "theme": {
+        
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "about": {
+      "ai": {
+        
+        
+        
+      },
+      "credits": {
+        
+        
+      }
+    },
+    "byok": {"save_failed": "Failed to save API key", "delete_failed": "Failed to remove API key",
+      "title": "AIクラウド接続",
+      "desc": "任意のクラウドナレーター用に自分のAPIキーを接続します。",
+      "delete_confirm": "{{name}}のキーを削除しますか？"
+    },
+    "image": {
+      "title": "画像生成",
+      "desc": "物語の画像をローカルで生成します。",
+      "active_model": "アクティブな画像モデル:",
+      "catalog": "画像モデル",
+      "sdcpp_status": "ローカル画像エンジンが含まれています。",
+      "ready": "準備完了",
+      "not_installed": "未インストール - 下からダウンロード",
+      "test": "画像生成をテスト",
+      "testing": "テスト中...",
+      "works": "動作します",
+      "test_failed": "画像生成に失敗しました - 先にモデルをインストールしてください。",
+      "test_failed_short": "失敗 - 下からモデルをインストール",
+      "story_images": "物語の画像",
+      "story_images_desc": "シーンを自動的に画像化するタイミングを設定します。手動画像化も利用できます。",
+      "automatic": "自動イラスト",
+      "style": "既定のビジュアルスタイル",
+      "quality": "画像品質",
+      "max_auto": "自動画像の最大数",
+      "refresh": "画像モデルを更新",
+      "loading": "画像モデルを読み込み中...",
+      "load_error": "画像モデルを読み込めませんでした。",
+      "empty_catalog": "カタログに画像モデルがありません。接続を確認して更新してください。",
+      "large": "大",
+      "needs_ram": "{{gb}} GB RAM が必要です - ハードウェアの範囲外です。",
+      "active": "アクティブ",
+      "use": "使用",
+      "delete": "{{id}} を削除",
+      "delete_confirm": "画像モデル \"{{id}}\" のウェイトを削除しますか？元に戻せません。",
+      "download_failed": "画像モデルのダウンロードに失敗しました。",
+      "downloading": "{{model}} のウェイトをダウンロード中...",
+      "cancel_download": "ダウンロードをキャンセル",
+      "provider": "画像プロバイダー",
+      "provider_desc": "ローカル生成または接続済みの OpenAI Image API を選択します。",
+      "provider_local": "ローカル sd.cpp",
+      "provider_local_desc": "この端末でプライベートに生成します。",
+      "provider_local_ready": "準備完了",
+      "provider_local_setup": "開始するにはモデルをダウンロード",
+      "provider_openai": "OpenAI Image API",
+      "provider_openai_desc": "保存済みの OpenAI API キーを使用します。",
+      "provider_openai_ready": "API キー接続済み",
+      "provider_openai_setup": "BYOK で OpenAI キーを追加",
+      "provider_error": "画像プロバイダーを変更できませんでした。"
+    },
+    "narrative": {
+      "title": "物語の設定",
+      "style": "物語のスタイル",
+      "styleDesc": "文章のスタイルを選びます。",
+      "freedom": "物語の自由度",
+      "freedomDesc": "物語がどれだけ導くかを選びます。"
+    },
+    "reading": {
+      "title": "読書",
+      "serifFont": "物語にセリフ体を使う",
+      "serifFontDesc": "本のようなセリフ体で表示します。"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "body": "{{count}}個の世界が待っています。物語は基本的にローカルで動作し、アカウントも独自のキーなしのクラウドも不要です。",
+      "body_generic": "物語は基本的にローカルで動作し、アカウントも独自のキーなしのクラウドも不要です。",
+      "begin": "始める",
+      "trust_local": "この端末で実行",
+      "trust_account": "アカウント不要",
+      "trust_private": "ローカルが基本"
+    },
+    "prefs": {
+      "title": "物語を形作る",
+      "story_type": "どんな物語に惹かれますか？",
+      "freedom": "どれくらい自由にしますか？",
+      "style": "物語のスタイルは？",
+      "continue": "続ける",
+      "skip": "スキップ",
+      "epic": "壮大な冒険",
+      "intrigue": "政治的な陰謀",
+      "drama": "個人的なドラマ",
+      "mystery": "謎と発見",
+      "dark": "暗く幻想的",
+      "surprise": "おまかせ",
+      "guided": "導いてほしい",
+      "balanced": "バランス",
+      "free": "完全な自由",
+      "literary": "文学的で描写的",
+      "fast": "速く簡潔",
+      "cinematic": "映画的で視覚的"
+    },
+    "world": {
+      "title": "どこから始めますか？",
+      "subtitle": "まず{{shown}}。この端末にはさらに{{rest}}あります。",
+      "show_all": "{{count}}個すべて表示 ->",
+      "skip": "スキップ ->",
+      "preparing": "ナレーターを準備中"
+    },
+    "model": {
+      "title": "物語エンジンを選択",
+      "subtitle": "物語生成用のローカルAIモデルを選びます。",
+      "recommended": "おすすめ",
+      "pulling": "ダウンロード中...",
+      "install": "インストール",
+      "waiting": "まだダウンロード中...",
+      "needs_install": "続けるにはモデルをインストールしてください",
+      "continue": "物語を書く",
+      "change": "別のモデルを使う",
+      "ready_title": "ナレーターの準備完了",
+      "ready_body": "{{model}} - この端末だけで動作します。",
+      "enter_world": "{{world}}へ入る"
+    },
+    "cloud": {
+      
+      
+      
+      
+      
+      
+      
+    }
+  },
+  "tutorial": {
+    "back": "戻る",
+    "next": "次へ",
+    "got_it": "了解",
+    "left_title": "あなたの物語",
+    "left_body": "ホームに戻る、世界を探す、冒険を続ける操作をここで行います。",
+    "right_title": "世界のコンテキスト",
+    "right_body": "キャラクター、カバー、Codexを物語の横で確認できます。",
+    "input_title": "あなたの選択",
+    "input_body": "Do、Say、Storyを選び、キャラクターの行動を入力します。"
+  }
+}

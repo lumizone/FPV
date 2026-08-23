@@ -1,0 +1,711 @@
+{
+  "ui": {
+    "delete-character-failed": "Failed to delete character",
+    "rename-failed": "Failed to rename session",
+    "a-brief-description-of-your-world-the-setting-to": "당신의 세계에 대한 간단한 설명 — 배경, 톤, 분위기...",
+    "accept": "수락",
+    "active": "활성",
+    "add-character": "캐릭터 추가",
+    "add-entry": "항목 추가",
+    "advanced-controls": "고급 컨트롤",
+    "always-remembered": "항상 기억",
+    "anime": "애니메이션",
+    "application-settings-and-local-ai-configuration": "애플리케이션 설정 및 로컬 AI 구성",
+    "automatically-illustrate-new-scenes": "새 장면 자동 일러스트",
+    "back-to-library": "라이브러리로 돌아가기",
+    "backstory": "배경 이야기",
+    "backstory-and-background": "배경 이야기와 설정...",
+    "balanced": "균형",
+    "cancel": "취소",
+    "character-name": "캐릭터 이름",
+    "chatgpt-plus-pro-via-codex": "Codex를 통한 ChatGPT Plus / Pro",
+    "cinematic": "시네마틱",
+    "clear-metrics": "지표 지우기",
+    "click-to-add-the-first-one": "첫 번째 항목을 추가하려면 클릭하세요",
+    "close": "닫기",
+    "close-panel": "패널 닫기",
+    "close-settings": "설정 닫기",
+    "close-story-map": "스토리 맵 닫기",
+    "cloud-turns": "클라우드 턴",
+    "codex-entries": "Codex 항목",
+    "codex-entries-define-key-concepts-characters-loc": "Codex 항목은 AI가 내레이션 중 참조할 핵심 개념, 캐릭터, 장소 및 세계관을 정의합니다.",
+    "codex-narrator": "Codex 내레이터",
+    "comma-separated-keywords-that-trigger-this-codex": "이 Codex 항목을 트리거하는 쉼표로 구분된 키워드.",
+    "concise": "간결",
+    "content": "내용",
+    "context-panel": "컨텍스트 패널",
+    "context-sampling-memory-and-scene-settings": "컨텍스트, 샘플링, 메모리 및 장면 설정.",
+    "context-window": "컨텍스트 창",
+    "continue": "계속",
+    "continuity-facts-for-this-story": "이 스토리의 연속성 사실.",
+    "copy-story-as-markdown": "스토리를 마크다운으로 복사",
+    "cost-estimate-uses-reference-rates-of-3-m-input": "비용 추정치는 입력 $3/M, 출력 $15/M의 기준 요율을 사용합니다. 로컬 전용이며 청구서가 아닙니다.",
+    "could-not-load-this-section": "이 섹션을 불러올 수 없습니다.",
+    "could-not-load-this-story-for-editing": "편집을 위해 이 스토리를 불러올 수 없습니다.",
+    "create-a-new-story-branch": "새 스토리 분기 만들기",
+    "create-story": "스토리 만들기",
+    "current-location": "현재 위치",
+    "custom": "사용자 지정…",
+    "custom-model-name": "사용자 지정 모델 이름",
+    "daily-cloud-limit-in-usd": "일일 클라우드 한도(USD)",
+    "daily-cloud-limit-usd": "일일 클라우드 한도(USD)",
+    "dark-fantasy": "다크 판타지",
+    "default": "기본값",
+    "delete": "삭제할까요?",
+    "delete-2": "삭제",
+    "delete-all-local-data": "모든 로컬 데이터 삭제",
+    "delete-character": "캐릭터 삭제",
+    "delete-model": "{{name}} 삭제",
+    "delete-story": "스토리 삭제",
+    "delete-world": "월드 삭제",
+    "delete-world-name": "{{name}} 삭제",
+    "describe-this-element-of-your-world": "당신의 세계에서 이 요소를 설명하세요...",
+    "description": "설명",
+    "draft-faster": "초안 · 더 빠름",
+    "dramatic": "극적",
+    "edit": "편집",
+    "edit-character": "캐릭터 편집",
+    "edit-narration": "내레이션 편집",
+    "edit-player-action": "플레이어 행동 편집",
+    "edit-world": "월드 편집",
+    "embedding": "임베딩",
+    "enable-advanced-generation-controls": "고급 생성 컨트롤 활성화",
+    "every-2-turns": "2턴마다",
+    "every-3-turns": "3턴마다",
+    "every-save-point-and-alternate-choice-stays-conn": "모든 세이브 포인트와 대안 선택은 그것이 생겨난 순간과 계속 연결되어 있습니다.",
+    "every-scene": "매 장면",
+    "export-world": "월드 내보내기",
+    "fact-to-pin-as-canon": "캐논으로 고정할 사실",
+    "fast-paced": "빠른 전개",
+    "find-a-scene": "장면 찾기...",
+    "first-person-viewpoint": "1인칭 시점",
+    "first-scene-only": "첫 장면만",
+    "fork-from-here": "여기서 분기",
+    "fpv-is-an-ai-powered-interactive-narrative-app-c": "FPV는 AI 기반 인터랙티브 내러티브 앱입니다. 판타지, SF, 호러, 로맨스 등 모든 장르의 몰입형 스토리를 만들 수 있으며, 기본적으로 컴퓨터에서 로컬로 실행됩니다. 선택적인 BYOK 클라우드 공급자는 명시적으로 연결하고 선택할 때만 사용됩니다.",
+    "fpv-is-built-on-open-source-work-local-models-ru": "FPV는 오픈소스 작업을 기반으로 만들어졌습니다. 로컬 모델은 Ollama와 stable-diffusion.cpp를 통해 실행됩니다. 전체 라이선스 조건은 각 모델에 포함되어 제공됩니다.",
+    "free": "자유",
+    "generate-cover": "커버 생성",
+    "generation": "생성",
+    "generation-diagnostics": "생성 진단",
+    "generations": "생성",
+    "genre": "장르",
+    "github": "GitHub",
+    "guided": "안내",
+    "high-quality-slower": "고품질 · 더 느림",
+    "home": "홈",
+    "image-style": "이미지 스타일",
+    "important-scenes-only": "중요한 장면만",
+    "indexed-past-scenes": "색인된 과거 장면",
+    "ink": "잉크",
+    "input-mode": "입력 모드",
+    "input-tokens-est": "입력 토큰 추정치",
+    "inventory": "인벤토리",
+    "keep-generated-scenes-visually-consistent-these": "생성된 장면을 시각적으로 일관되게 유지하세요. 이 노트는 이 세계의 모든 일러스트레이션을 안내합니다.",
+    "key-saved": "키 저장됨",
+    "keyboard-shortcuts": "키보드 단축키",
+    "literary": "문학적",
+    "loading": "로딩 중...",
+    "loading-lore": "로어 로딩 중...",
+    "loading-quants": "퀀트 로딩 중…",
+    "main-timeline": "메인 타임라인",
+    "manga": "만화",
+    "mature-content-18": "성인 콘텐츠 (18+)",
+    "maximize": "최대화",
+    "minimize": "최소화",
+    "model-name": "모델 이름",
+    "more-dialogue": "대화 위주",
+    "more-tension": "긴장감 위주",
+    "name": "이름",
+    "narrator": "내레이터",
+    "navigation-panel": "내비게이션 패널",
+    "new-path": "새 경로",
+    "new-variation": "새 변형",
+    "new-world": "새 월드",
+    "no": "아니요",
+    "no-characters-defined-for-this-world": "이 월드에 정의된 캐릭터가 없습니다.",
+    "no-characters-yet-add-characters-to-define-who-l": "아직 캐릭터가 없습니다. 이 세계에 누가 사는지 정의하려면 캐릭터를 추가하세요.",
+    "no-codex-entries-for-this-world": "이 월드에 Codex 항목이 없습니다.",
+    "no-codex-entries-yet": "아직 Codex 항목 없음",
+    "no-models-returned-enter-one-manually-below": "반환된 모델이 없습니다 — 아래에 직접 입력하세요.",
+    "no-details-set": "설정된 세부 정보가 없습니다.",
+    "no-gguf-files-in-this-repo": "이 저장소에 GGUF 파일이 없습니다.",
+    "no-gguf-models-found": "GGUF 모델을 찾을 수 없습니다.",
+    "no-key": "키 없음",
+    "quick-fill": "빠른 입력:",
+    "no-lore-entries-for-this-world": "이 월드에 로어 항목이 없습니다.",
+    "no-models-in-catalog-check-your-ollama-connectio": "카탈로그에 모델이 없습니다. Ollama 연결을 확인하세요.",
+    "no-saved-paths-yet": "아직 저장된 경로가 없습니다.",
+    "no-scenes-yet-your-story-map-will-appear-here-as": "아직 장면이 없습니다. 플레이하면 스토리 맵이 여기에 표시됩니다.",
+    "no-sessions-yet-start-a-story-to-begin": "아직 세션이 없습니다. 시작하려면 스토리를 시작하세요.",
+    "no-story-selected": "선택된 스토리가 없습니다.",
+    "noir": "누아르",
+    "npc": "NPC",
+    "off": "끔",
+    "open": "열기",
+    "open-huggingface-co": "huggingface.co 열기",
+    "open-path": "{{name}} 열기",
+    "open-print-or-pdf-preview": "인쇄 또는 PDF 미리보기 열기",
+    "open-print-pdf": "인쇄/PDF 열기",
+    "output-tokens-est": "출력 토큰 추정치",
+    "performance-profile": "성능 프로필",
+    "pin-a-fact-when-it-must-never-be-lost": "절대 잃어서는 안 될 사실을 고정하세요.",
+    "pin-fact": "사실 고정",
+    "pinned-canon": "고정된 캐논",
+    "pinned-canon-is-always-included-story-state-summ": "고정된 캐논은 항상 포함됩니다. 스토리 상태, 요약, 최근 턴 및 관련 과거 장면이 각 프롬프트의 나머지를 채웁니다.",
+    "play": "플레이",
+    "player": "플레이어",
+    "predefined": "사전 정의됨",
+    "preset-name": "프리셋 이름",
+    "project-backup": "프로젝트 백업",
+    "proposed-changes": "제안된 변경 사항",
+    "quest-log": "퀘스트 로그",
+    "realistic": "사실적",
+    "reference-cloud-cost": "참조 클라우드 비용",
+    "refresh-metrics": "지표 새로고침",
+    "refresh-model-catalog": "모델 카탈로그 새로고침",
+    "regenerate": "다시 생성",
+    "reject": "거부",
+    "relationships": "관계",
+    "remove-entry": "항목 제거",
+    "remove-key": "키 제거",
+    "remove-key-api": "{{name}} API 키 제거",
+    "remove-pinned-canon": "고정된 캐논 제거",
+    "removes-worlds-stories-generated-assets-download": "월드, 스토리, 생성된 자산, 다운로드한 로컬 모델, 로그 및 저장된 API 키를 제거합니다.",
+    "rename": "이름 바꾸기",
+    "rename-story": "스토리 이름 바꾸기",
+    "response-length": "응답 길이",
+    "retry-illustration": "일러스트레이션 다시 시도",
+    "review-continuity": "연속성 검토",
+    "role": "역할",
+    "same-seed": "동일 시드",
+    "save": "저장",
+    "save-a-named-checkpoint": "이름 있는 체크포인트 저장",
+    "save-as-html-file": "HTML 파일로 저장",
+    "save-point": "세이브 포인트",
+    "save-story-as-html-file": "스토리를 HTML 파일로 저장",
+    "save-worlds-adventures-codex-story-state-paths-a": "월드, 모험, Codex, 스토리 상태, 경로 및 생성된 이미지를 저장합니다. API 키, 모델 가중치 및 공급자 설정은 절대 포함되지 않습니다.",
+    "saved-presets": "저장된 프리셋",
+    "search-story-scenes": "스토리 장면 검색",
+    "searching": "검색 중…",
+    "select-a-world-to-see-its-lore-characters-and-de": "로어, 캐릭터 및 세부 정보를 보려면 월드를 선택하세요.",
+    "semantic-recall-is-empty-or-turned-off": "의미적 회상이 비어 있거나 꺼져 있습니다.",
+    "settings": "설정",
+    "settings-ai-cloud-connection": "설정 → AI 클라우드 연결",
+    "slower": "더 느림",
+    "start-story": "스토리 시작",
+    "starting": "시작 중…",
+    "step-inside-the-story": "스토리 속으로 들어가기",
+    "step-number": "단계 {{n}}: {{title}}",
+    "stop": "중지",
+    "stop-generation": "생성 중지",
+    "stories": "스토리",
+    "story-map": "스토리 맵",
+    "story-narration": "스토리 내레이션",
+    "story-paths": "스토리 경로",
+    "story-privacy": "스토리 개인정보",
+    "story-so-far": "지금까지의 스토리",
+    "story-so-far-2": "지금까지의 스토리…",
+    "story-state": "스토리 상태",
+    "story-state-is-not-available-yet": "스토리 상태를 아직 사용할 수 없습니다.",
+    "submit-action": "행동 제출",
+    "system-prompt": "시스템 프롬프트",
+    "the-narrator-noticed-these-possible-changes-acce": "내레이터가 이러한 가능한 변경 사항을 발견했습니다. 캐논이 되어야 할 것만 수락하세요.",
+    "the-story-continues": "스토리는 계속됩니다…",
+    "this-instructs-the-ai-on-how-to-narrate-your-sto": "이것은 AI가 당신의 스토리를 내레이션하는 방법을 안내합니다.",
+    "this-policy-controls-whether-story-text-may-be-s": "이 정책은 스토리 텍스트가 클라우드 내레이터로 전송될 수 있는지를 제어합니다. 로컬 이미지 생성은 로컬로 유지됩니다.",
+    "this-tab-failed-to-load": "이 탭을 불러오지 못했습니다.",
+    "title": "제목",
+    "total-inference-time": "총 추론 시간",
+    "traits": "특성",
+    "traits-comma-separated": "특성 (쉼표로 구분)",
+    "triggers": "트리거",
+    "try-again": "다시 시도",
+    "type-your-genre": "장르를 입력하세요...",
+    "undo": "실행 취소",
+    "unlimited": "무제한",
+    "unpredictability": "예측 불가능성",
+    "upload-cover": "커버 업로드",
+    "use-model": "모델 사용",
+    "use-semantic-memory-when-available": "가능한 경우 의미적 메모리 사용",
+    "used-only-when-relevant": "관련 있을 때만 사용",
+    "view-world": "월드 보기 →",
+    "visual-bible": "비주얼 바이블",
+    "vocabulary-range": "어휘 범위",
+    "watercolor": "수채화",
+    "website": "웹사이트",
+    "what-the-narrator-knows": "내레이터가 아는 것",
+    "working": "작업 중...",
+    "write-your-first-action-below-to-step-into-the-w": "아래에 첫 행동을 입력하여 세계로 들어가세요. 모든 스토리는 단 하나의 선택에서 시작됩니다.",
+    "your-action": "당신의 행동",
+    "your-story-has-been-saved-start-playing-or-add-a": "스토리가 저장되었습니다. 플레이를 시작하거나 아래에 커버 이미지를 추가하세요.",
+    "delete-session": "세션 삭제",
+    "delete-session-confirm": "이 모험을 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+    "name-this-story-branch": "이 스토리 분기의 이름 지정",
+    "alternative-path": "대체 경로",
+    "could-not-create-story-branch": "스토리 분기를 만들 수 없습니다",
+    "name-this-checkpoint": "이 체크포인트의 이름 지정",
+    "before-the-next-choice": "다음 선택 전",
+    "could-not-create-checkpoint": "체크포인트를 만들 수 없습니다",
+    "name-this-alternate-path": "이 대체 경로의 이름 지정",
+    "retcon": "레트콘",
+    "could-not-fork-from-this-turn": "이 턴에서 분기할 수 없습니다",
+    "project-backup-created": "프로젝트 백업 생성됨",
+    "backup-summary": "월드 {{worlds}}개, 모험 {{sessions}}개, 자산 {{assets}}개.",
+    "project-backup-failed": "프로젝트 백업 실패",
+    "restore-project-confirm": "이 프로젝트를 복원할까요? 현재 월드, 모험, 스토리 데이터가 교체됩니다.",
+    "project-restored": "프로젝트 복원됨",
+    "project-restore-failed": "프로젝트 복원 실패",
+    "reset-all-data-confirm-1": "모든 FPV 월드, 스토리, 이미지, 모델, 로그 및 저장된 공급자 키를 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+    "reset-all-data-confirm-2": "최종 확인: 모든 로컬 FPV 데이터를 영구적으로 삭제할까요?",
+    "all-local-data-deleted": "모든 로컬 FPV 데이터가 삭제되었습니다",
+    "reset-failed": "초기화 실패",
+    "visualization-failed": "시각화 실패. 이미지 모델이 설치되어 있는지 확인하세요.",
+    "could-not-save-edited-message": "수정한 메시지를 저장할 수 없습니다",
+    "story-copied": "스토리 복사됨",
+    "messages-copied-to-clipboard": "메시지 {{count}}개를 클립보드에 복사했습니다.",
+    "failed-to-copy-story": "스토리 복사 실패.",
+    "html-copied": "HTML 복사됨",
+    "popup-blocked-html-copied": "팝업이 차단되었습니다. HTML을 클립보드에 복사했습니다.",
+    "failed-to-export": "내보내기 실패.",
+    "scene-generation-failed": "장면 생성 실패. 이미지 모델이 설치되어 있는지 확인하세요.",
+    "could-not-start-story": "이 스토리를 시작할 수 없습니다.",
+    "world-exported": "월드 내보내기 완료",
+    "world-data-copied": "\"{{name}}\" 데이터를 클립보드에 복사했습니다.",
+    "world-export-failed": "월드 내보내기 실패",
+    "failed-to-delete-world": "월드 삭제 실패.",
+    "failed-to-save-character": "캐릭터 저장 실패.",
+    "cover-generation-failed": "커버 생성 실패. 먼저 설정 → 이미지 모델에서 이미지 모델을 설치하세요.",
+    "cover-upload-failed": "커버 업로드 실패.",
+    "story-updated": "스토리 업데이트됨",
+    "story-created": "스토리 생성됨",
+    "preference-not-saved": "이 설정을 저장할 수 없습니다 — 재시작 후 초기화될 수 있습니다."
+  },
+  "app": {
+    "autoinstall": {
+      
+      
+      
+      
+      
+      
+      
+      
+    },
+    "search": {
+      
+      
+      
+      
+      
+      
+      
+    },
+    "feedback": {
+      
+      
+      
+      
+      
+      
+      "reason": {
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "update": {
+      
+      
+      
+      
+      
+      
+    },
+    "modeldl": {
+      "downloading": "{{model}} 다운로드 중"
+    },
+    "titlebar": {
+      
+      
+      
+      
+    },
+    "layout": {
+      
+      
+      "show_right_panel": "프로필 패널 표시",
+      "hide_right_panel": "프로필 패널 숨기기"
+    }
+  },
+  "navigation": {
+    "home": "홈",
+    "new_story": "새 이야기 만들기",
+    "explore": "추천 이야기 탐색"
+    ,
+    "continue": "모험 계속하기",
+    "featured": "추천 세계",
+    "featured_desc": "다양한 분위기와 장르에서 엄선한 이야기입니다.",
+    "settings": "설정",
+    "new_story_short": "새 이야기"
+    ,
+    "adventures": "내 모험",
+    "browse_stories": "모든 이야기 보기",
+    "new_adventure": "새 모험",
+    "no_adventures": "아직 모험이 없습니다. 이야기를 선택해 시작하세요."
+    
+    
+  },
+  "library": {
+    "title": "이야기 라이브러리",
+    "import": "가져오기",
+    "importing": "가져오는 중...",
+    "search": "검색..."
+    
+    ,
+    "source": "출처",
+    "genre": "장르",
+    "all": "전체",
+    "predefined": "추천",
+    "custom": "사용자 지정",
+    "click_to_filter": "클릭하여 필터",
+    "no_search_match": "\"{{query}}\"와 일치하는 이야기가 없습니다",
+    "no_search_hint": "다른 검색어를 입력하거나 필터를 지워 보세요.",
+    "no_filter_match": "필터와 일치하는 이야기가 없습니다",
+    "no_filter_hint": "필터를 지우거나 직접 이야기를 만들어 보세요.",
+    "clear_filters": "필터 모두 지우기",
+    "create_own": "직접 만들기",
+    "no_worlds": "이야기가 기다리고 있어요",
+    "no_worlds_desc": "이야기를 만들거나 JSON을 가져오거나 추천 세계를 탐색하세요.",
+    "import_json": "JSON에서 가져오기"
+    
+    
+  },
+  "errors": {
+    "title": "문제가 발생했어요",
+    "body": "인터페이스 일부에서 오류가 발생했습니다. 이야기와 세계는 안전합니다. 다시 시도하거나 창을 새로고침하세요.",
+    "diagnostic": "진단 정보가 로컬에 저장되었습니다.",
+    "retry": "다시 시도",
+    "reload": "창 새로고침"
+  },
+  "settings": {
+    "drawer": {
+      "title": "설정",
+      "general": "일반",
+      "appearance": "외관 및 채팅",
+      "chat": "Narration & Display"
+      ,
+      "about": "정보",
+      "byok": "AI 클라우드 연결",
+      "image_model": "이미지 모델",
+      "narrative_model": "서술 모델"
+    },
+    "general": {
+      
+      
+      "language": {
+        "title": "언어"
+        
+        
+        
+        
+        
+        
+        
+        
+      },
+      "startup": {
+        
+        
+      },
+      "tray": {
+        "title": "트레이로 숨기기",
+        "desc": "닫아도 메뉴 막대에서 앱을 계속 실행"
+      },
+      "low_power": {
+        "title": "저전력 모드",
+        "desc": "로컬 모델을 빠르게 해제하고 메모리 사용량을 줄입니다"
+      },
+      "images_ac": {
+        "title": "전원 연결 시에만 자동 이미지",
+        "desc": "배터리 사용 중에는 자동 이미지 생성을 일시 중지합니다"
+      },
+      "semantic_memory": {
+        "title": "의미 기억",
+        "desc": "장기 스토리 기억을 위해 추가 로컬 모델을 사용합니다"
+      },
+      "notifications": {
+        
+        
+      },
+      "updates": {
+        
+        
+      }
+      ,
+      "autostart": "로그인 시 시작",
+      "blur": "배경 흐리게"
+    },
+    "chat": {
+      "textSize": {
+        "title": "글자 크기",
+        "desc": "채팅 말풍선의 배율 조정",
+        "small": "작게",
+        "normal": "보통",
+        "large": "크게"
+      },
+      "markdown": {
+        
+        
+      },
+      "reasoning": {
+        
+        
+      },
+      "inputBehavior": {
+        "title": "입력 동작"
+      },
+      "sendOnEnter": {
+        "title": "Enter로 보내기",
+        "desc": "Enter로 전송, Shift+Enter로 줄 바꿈"
+      }
+    },
+    "models": {
+      "delete_failed": "Failed to delete model",
+      "set_default_failed": "Failed to set default model",
+      "loading": "불러오는 중…",
+      "load_error": "모델을 불러오지 못했습니다.",
+      "no_data": "데이터 없음."
+      
+      
+      
+      
+      
+      ,
+      "catalog": "카탈로그",
+      "set_default": "활성으로 설정"
+      ,
+      "installed": "설치됨"
+      
+      
+      
+      
+      ,
+      "retry": "다시 시도"
+      
+      ,
+      "install": "설치"
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "hf_title": "Hugging Face 둘러보기"
+      ,
+      "hf_placeholder": "검색하거나 huggingface.co 모델 URL을 붙여넣기"
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ,
+      "active_narrator": "활성 나레이터",
+      "cloud_hint": "선택적 클라우드 모델",
+      "cloud_narrator": "클라우드 나레이터",
+      "hf_hint": "GGUF 모델을 로컬에서 실행",
+      "no_models": "설치된 모델이 없습니다.",
+      "delete_confirm": "모델 \"{{name}}\"을 삭제할까요? 취소할 수 없습니다.",
+      "cloud_list_error": "모델을 불러올 수 없습니다."
+    },
+    "appearance": {
+      "desc": "대시보드의 배경 테마를 사용자 지정하세요.",
+      "theme": {
+        
+        
+        
+        
+        
+        
+        
+        
+      }
+    },
+    "about": {
+      "ai": {
+        
+        
+        
+      },
+      "credits": {
+        
+        
+      }
+    },
+    "byok": {"save_failed": "Failed to save API key", "delete_failed": "Failed to remove API key",
+      "title": "AI 클라우드 연결",
+      "desc": "선택적 클라우드 나레이터를 위해 내 API 키를 연결합니다.",
+      "delete_confirm": "{{name}} 키를 삭제할까요?"
+    },
+    "image": {
+      "title": "이미지 생성",
+      "desc": "이야기 일러스트를 로컬에서 생성합니다.",
+      "active_model": "활성 이미지 모델:",
+      "catalog": "이미지 모델",
+      "sdcpp_status": "로컬 이미지 엔진이 포함되어 있습니다.",
+      "ready": "준비됨",
+      "not_installed": "설치되지 않음 - 아래에서 다운로드",
+      "test": "이미지 생성 테스트",
+      "testing": "테스트 중...",
+      "works": "작동함",
+      "test_failed": "이미지 생성 실패 - 먼저 모델을 설치하세요.",
+      "test_failed_short": "실패 - 아래에서 모델 설치",
+      "story_images": "이야기 이미지",
+      "story_images_desc": "장면을 자동으로 삽화할 시점을 설정합니다. 수동 삽화도 사용할 수 있습니다.",
+      "automatic": "자동 삽화",
+      "style": "기본 시각 스타일",
+      "quality": "이미지 품질",
+      "max_auto": "자동 이미지 최대 수",
+      "refresh": "이미지 모델 새로 고침",
+      "loading": "이미지 모델 로딩 중...",
+      "load_error": "이미지 모델을 불러올 수 없습니다.",
+      "empty_catalog": "카탈로그에 이미지 모델이 없습니다. 연결을 확인하고 새로 고침하세요.",
+      "large": "대형",
+      "needs_ram": "{{gb}} GB RAM 필요 - 하드웨어 등급보다 낮습니다.",
+      "active": "활성",
+      "use": "사용",
+      "delete": "{{id}} 삭제",
+      "delete_confirm": "이미지 모델 \"{{id}}\" 가중치를 삭제할까요? 취소할 수 없습니다.",
+      "download_failed": "이미지 모델 다운로드 실패.",
+      "downloading": "{{model}} 가중치 다운로드 중...",
+      "cancel_download": "다운로드 취소",
+      "provider": "이미지 제공업체",
+      "provider_desc": "로컬 생성 또는 연결된 OpenAI Image API를 선택하세요.",
+      "provider_local": "로컬 sd.cpp",
+      "provider_local_desc": "이 기기에서 비공개로 생성합니다.",
+      "provider_local_ready": "준비됨",
+      "provider_local_setup": "시작하려면 모델을 다운로드하세요",
+      "provider_openai": "OpenAI Image API",
+      "provider_openai_desc": "저장된 OpenAI API 키를 사용합니다.",
+      "provider_openai_ready": "API 키 연결됨",
+      "provider_openai_setup": "BYOK에서 OpenAI 키 추가",
+      "provider_error": "이미지 제공업체를 변경할 수 없습니다."
+    },
+    "narrative": {
+      "title": "서술 설정",
+      "style": "서술 스타일",
+      "styleDesc": "문체를 선택하세요.",
+      "freedom": "서술 자유도",
+      "freedomDesc": "이야기가 얼마나 이끌지 선택하세요."
+    },
+    "reading": {
+      "title": "읽기",
+      "serifFont": "서술에 세리프 글꼴 사용",
+      "serifFontDesc": "책처럼 보이는 세리프 글꼴을 사용합니다."
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "body": "{{count}}개의 세계가 기다립니다. 이야기는 기본적으로 로컬에서 실행되며 계정이나 직접 연결한 키 없는 클라우드가 필요하지 않습니다.",
+      "body_generic": "이야기는 기본적으로 로컬에서 실행되며 계정이나 직접 연결한 키 없는 클라우드가 필요하지 않습니다.",
+      "begin": "시작",
+      "trust_local": "이 기기에서 실행",
+      "trust_account": "계정 불필요",
+      "trust_private": "로컬 기본"
+    },
+    "prefs": {
+      "title": "이야기 만들기",
+      "story_type": "어떤 이야기에 끌리나요?",
+      "freedom": "얼마나 자유롭게 할까요?",
+      "style": "어떤 서술 스타일인가요?",
+      "continue": "계속",
+      "skip": "건너뛰기",
+      "epic": "웅장한 모험",
+      "intrigue": "정치적 음모",
+      "drama": "개인적인 드라마",
+      "mystery": "미스터리와 발견",
+      "dark": "어둡고 분위기 있는",
+      "surprise": "놀라게 해줘",
+      "guided": "이끌어 줘",
+      "balanced": "균형",
+      "free": "완전한 자유",
+      "literary": "문학적이고 묘사적인",
+      "fast": "빠르고 간결한",
+      "cinematic": "영화적이고 시각적인"
+    },
+    "world": {
+      "title": "어디에서 시작할까요?",
+      "subtitle": "시작할 세계 {{shown}}개. 이 기기에 {{rest}}개가 더 있습니다.",
+      "show_all": "{{count}}개 모두 보기 ->",
+      "skip": "건너뛰기 ->",
+      "preparing": "나레이터 준비 중"
+    },
+    "model": {
+      "title": "이야기 엔진 선택",
+      "subtitle": "이야기를 생성할 로컬 AI 모델을 선택하세요.",
+      "recommended": "추천",
+      "pulling": "다운로드 중...",
+      "install": "설치",
+      "waiting": "아직 다운로드 중...",
+      "needs_install": "계속하려면 모델을 설치하세요",
+      "continue": "이야기 쓰기",
+      "change": "다른 모델 사용",
+      "ready_title": "나레이터 준비 완료",
+      "ready_body": "{{model}} - 이 기기에서 완전히 실행됩니다.",
+      "enter_world": "{{world}} 입장"
+    },
+    "cloud": {
+      
+      
+      
+      
+      
+      
+      
+    }
+  },
+  "tutorial": {
+    "back": "뒤로",
+    "next": "다음",
+    "got_it": "알겠어요",
+    "left_title": "내 이야기",
+    "left_body": "홈으로 돌아가거나 세계를 탐색하거나 모험을 이어가세요.",
+    "right_title": "세계 컨텍스트",
+    "right_body": "캐릭터, 커버, Codex를 이야기 옆에서 확인할 수 있습니다.",
+    "input_title": "당신의 선택",
+    "input_body": "Do, Say, Story를 선택하고 캐릭터가 시도하는 행동을 입력하세요."
+  }
+}

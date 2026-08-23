@@ -1,0 +1,14 @@
+# Release inputs for the Apple Silicon direct-download bundle.
+# Update this file only after independently verifying the upstream artifact.
+TARGET=aarch64-apple-darwin
+OLLAMA_VERSION=v0.30.8
+OLLAMA_URL=https://github.com/ollama/ollama/releases/download/v0.30.8/ollama-darwin.tgz
+OLLAMA_SHA256=2f1311d797c554a79bee6412ad839bdd5b9e69a2715697ae9db4e58c037ddfca
+LLAMA_SERVER_SHA256=bca9d7c6aa8522719ec77e02ac8551b3caaa99d01c32ce9a4431f2c439ed7871
+LLAMA_QUANTIZE_SHA256=deee8c95c478a3e5a387d1beb2ec2c05a5631d3b6df378d186788f5cf44eb8c4
+OLLAMA_RUNTIME_TREE_SHA256=9d3277547a24e5f9ffde0310b0822e3acc596c65a3d52520525c7a531882ecff
+SD_CLI_COMMIT=a8a91b24cdf18a3e415d7f2a28f69b5be8a17700
+SD_CLI_SHA256=df127d5835b7dd1cfd5795e7f6eadf80de3f833fd991ee1f845427f2b18ba4f4
+# The currently pinned sd-cli artifact requires macOS 26.0.
+# Rebuild it with a lower deployment target before widening support.
+SD_CLI_MIN_MACOS=26.0

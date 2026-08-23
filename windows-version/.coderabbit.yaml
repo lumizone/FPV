@@ -1,0 +1,11 @@
+# CodeRabbit configuration
+reviews:
+  max_files: 200
+  max_lines: 50000
+  path_instructions:
+    - path: "**/*.rs"
+      instructions: "Check for Rust compilation issues, unsafe code, and error handling."
+    - path: "**/*.tsx"
+      instructions: "Check React patterns, hook dependencies, and Tailwind class consistency."
+    - path: "**/*.ts"
+      instructions: "Check TypeScript types, async patterns, and Tauri invoke calls."

@@ -1,0 +1,174 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  check-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.77.0
+          components: clippy
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Frontend unit tests
+        run: npm test -- --run
+
+      - name: i18n parity
+        run: python scripts/i18n_check_parity.py
+
+      - name: i18n active-key audit
+        run: python scripts/i18n_audit.py
+
+      - name: Static privacy check
+        shell: pwsh
+        run: |
+          $matches = rg -n 'supabase|SUPABASE_URL|createClient\(' src src-tauri/src
+          if ($LASTEXITCODE -eq 0) {
+            $matches
+            throw "External database references found in shipped source"
+          }
+          if ($LASTEXITCODE -gt 1) { throw "Privacy scan failed" }
+          Write-Host "PASS - no Supabase client or URL in shipped source"
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Validate PowerShell scripts
+        shell: pwsh
+        run: |
+          $errors = $null
+          foreach ($file in @('scripts/fetch-binaries-win.ps1','scripts/validate-binaries-win.ps1','scripts/write-release-manifest-win.ps1')) {
+            [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$null, [ref]$errors) | Out-Null
+            if ($errors) { throw "PowerShell syntax errors in $file" }
+          }
+
+      - name: Validate Windows binary manifest
+        shell: pwsh
+        run: npm run package:lock:validate
+
+      - name: Fetch sidecars (Ollama + sd.cpp)
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: powershell -ExecutionPolicy Bypass -File scripts/fetch-binaries-win.ps1
+
+      - name: Validate fetched runtime completeness
+        shell: pwsh
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-binaries-win.ps1
+
+      - name: Cargo check
+        working-directory: src-tauri
+        run: cargo check
+
+      - name: Cargo test (lib)
+        working-directory: src-tauri
+        run: cargo test --lib
+
+      - name: Cargo clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+
+  build-installer:
+    needs: check-windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.77.0
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Validate Windows binary manifest
+        shell: pwsh
+        run: npm run package:lock:validate
+
+      - name: Fetch sidecars
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: powershell -ExecutionPolicy Bypass -File scripts/fetch-binaries-win.ps1
+
+      - name: Validate fetched runtime completeness
+        shell: pwsh
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-binaries-win.ps1
+
+      - name: Build NSIS installer
+        run: npm run tauri -- build --bundles nsis
+
+      - name: Validate release artifact and write manifest
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem -Path "src-tauri/target/release/bundle/nsis" -Filter "*.exe" -File | Select-Object -First 1
+          if (-not $installer) { throw "NSIS installer was not produced" }
+          powershell -NoProfile -ExecutionPolicy Bypass -File scripts/write-release-manifest-win.ps1 -Artifact $installer.FullName -Output "$($installer.FullName).release-manifest.json"
+          (Get-FileHash -LiteralPath $installer.FullName -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath "$($installer.FullName).sha256" -Encoding ascii
+
+      - name: Smoke test — binary launches and stays up
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path "src-tauri/target/release" -Filter "*.exe" -File | Select-Object -First 1
+          $proc = Start-Process -FilePath $exe.FullName -PassThru
+          Start-Sleep -Seconds 25
+          if ($proc.HasExited) {
+            Write-Error "App exited within 25s (exit code $($proc.ExitCode))"
+            exit 1
+          }
+          Write-Host "OK - App binary loaded and stayed running for 25s."
+          Stop-Process -Id $proc.Id -Force
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: fpv-windows-nsis
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/nsis/*.exe.release-manifest.json
+            src-tauri/target/release/bundle/nsis/*.exe.sha256

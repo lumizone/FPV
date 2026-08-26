@@ -10,7 +10,7 @@
   [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-d9ff72?style=flat-square&labelColor=111111)](LICENSE)
   ![Local-first](https://img.shields.io/badge/Local--first-Your%20machine%2C%20your%20story-71d9ca?style=flat-square&labelColor=111111)
   ![Platforms](https://img.shields.io/badge/Platforms-macOS%20%2B%20Windows-d9ff72?style=flat-square&labelColor=111111)
-  ![Status](https://img.shields.io/badge/Status-v0.0.1%20in%20release%20preparation-8ca1b3?style=flat-square&labelColor=111111)
+  ![Status](https://img.shields.io/badge/Status-v0.1.0-3fb950?style=flat-square&labelColor=111111)
 </div>
 
 ![First Person Viewpoint — Your choices move the story forward. Local-first interactive fiction for desktop. Open source. Local play, no account required.](.github/assets/fpv-worldlines-banner.svg)

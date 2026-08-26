@@ -56,7 +56,7 @@ There are no release binaries in this repository yet. Downloads will be publishe
 ## Repository layout
 
 ```text
-FPV2.0/
+FPV/
 ├── mac-version/      # macOS Tauri application
 ├── windows-version/  # Windows Tauri application
 └── LICENSE           # AGPL-3.0-or-later

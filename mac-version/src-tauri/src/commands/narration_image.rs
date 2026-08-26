@@ -103,7 +103,7 @@ pub async fn world_generate_cover(
     let app_data = crate::storage::app_data_dir()?;
     let covers_dir = app_data.join("covers");
     tokio::fs::create_dir_all(&covers_dir).await?;
-    let filename = format!("cover_{}.png", world_id);
+    let filename = format!("cover_{world_id}.png");
     let path = covers_dir.join(&filename);
     let partial = covers_dir.join(format!("{filename}.part"));
     tokio::fs::write(&partial, &img_bytes).await?;
@@ -112,8 +112,13 @@ pub async fn world_generate_cover(
     let path_str = path.to_string_lossy().to_string();
 
     // 6. Persist the cover path in the database
-    let conn = state.db.lock().await;
-    db::update_cover_image_path(&conn, &world_id, &path_str)?;
+    {
+        let conn = state.db.lock().await;
+        db::update_cover_image_path(&conn, &world_id, &path_str)?;
+    }
+    // Guard released first: deleting the superseded cover is filesystem
+    // work that needs no database, and this is the one global mutex every
+    // narration turn contends for.
     if let Some(old_path) = world.cover_image_path {
         if old_path != path_str {
             crate::commands::story::cleanup_owned_cover(&old_path).await;

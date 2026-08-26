@@ -422,8 +422,7 @@ pub fn clear_all() -> AppResult<()> {
     // removed so a reset cannot leave a recoverable plaintext copy behind.
     // Iterate the CloudProvider enum (plus the custom-base-url entry) so a
     // newly added provider can never be silently skipped on reset.
-    let mut names: Vec<&'static str> =
-        CloudProvider::ALL.iter().map(|p| p.as_str()).collect();
+    let mut names: Vec<&'static str> = CloudProvider::ALL.iter().map(|p| p.as_str()).collect();
     names.push("custom_base_url");
     for name in names {
         // Continue past individual failures so one stuck account can't

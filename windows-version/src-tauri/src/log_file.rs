@@ -134,12 +134,20 @@ pub fn tail(bytes: usize) -> String {
 /// never called the code they claimed to cover.
 fn tail_slice(data: &[u8], bytes: usize) -> &[u8] {
     let start = data.len().saturating_sub(bytes);
-    let slice = &data[start..];
     if start == 0 {
         // Nothing was cut, so there is no partial line to skip — and
         // skipping here would eat the genuine first line.
-        return slice;
+        return data;
     }
+    // When the cut lands exactly on a line boundary (the byte before
+    // `start` is already a newline), the slice opens on a complete line.
+    // Skipping to the next newline anyway — which is what this did before
+    // — threw away one whole valid line whenever the cut happened to
+    // align that way.
+    if data[start - 1] == b'\n' {
+        return &data[start..];
+    }
+    let slice = &data[start..];
     match slice.iter().position(|b| *b == b'\n') {
         Some(i) => &slice[i + 1..],
         None => slice,
@@ -216,7 +224,9 @@ mod tests {
     fn a_window_landing_exactly_on_a_newline_does_not_drop_the_next_line() {
         let data = b"aaa\nbbb\nccc\n";
         // Exactly the last 8 bytes: "bbb\nccc\n" — the cut sits on the
-        // newline that ends "aaa".
-        assert_eq!(String::from_utf8_lossy(tail_slice(data, 8)), "ccc\n");
+        // newline that ends "aaa", so BOTH remaining lines are complete
+        // and neither may be skipped. This assertion used to demand
+        // "ccc\n", locking in the very bug the test is named after.
+        assert_eq!(String::from_utf8_lossy(tail_slice(data, 8)), "bbb\nccc\n");
     }
 }

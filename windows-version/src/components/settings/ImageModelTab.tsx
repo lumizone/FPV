@@ -24,19 +24,9 @@ import {
   gpuRuntimeRetryImage,
   type LocalModelChoice,
   type GpuRuntimeStatus,
+  type ImageProviderId,
 } from "@/lib/tauri";
-
-type ImageProviderId = "local" | "openai" | "seedream" | "hunyuan" | "cogview" | "flux" | "imagen";
-
-/// Which BYOK text-provider key each cloud image provider uses.
-const IMAGE_KEY_PROVIDER: Record<string, string> = {
-  openai: "openai",
-  seedream: "doubao",
-  hunyuan: "hunyuan",
-  cogview: "zhipu",
-  flux: "bfl",
-  imagen: "google",
-};
+import { CLOUD_IMAGE_PROVIDERS, CLOUD_PROVIDER_READY_KEY, CLOUD_PROVIDER_READY_FALLBACK } from "@/lib/imageProviders";
 
 /// Settings tab for the image-generation model (stable-diffusion.cpp + cloud).
 /// Lists the sd.cpp model catalog, downloads weights, sets the active
@@ -70,14 +60,10 @@ export function ImageModelTab() {
   const [cloudModelSaving, setCloudModelSaving] = useState(false);
   const [manualCloudModel, setManualCloudModel] = useState<Record<string, string>>({});
 
-  // Whether each cloud image provider's BYOK key is present.
-  const openAiKeySaved = byokProviders.includes("openai");
-  const seedreamKeySaved = byokProviders.includes("doubao");
-  const hunyuanKeySaved = byokProviders.includes("hunyuan");
-  const cogviewKeySaved = byokProviders.includes("zhipu");
-  const fluxKeySaved = byokProviders.includes("bfl");
-  const imagenKeySaved = byokProviders.includes("google");
-  const keySaved = (p: string) => byokProviders.includes(IMAGE_KEY_PROVIDER[p] ?? "");
+  // Whether each cloud image provider's BYOK key is present, resolved
+  // through the shared registry (src/lib/imageProviders.ts).
+  const keySaved = (p: ImageProviderId) =>
+    byokProviders.includes(CLOUD_IMAGE_PROVIDERS.find((e) => e.id === p)?.byokKey ?? "");
 
   const refresh = () => {
     setLoading(true);
@@ -88,7 +74,7 @@ export function ImageModelTab() {
         setActiveModel(active);
         setLocalEngineReady(localCheck.local_ready);
         setByokProviders(byok.providers);
-        const keyProvider = IMAGE_KEY_PROVIDER[provider];
+        const keyProvider = CLOUD_IMAGE_PROVIDERS.find((e) => e.id === provider)?.byokKey;
         setSelectedProvider(
           provider === "local" || (keyProvider && byok.providers.includes(keyProvider))
             ? (provider as ImageProviderId)
@@ -312,83 +298,24 @@ export function ImageModelTab() {
               </span>
             </label>
 
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${openAiKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "openai" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="openai" checked={selectedProvider === "openai"} onChange={() => handleProviderChange("openai")} disabled={!openAiKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">{t("settings.image.provider_openai", "OpenAI Image API")}</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">{t("settings.image.provider_openai_desc", "Uses your saved OpenAI API key.")}</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${openAiKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {openAiKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {openAiKeySaved ? t("settings.image.provider_openai_ready", "API key connected") : t("settings.image.provider_openai_setup", "Add an OpenAI key in BYOK")}
-                </span>
-              </span>
-            </label>
-
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${seedreamKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "seedream" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="seedream" checked={selectedProvider === "seedream"} onChange={() => handleProviderChange("seedream")} disabled={!seedreamKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">Seedream (ByteDance)</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">Uses your Doubao (Volcano Ark) API key.</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${seedreamKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {seedreamKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {seedreamKeySaved ? "API key connected" : "Add a Doubao key in BYOK"}
-                </span>
-              </span>
-            </label>
-
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${hunyuanKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "hunyuan" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="hunyuan" checked={selectedProvider === "hunyuan"} onChange={() => handleProviderChange("hunyuan")} disabled={!hunyuanKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">Hunyuan-Image (Tencent)</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">Uses your Hunyuan API key.</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${hunyuanKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {hunyuanKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {hunyuanKeySaved ? "API key connected" : "Add a Hunyuan key in BYOK"}
-                </span>
-              </span>
-            </label>
-
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${cogviewKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "cogview" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="cogview" checked={selectedProvider === "cogview"} onChange={() => handleProviderChange("cogview")} disabled={!cogviewKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">CogView (Zhipu)</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">Uses your Zhipu API key.</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${cogviewKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {cogviewKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {cogviewKeySaved ? "API key connected" : "Add a Zhipu key in BYOK"}
-                </span>
-              </span>
-            </label>
-
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${fluxKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "flux" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="flux" checked={selectedProvider === "flux"} onChange={() => handleProviderChange("flux")} disabled={!fluxKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">FLUX (Black Forest Labs)</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">Uses your BFL API key.</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${fluxKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {fluxKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {fluxKeySaved ? "API key connected" : "Add a BFL key in BYOK"}
-                </span>
-              </span>
-            </label>
-
-            <label className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${imagenKeySaved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selectedProvider === "imagen" ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
-              <input type="radio" name="image-provider" value="imagen" checked={selectedProvider === "imagen"} onChange={() => handleProviderChange("imagen")} disabled={!imagenKeySaved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
-              <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
-              <span className="min-w-0">
-                <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">Google Imagen (Gemini)</span>
-                <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">Uses your Google API key.</span>
-                <span className={`mt-2 flex items-center gap-1 text-[11px] ${imagenKeySaved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
-                  {imagenKeySaved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
-                  {imagenKeySaved ? "API key connected" : "Add a Google key in BYOK"}
-                </span>
-              </span>
-            </label>
+            {CLOUD_IMAGE_PROVIDERS.map((entry) => {
+              const saved = byokProviders.includes(entry.byokKey);
+              const selected = selectedProvider === entry.id;
+              return (
+                <label key={entry.id} className={`surface flex min-h-24 items-start gap-3 px-3 py-3 transition-colors ${saved ? "cursor-pointer hover:border-[var(--color-label-tertiary)]/40" : "cursor-not-allowed opacity-60"} ${selected ? "border-[var(--color-accent)]/60 bg-[var(--color-accent-soft)]" : ""}`}>
+                  <input type="radio" name="image-provider" value={entry.id} checked={selected} onChange={() => handleProviderChange(entry.id)} disabled={!saved} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-accent)] disabled:cursor-not-allowed" />
+                  <Cloud aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]" />
+                  <span className="min-w-0">
+                    <span className="block text-[13px] font-medium text-[var(--color-label-primary)]">{t(entry.labelKey, entry.labelFallback)}</span>
+                    <span className="mt-0.5 block text-[11px] leading-4 text-[var(--color-label-tertiary)]">{t(entry.descKey, entry.descFallback)}</span>
+                    <span className={`mt-2 flex items-center gap-1 text-[11px] ${saved ? "text-[var(--color-system-green)]" : "text-[var(--color-label-tertiary)]"}`}>
+                      {saved ? <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleAlert aria-hidden="true" className="h-3.5 w-3.5" />}
+                      {saved ? t(CLOUD_PROVIDER_READY_KEY, CLOUD_PROVIDER_READY_FALLBACK) : t(entry.setupKey, entry.setupFallback)}
+                    </span>
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </fieldset>
 

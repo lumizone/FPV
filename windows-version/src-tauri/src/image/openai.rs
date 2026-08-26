@@ -178,11 +178,9 @@ async fn parse_image_data(client: &reqwest::Client, body: &str) -> AppResult<Str
         return Ok(base64::engine::general_purpose::STANDARD.encode(bytes));
     }
     if let Some(url) = data.get("url").and_then(|v| v.as_str()) {
-        let parsed = url::Url::parse(url)
-            .map_err(|_| AppError::Other("image URL was invalid".into()))?;
-        if parsed.scheme() != "https" || crate::byok::is_local_base_url(url) {
-            return Err(AppError::Other("image URL was not a safe public HTTPS URL".into()));
-        }
+        let parsed =
+            url::Url::parse(url).map_err(|_| AppError::Other("image URL was invalid".into()))?;
+        crate::image::validate_public_image_url(&parsed).await?;
         let response = client
             .get(parsed)
             .send()

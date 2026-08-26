@@ -35,8 +35,6 @@
 //! Windows box (kill the app from Task Manager mid-session and confirm
 //! `ollama.exe` disappears with it — Task 12).
 
-#![cfg(windows)]
-
 use std::os::windows::io::RawHandle;
 use std::sync::OnceLock;
 
@@ -71,7 +69,9 @@ fn job() -> Option<&'static JobHandle> {
         // documented way to make a private job.
         let handle = unsafe { CreateJobObjectW(std::ptr::null(), std::ptr::null()) };
         if handle.is_null() {
-            warn!("could not create a job object; the ollama sidecar will outlive an abnormal exit");
+            warn!(
+                "could not create a job object; the ollama sidecar will outlive an abnormal exit"
+            );
             return None;
         }
 
@@ -96,7 +96,9 @@ fn job() -> Option<&'static JobHandle> {
             return None;
         }
 
-        debug!("job object ready — the ollama sidecar will be killed if this process dies abnormally");
+        debug!(
+            "job object ready — the ollama sidecar will be killed if this process dies abnormally"
+        );
         Some(JobHandle(handle))
     })
     .as_ref()
@@ -125,7 +127,10 @@ pub fn adopt(child: RawHandle, label: &str) {
     if ok == 0 {
         // Common and harmless when something else (a debugger, some
         // container runtimes) already placed us in a non-breakaway job.
-        warn!(sidecar = label, "could not assign the sidecar to the job object");
+        warn!(
+            sidecar = label,
+            "could not assign the sidecar to the job object"
+        );
     } else {
         debug!(sidecar = label, "sidecar assigned to the job object");
     }

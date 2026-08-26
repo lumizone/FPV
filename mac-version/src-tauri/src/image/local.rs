@@ -36,8 +36,10 @@ pub async fn generate(req: super::ImageRequest) -> AppResult<super::ImageResult>
 /// check is exact (named files), so this is never `None`-unknown; the
 /// Option shape survives from the mflux era, whose HF-cache heuristic
 /// could genuinely not know.
-pub fn weights_status_of(model: crate::image::sdcpp::LocalModel) -> Option<bool> {
-    Some(crate::image::sdcpp::weights_ready_for(model))
+/// Runs off the async runtime: the underlying manifest check hashes
+/// multi-GB weight files whenever the verification cache is cold.
+pub async fn weights_status_of_async(model: crate::image::sdcpp::LocalModel) -> Option<bool> {
+    Some(crate::image::sdcpp::weights_ready_for_async(model).await)
 }
 
 /// Coarse progress phases emitted while pre-warming. sd.cpp's pre-warm is
@@ -173,10 +175,14 @@ mod tests {
         );
     }
 
-    #[test]
-    fn weights_status_is_never_unknown() {
+    #[tokio::test]
+    async fn weights_status_is_never_unknown() {
         // The manifest check is exact — callers rely on Some(_) so the
         // "unknown → fail-open" branch (an mflux relic) never fires.
-        assert!(weights_status_of(crate::image::sdcpp::LocalModel::default()).is_some());
+        assert!(
+            weights_status_of_async(crate::image::sdcpp::LocalModel::default())
+                .await
+                .is_some()
+        );
     }
 }

@@ -36,8 +36,10 @@ pub async fn generate(req: super::ImageRequest) -> AppResult<super::ImageResult>
 /// check is exact (named files), so this is never `None`-unknown; the
 /// Option shape survives from the mflux era, whose HF-cache heuristic
 /// could genuinely not know.
-pub fn weights_status_of(model: crate::image::sdcpp::LocalModel) -> Option<bool> {
-    Some(crate::image::sdcpp::weights_ready_for(model))
+/// Runs off the async runtime: the underlying manifest check hashes
+/// multi-GB weight files whenever the verification cache is cold.
+pub async fn weights_status_of_async(model: crate::image::sdcpp::LocalModel) -> Option<bool> {
+    Some(crate::image::sdcpp::weights_ready_for_async(model).await)
 }
 
 /// Coarse progress phases emitted while pre-warming. sd.cpp's pre-warm is
@@ -78,23 +80,14 @@ pub(crate) fn free_disk_gb_at(path: &std::path::Path) -> Option<u64> {
         while !probe.exists() {
             probe = probe.parent()?;
         }
-        let wide: Vec<u16> = probe
-            .as_os_str()
-            .encode_wide()
-            .chain(Some(0))
-            .collect();
+        let wide: Vec<u16> = probe.as_os_str().encode_wide().chain(Some(0)).collect();
         let mut free_avail: u64 = 0;
         let mut total: u64 = 0;
         let mut free_total: u64 = 0;
         // SAFETY: `wide` is a null-terminated UTF-16 buffer; the output
         // pointers point at valid u64 locals the API is required to fill.
         let ok = unsafe {
-            GetDiskFreeSpaceExW(
-                wide.as_ptr(),
-                &mut free_avail,
-                &mut total,
-                &mut free_total,
-            )
+            GetDiskFreeSpaceExW(wide.as_ptr(), &mut free_avail, &mut total, &mut free_total)
         };
         if ok == 0 {
             return None;
@@ -141,9 +134,7 @@ fn system_ram_gb() -> u64 {
 
     #[cfg(windows)]
     {
-        use windows_sys::Win32::System::SystemInformation::{
-            GlobalMemoryStatusEx, MEMORYSTATUSEX,
-        };
+        use windows_sys::Win32::System::SystemInformation::{GlobalMemoryStatusEx, MEMORYSTATUSEX};
         let mut status: MEMORYSTATUSEX = unsafe { std::mem::zeroed() };
         status.dwLength = std::mem::size_of::<MEMORYSTATUSEX>() as u32;
         // SAFETY: `status` is a valid, zero-initialized MEMORYSTATUSEX with
@@ -249,10 +240,14 @@ mod tests {
         );
     }
 
-    #[test]
-    fn weights_status_is_never_unknown() {
+    #[tokio::test]
+    async fn weights_status_is_never_unknown() {
         // The manifest check is exact — callers rely on Some(_) so the
         // "unknown → fail-open" branch (an mflux relic) never fires.
-        assert!(weights_status_of(crate::image::sdcpp::LocalModel::default()).is_some());
+        assert!(
+            weights_status_of_async(crate::image::sdcpp::LocalModel::default())
+                .await
+                .is_some()
+        );
     }
 }

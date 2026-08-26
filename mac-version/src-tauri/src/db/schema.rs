@@ -635,3 +635,47 @@ CREATE TABLE IF NOT EXISTS fpv_story_state_history (
 CREATE INDEX IF NOT EXISTS idx_story_state_history_session
     ON fpv_story_state_history(session_id, saved_at);
 "#;
+
+/// V30: drop the Local Waifu tables FPV never used.
+///
+/// FPV was forked from Local Waifu, and migrations v1–v17 are LW's — they
+/// build a companion-AI schema (characters, chat, the memory knowledge
+/// graph, relationship state, lorebook, anticipations) before FPV's own
+/// schema starts at v18. Not one of these seventeen tables is read or
+/// written anywhere outside `schema.rs` and `migrations.rs`; every fresh
+/// install created them empty and carried them forever.
+///
+/// The confusing part was `characters`: FPV has its own `fpv_characters`
+/// (v19) and `db::characters` writes exclusively to that one, so the DB
+/// held two character tables of which only the prefixed one was live.
+/// Same story with `open_threads` — the TABLE is LW's and dead, while
+/// `StoryState::open_threads` in `story/db.rs` is a live JSON field with
+/// no relation to it.
+///
+/// v1–v17 still run on a fresh database (rewriting applied migrations is
+/// how you corrupt somebody's install); this drops the result immediately
+/// afterwards, so new and existing databases converge on the same shape.
+///
+/// Order matters: `foreign_keys` is ON, so each table is dropped before
+/// the ones it references — everything pointing at `chat_messages`,
+/// `conversations` and `entities` goes first, and `characters`, which all
+/// of them ultimately hang off, goes last.
+pub const V30: &str = r#"
+DROP TABLE IF EXISTS relations;
+DROP TABLE IF EXISTS entities;
+DROP TABLE IF EXISTS feedback_events;
+DROP TABLE IF EXISTS memories;
+DROP TABLE IF EXISTS memory_blocks;
+DROP TABLE IF EXISTS anticipations;
+DROP TABLE IF EXISTS behavior_history;
+DROP TABLE IF EXISTS lorebook_entries;
+DROP TABLE IF EXISTS mood_state;
+DROP TABLE IF EXISTS open_threads;
+DROP TABLE IF EXISTS proactive_log;
+DROP TABLE IF EXISTS relationship_milestones;
+DROP TABLE IF EXISTS relationship;
+DROP TABLE IF EXISTS surprisal_stats;
+DROP TABLE IF EXISTS chat_messages;
+DROP TABLE IF EXISTS conversations;
+DROP TABLE IF EXISTS characters;
+"#;

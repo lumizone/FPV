@@ -8,6 +8,7 @@ mod image;
 mod inference;
 mod log_file;
 mod metrics;
+mod resource_gate;
 mod secret_store;
 mod sidecars;
 mod state;
@@ -17,7 +18,6 @@ mod tray;
 
 use std::sync::Arc;
 
-use rand::RngCore;
 use tauri::Manager;
 use tracing::{error, info, warn};
 use tracing_subscriber::EnvFilter;
@@ -27,7 +27,6 @@ use crate::sidecars::SidecarManager;
 use crate::state::AppState;
 
 const META_HW_UUID: &str = "hardware_uuid";
-const META_CRYPTO_SALT_HEX: &str = "crypto_salt_hex";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -42,8 +41,8 @@ pub fn run() {
         }
     };
 
-    if let Err(err) = init_security_meta(&db) {
-        error!(?err, "failed to init security meta");
+    if let Err(err) = init_install_id(&db) {
+        error!(?err, "failed to init install id");
         std::process::exit(1);
     }
 
@@ -128,6 +127,11 @@ pub fn run() {
             // or more model runners behind. Cleanup is restricted to orphaned
             // executables inside FPV.app bundles.
             crate::sidecars::ollama::cleanup_orphaned_runners();
+
+            // Now that nothing of ours is still rendering, drop whatever
+            // the last run left in the renderer scratch space — decoded
+            // reference portraits among it.
+            crate::storage::sweep_renderer_temp();
 
             // Native macOS app menu.
             match app_menu::build(&handle) {
@@ -343,50 +347,31 @@ fn init_tracing() {
     tracing::info!(version = env!("CARGO_PKG_VERSION"), "log opened");
 }
 
-fn init_security_meta(db: &db::DbHandle) -> error::AppResult<(String, Vec<u8>)> {
+/// Mint this installation's stable identifier on first launch.
+///
+/// This used to be `init_security_meta` and also generated a 32-byte
+/// `crypto_salt_hex`. In Local Waifu that salt is a real input — it
+/// derives the soul-file key and feeds `license::gate` — but FPV has no
+/// encryption module and nothing ever read the value back: it was
+/// generated, stored, and the whole return value was then dropped at the
+/// call site. Worse, it made `pre_update_check` tell users the app had
+/// "security metadata" guarding their data, which was not true here.
+///
+/// It also carried a live trap. The recovery path was
+/// `hex_decode(&hex).unwrap_or_else(|_| generate_salt())`, which minted a
+/// replacement salt on a corrupt value but never persisted it — so every
+/// launch would produce a different one. Harmless while nothing consumed
+/// it; silent, permanent data loss the day something did.
+///
+/// If at-rest encryption lands, generate the salt inside that module,
+/// where the write and the read live together.
+fn init_install_id(db: &db::DbHandle) -> error::AppResult<String> {
     let conn = db.blocking_lock();
 
-    let hw = if let Some(stored) = db::meta_get(&conn, META_HW_UUID)? {
-        stored
-    } else {
-        let v = uuid::Uuid::new_v4().to_string();
-        db::meta_set(&conn, META_HW_UUID, &v)?;
-        v
-    };
-
-    let salt = if let Some(hex) = db::meta_get(&conn, META_CRYPTO_SALT_HEX)? {
-        hex_decode(&hex).unwrap_or_else(|_| generate_salt())
-    } else {
-        let s = generate_salt();
-        db::meta_set(&conn, META_CRYPTO_SALT_HEX, &hex_encode(&s))?;
-        s
-    };
-
-    Ok((hw, salt))
-}
-
-fn generate_salt() -> Vec<u8> {
-    let mut buf = vec![0u8; 32];
-    rand::thread_rng().fill_bytes(&mut buf);
-    buf
-}
-
-fn hex_encode(bytes: &[u8]) -> String {
-    let mut s = String::with_capacity(bytes.len() * 2);
-    for b in bytes {
-        s.push_str(&format!("{b:02x}"));
+    if let Some(stored) = db::meta_get(&conn, META_HW_UUID)? {
+        return Ok(stored);
     }
-    s
-}
-
-fn hex_decode(s: &str) -> Result<Vec<u8>, ()> {
-    if s.len() % 2 != 0 {
-        return Err(());
-    }
-    let mut out = Vec::with_capacity(s.len() / 2);
-    for i in (0..s.len()).step_by(2) {
-        let byte = u8::from_str_radix(&s[i..i + 2], 16).map_err(|_| ())?;
-        out.push(byte);
-    }
-    Ok(out)
+    let minted = uuid::Uuid::new_v4().to_string();
+    db::meta_set(&conn, META_HW_UUID, &minted)?;
+    Ok(minted)
 }

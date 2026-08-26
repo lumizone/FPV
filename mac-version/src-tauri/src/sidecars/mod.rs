@@ -34,6 +34,9 @@ impl SidecarManager {
     }
 
     pub async fn shutdown_all(&self, client: &OllamaClient) -> AppResult<()> {
+        // Before Ollama, because it is the one with a grace period: an
+        // sd-cli render left running here outlives the app entirely.
+        crate::image::sdcpp::kill_active_render().await;
         if let Some(o) = self.ollama.lock().await.take() {
             if let Err(err) = o.kill(client).await {
                 warn!(?err, "ollama kill failed");

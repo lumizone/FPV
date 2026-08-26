@@ -514,7 +514,9 @@ pub async fn project_export(
             std::fs::write(&temp, &json)?;
             std::fs::rename(&temp, &destination)
         })();
-        if result.is_err() { let _ = std::fs::remove_file(&temp); }
+        if result.is_err() {
+            let _ = std::fs::remove_file(&temp);
+        }
         result
     })
     .await

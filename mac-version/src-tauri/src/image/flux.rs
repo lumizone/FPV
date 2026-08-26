@@ -8,7 +8,9 @@ use crate::error::{AppError, AppResult};
 use crate::image::{read_response_limited, validate_png_payload, ImageRequest, ImageResult};
 use crate::inference::cloud::CloudProvider;
 
-const BASE: &str = "https://api.bfl.ml/v1";
+// Keep in sync with `cloud_chat::BFL_BASE` — the same host was hardcoded
+// in two places, so the dead `.ml` domain had to be fixed twice.
+const BASE: &str = "https://api.bfl.ai/v1";
 /// Default model (see `image::default_cloud_model`); the user can pick
 /// another BFL endpoint live in Settings (`commands::image::image_cloud_models`
 /// returns a curated BFL list — the API is task-based and has no model-list
@@ -59,7 +61,12 @@ pub async fn generate(req: ImageRequest, model: &str) -> AppResult<ImageResult> 
     if !response.status().is_success() {
         return Err(AppError::Other("FLUX request failed (non-2xx)".into()));
     }
-    let body = read_response_limited(response, MAX_JSON_BYTES, "FLUX response exceeded size limit").await?;
+    let body = read_response_limited(
+        response,
+        MAX_JSON_BYTES,
+        "FLUX response exceeded size limit",
+    )
+    .await?;
     let resp: BflResponse = serde_json::from_slice(&body)
         .map_err(|_| AppError::Other("FLUX response was invalid".into()))?;
 
@@ -79,14 +86,12 @@ pub async fn generate(req: ImageRequest, model: &str) -> AppResult<ImageResult> 
         .await
         .map_err(|_| AppError::Other("FLUX image download failed".into()))?;
     if !response.status().is_success() {
-        return Err(AppError::Other("FLUX image download returned an error".into()));
+        return Err(AppError::Other(
+            "FLUX image download returned an error".into(),
+        ));
     }
-    let bytes = read_response_limited(
-        response,
-        MAX_PNG_BYTES,
-        "FLUX image exceeded size limit",
-    )
-    .await?;
+    let bytes =
+        read_response_limited(response, MAX_PNG_BYTES, "FLUX image exceeded size limit").await?;
     validate_png_payload(&bytes, MAX_PNG_BYTES)?;
 
     Ok(ImageResult {

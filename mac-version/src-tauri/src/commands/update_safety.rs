@@ -54,6 +54,17 @@ pub async fn pre_update_check(state: State<'_, AppState>) -> AppResult<PreUpdate
     let db_path = storage::db_path()?;
     let app_dir = storage::app_data_dir()?;
 
+    // Measured once, off the runtime. `dir_size` is a recursive stat walk
+    // over the whole app-data dir — model weights, every generated image,
+    // every log — and it used to run inline at each of the four exits
+    // below, blocking a tokio worker each time.
+    let data_size_bytes = {
+        let app_dir = app_dir.clone();
+        tokio::task::spawn_blocking(move || dir_size(&app_dir))
+            .await
+            .map_err(|e| AppError::Other(format!("data size scan failed: {e}")))?
+    };
+
     // (1) DB integrity. Open read-only to make sure even if a writer
     //     held the WAL we wouldn't block — APFS lets multiple readers
     //     in even when SQLite has the WAL open. URI path needs percent
@@ -66,7 +77,7 @@ pub async fn pre_update_check(state: State<'_, AppState>) -> AppResult<PreUpdate
         .replace(' ', "%20")
         .replace('?', "%3F")
         .replace('#', "%23");
-    let uri = format!("file:{}?mode=ro", path_escaped);
+    let uri = format!("file:{path_escaped}?mode=ro");
     let conn = match Connection::open_with_flags(
         &uri,
         OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_URI,
@@ -76,7 +87,7 @@ pub async fn pre_update_check(state: State<'_, AppState>) -> AppResult<PreUpdate
             return Ok(PreUpdateCheckResult {
                 ok: false,
                 reason: format!("Cannot open app database: {e}"),
-                data_size_bytes: dir_size(&app_dir),
+                data_size_bytes,
             });
         }
     };
@@ -91,35 +102,40 @@ pub async fn pre_update_check(state: State<'_, AppState>) -> AppResult<PreUpdate
                 "Database integrity check failed: {integrity}. \
                  Update blocked. Take a backup first or contact support."
             ),
-            data_size_bytes: dir_size(&app_dir),
+            data_size_bytes,
         });
     }
 
-    // (2) Security metadata present. These are initialized on first
-    //     launch and are needed for app identity verification.
+    // (2) The install id is present, i.e. app_meta survived and is
+    //     writable. It is minted on first launch, so its absence means
+    //     the database is not in the state this build expects.
+    //
+    //     This also used to require `crypto_salt_hex` and told the user
+    //     the app was "missing security metadata … cannot guarantee data
+    //     integrity", which implied an at-rest encryption scheme FPV does
+    //     not have. The salt is no longer written (see `init_install_id`),
+    //     so requiring it here would block the first update of every new
+    //     install.
     let conn = state.db.lock().await;
-    let salt_present = crate::db::meta_get(&conn, "crypto_salt_hex")?
-        .filter(|s| !s.is_empty())
-        .is_some();
-    let hw_present = crate::db::meta_get(&conn, "hardware_uuid")?
+    let install_id_present = crate::db::meta_get(&conn, "hardware_uuid")?
         .filter(|s| !s.is_empty())
         .is_some();
     drop(conn);
 
-    if !salt_present || !hw_present {
+    if !install_id_present {
         return Ok(PreUpdateCheckResult {
             ok: false,
-            reason: "App is missing security metadata (crypto_salt or hardware_uuid). \
-                     Cannot guarantee data integrity after update."
+            reason: "App is missing its install id, which is written on first launch. \
+                     The database may be damaged — take a backup before updating."
                 .into(),
-            data_size_bytes: dir_size(&app_dir),
+            data_size_bytes,
         });
     }
 
     Ok(PreUpdateCheckResult {
         ok: true,
         reason: String::new(),
-        data_size_bytes: dir_size(&app_dir),
+        data_size_bytes,
     })
 }
 
@@ -182,42 +198,83 @@ pub async fn backup_app_data(
         .unwrap_or(0);
     let backup_prefix = dest_root.join(format!("fpvdesktop-backup-{now}"));
 
-    // Hold the DB mutex across checkpoint and copy. This prevents an app
-    // writer from creating a new WAL between the checkpoint and the app.db
-    // copy, which would otherwise make the backup internally inconsistent.
-    let conn = state.db.lock().await;
-    conn.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
-        .map_err(|e| AppError::Other(format!("cannot create a consistent SQLite backup: {e}")))?;
-
-    // Seconds are not unique when two backups start together. Reserve the
-    // directory atomically and add a suffix on collision.
-    let backup_dir = (0u32..)
-        .map(|suffix| {
-            if suffix == 0 {
-                backup_prefix.clone()
-            } else {
-                dest_root.join(format!("fpvdesktop-backup-{now}-{suffix}"))
+    // Seconds are not unique when two backups start together, so a
+    // collision gets a suffix. Capped, and only `AlreadyExists` counts as
+    // a collision: the old form was `(0u32..).find(|c| create_dir(c).is_ok())`,
+    // which reads every failure as a name clash — on a read-only volume or
+    // a dir we lack write permission on, that is ~4 billion failing
+    // syscalls before it gives up, which the user experiences as a hang.
+    const MAX_BACKUP_DIR_ATTEMPTS: u32 = 64;
+    let mut backup_dir = None;
+    for suffix in 0..MAX_BACKUP_DIR_ATTEMPTS {
+        let candidate = if suffix == 0 {
+            backup_prefix.clone()
+        } else {
+            dest_root.join(format!("fpvdesktop-backup-{now}-{suffix}"))
+        };
+        match std::fs::create_dir(&candidate) {
+            Ok(()) => {
+                backup_dir = Some(candidate);
+                break;
             }
-        })
-        .find(|candidate| std::fs::create_dir(candidate).is_ok())
-        .ok_or_else(|| AppError::Other("could not create unique backup directory".into()))?;
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(e) => {
+                return Err(AppError::Other(format!(
+                    "cannot create backup directory: {e}"
+                )))
+            }
+        }
+    }
+    let backup_dir = backup_dir
+        .ok_or_else(|| AppError::Other("could not create a unique backup directory".into()))?;
 
-    // Never copy plaintext or quarantined secret files. Omit SQLite WAL
-    // sidecars: the checkpoint makes app.db self-contained, and the DB mutex
-    // prevents a concurrent writer while this copy runs.
+    // Never copy plaintext or quarantined secret files. The database is
+    // excluded here too and written afterwards by `VACUUM INTO`, which
+    // takes SQLite's own consistent snapshot — copying `app.db` by hand
+    // means also copying its WAL sidecars, and a writer committing
+    // between the two copies leaves the backup internally inconsistent.
     let skip = vec![
         src.join("secrets.json"),
         src.join("secrets.json.corrupt"),
+        src.join("app.db"),
         src.join("app.db-wal"),
         src.join("app.db-shm"),
     ];
-    let (bytes, file_count) = copy_dir_recursive(&src, &backup_dir, &skip)?;
-    drop(conn);
+
+    // Off the async runtime. This copies the WHOLE app-data dir — model
+    // weights included, so multi-GB and minutes-long is normal — and
+    // running it inline blocked a tokio worker thread for the duration.
+    // The DB lock is deliberately NOT held across it: every narration
+    // turn needs that lock, and the copy no longer touches the database.
+    let src_copy = src.clone();
+    let backup_dir_copy = backup_dir.clone();
+    let (bytes, file_count) =
+        tokio::task::spawn_blocking(move || copy_dir_recursive(&src_copy, &backup_dir_copy, &skip))
+            .await
+            .map_err(|e| AppError::Other(format!("backup copy task failed: {e}")))??;
+
+    // SQLite's own snapshot of the database, taken under the DB lock but
+    // on a blocking thread — `VACUUM INTO` reads and rewrites the whole
+    // file, which is not something to do on a runtime worker either.
+    let db_name = storage::db_path()?
+        .file_name()
+        .ok_or_else(|| AppError::Other("database path has no filename".into()))?
+        .to_os_string();
+    let backup_db = backup_dir.join(&db_name);
+    let backup_db_sql = backup_db.to_string_lossy().into_owned();
+    let db = state.db.clone();
+    let db_bytes = tokio::task::spawn_blocking(move || -> AppResult<u64> {
+        let conn = db.blocking_lock();
+        conn.execute("VACUUM INTO ?1", [backup_db_sql])?;
+        Ok(std::fs::metadata(&backup_db).map(|m| m.len()).unwrap_or(0))
+    })
+    .await
+    .map_err(|e| AppError::Other(format!("database snapshot task failed: {e}")))??;
 
     Ok(BackupResult {
         backup_path: backup_dir.to_string_lossy().into_owned(),
-        bytes,
-        file_count,
+        bytes: bytes.saturating_add(db_bytes),
+        file_count: file_count.saturating_add(1),
     })
 }
 

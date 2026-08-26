@@ -62,9 +62,24 @@ $TempDir    = Join-Path $env:TEMP "fpv-fetch-binaries-win"
 if (-not (Test-Path -LiteralPath $LockFile -PathType Leaf)) {
     throw "Missing Windows binary manifest: $LockFile"
 }
-# The lock is a simple PowerShell-compatible key/value file. Do not source
-# binaries.lock here: that manifest is macOS-only by design.
-. $LockFile
+# Parse the lock as plain key/value text. Do NOT dot-source it: dot-sourcing
+# is fragile here (on CRLF checkouts the value can carry a trailing \r, which
+# breaks exact `-eq` and `-notmatch ...$` comparisons) and the macOS-only
+# binaries.lock must never be sourced anyway.
+$LockMap = @{}
+foreach ($Line in Get-Content -LiteralPath $LockFile) {
+    if ($Line -match '^([A-Za-z_][A-Za-z0-9_]*)=(.*)$') {
+        $LockMap[$Matches[1]] = $Matches[2].Trim()
+    }
+}
+$TARGET              = $LockMap['TARGET']
+$OLLAMA_VERSION      = $LockMap['OLLAMA_VERSION']
+$OLLAMA_URL          = $LockMap['OLLAMA_URL']
+$OLLAMA_CHECKSUM_URL = $LockMap['OLLAMA_CHECKSUM_URL']
+$SD_CLI_TAG          = $LockMap['SD_CLI_TAG']
+$SD_CLI_ASSET        = $LockMap['SD_CLI_ASSET']
+$SD_CLI_URL          = $LockMap['SD_CLI_URL']
+$SD_CLI_RELEASE_URL  = $LockMap['SD_CLI_RELEASE_URL']
 if ($TARGET -ne "x86_64-pc-windows-msvc") { throw "Windows manifest target must be x86_64-pc-windows-msvc" }
 if ($OLLAMA_URL -notmatch 'ollama-windows-amd64\.zip$') { throw "Windows manifest Ollama URL is not the x64 archive" }
 if ($SD_CLI_URL -notmatch 'win-cpu-x64\.zip$') { throw "Windows manifest sd.cpp URL is not the x64 archive" }

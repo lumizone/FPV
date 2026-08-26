@@ -39,12 +39,13 @@ pub enum CloudProvider {
     Ai21,
     Venice,
     Bfl,
+    Fal,
     Custom,
 }
 
 impl CloudProvider {
     /// Every provider, for exhaustive iteration (e.g. clearing all BYOK keys).
-    pub const ALL: [CloudProvider; 34] = [
+    pub const ALL: [CloudProvider; 35] = [
         Self::Openai,
         Self::Anthropic,
         Self::Deepseek,
@@ -78,6 +79,7 @@ impl CloudProvider {
         Self::Ai21,
         Self::Venice,
         Self::Bfl,
+        Self::Fal,
         Self::Custom,
     ];
 
@@ -116,6 +118,7 @@ impl CloudProvider {
             "ai21" => Some(Self::Ai21),
             "venice" => Some(Self::Venice),
             "bfl" => Some(Self::Bfl),
+            "fal" => Some(Self::Fal),
             "custom" => Some(Self::Custom),
             _ => None,
         }
@@ -156,6 +159,7 @@ impl CloudProvider {
             Self::Ai21 => "ai21",
             Self::Venice => "venice",
             Self::Bfl => "bfl",
+            Self::Fal => "fal",
             Self::Custom => "custom",
         }
     }
@@ -217,5 +221,20 @@ mod tests {
         assert!(!result.contains("secret-value"));
         assert!(!result.contains("other"));
         assert!(result.contains("[redacted]"));
+    }
+}
+
+#[cfg(test)]
+mod fal_tests {
+    use super::CloudProvider;
+
+    #[test]
+    fn fal_round_trips_through_its_string_id() {
+        assert_eq!(CloudProvider::Fal.as_str(), "fal");
+        assert_eq!(CloudProvider::from_str("fal"), Some(CloudProvider::Fal));
+        assert!(
+            CloudProvider::ALL.contains(&CloudProvider::Fal),
+            "Fal must be in ALL or `clear_all` will silently skip its key on reset"
+        );
     }
 }

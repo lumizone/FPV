@@ -434,7 +434,9 @@ pub async fn session_undo(state: State<'_, AppState>, session_id: String) -> App
     drop(conn);
     if let Some(message_id) = deleted {
         // Best-effort cleanup of the turn's scene image (if any).
-        let dir = crate::storage::images_dir()?.join("scenes").join(&session_id);
+        let dir = crate::storage::images_dir()?
+            .join("scenes")
+            .join(&session_id);
         for ext in ["png", "json"] {
             let _ = std::fs::remove_file(dir.join(format!("{message_id}.{ext}")));
         }
@@ -587,7 +589,7 @@ pub async fn world_import_json(state: State<'_, AppState>, json: String) -> AppR
     }
 
     let value: serde_json::Value = serde_json::from_str(&json)
-        .map_err(|e| crate::error::AppError::Other(format!("Invalid story JSON: {}", e)))?;
+        .map_err(|e| crate::error::AppError::Other(format!("Invalid story JSON: {e}")))?;
     let template = if value.get("world").is_some() {
         serde_json::from_value::<Template>(value)
             .map_err(|e| crate::error::AppError::Other(format!("Invalid story template: {e}")))?

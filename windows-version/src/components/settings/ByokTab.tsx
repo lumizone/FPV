@@ -49,6 +49,7 @@ const PROVIDERS: ProviderInfo[] = [
   { id: "ai21", name: "AI21 (Jamba)", desc: "Jamba hybrid models.", placeholder: "..." },
   { id: "venice", name: "Venice.ai", desc: "Private, uncensored models — text + image.", placeholder: "...", logo: "venice.svg" },
   { id: "bfl", name: "Black Forest Labs (FLUX)", desc: "FLUX image models — key for image generation.", placeholder: "..." },
+  { id: "fal", name: "fal.ai", desc: "Image endpoints — you paste the endpoint id.", placeholder: "..." },
   { id: "custom", name: "Custom (OpenAI-compatible)", desc: "LM Studio, vLLM, SGLang, Ollama (remote), AIHubMix, 302.AI — any OpenAI-compatible endpoint. Local servers usually need no real key — any text will do.", placeholder: "sk-... (or any text for a local server)" },
 ];
 

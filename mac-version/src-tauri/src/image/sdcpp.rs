@@ -24,7 +24,7 @@
 //!   - no `CREATE_NO_WINDOW` (a Windows console concept).
 
 use std::path::Path;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 
 use crate::error::{AppError, AppResult};
 
@@ -879,7 +879,23 @@ fn verify_file_hash(dir: &Path, f: &ManifestFile) -> bool {
     true
 }
 
+/// [`weights_ready_for`] off the async runtime.
+///
+/// On a cold verification cache this hashes every manifest file — several
+/// GB per model — and it is called per-model when the model list is
+/// opened and on every system-status poll. Run inline on a runtime worker
+/// it froze the whole app, narration included, for as long as the read
+/// took.
+pub async fn weights_ready_for_async(model: LocalModel) -> bool {
+    tokio::task::spawn_blocking(move || weights_ready_for(model))
+        .await
+        .unwrap_or(false)
+}
+
 /// True when every manifest file is present and non-partial.
+///
+/// Synchronous and potentially very slow — see [`weights_ready_for_async`]
+/// before calling this from an `async fn`.
 pub fn weights_ready_for(model: LocalModel) -> bool {
     let Ok(dir) = weights_dir() else {
         return false;
@@ -896,6 +912,72 @@ pub fn weights_ready_for(model: LocalModel) -> bool {
 /// second render starts when the first finishes.
 static LOCAL_RENDER_LOCK: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
 static IMAGE_CANCEL_REQUESTED: AtomicBool = AtomicBool::new(false);
+
+/// PID of the `sd-cli` child currently rendering, or 0 for none.
+/// `LOCAL_RENDER_LOCK` keeps that to at most one at a time.
+static ACTIVE_RENDER_PID: AtomicU32 = AtomicU32::new(0);
+
+/// Publishes the live render's PID for [`kill_active_render`] and clears
+/// it again on every way out of the render — success, error, timeout,
+/// cancel, unwind. A stale PID is not harmless: shutdown would go on to
+/// signal whatever process the OS handed that number to next.
+struct ActiveRenderPid;
+
+impl ActiveRenderPid {
+    fn publish(pid: Option<u32>) -> Self {
+        ACTIVE_RENDER_PID.store(pid.unwrap_or(0), Ordering::SeqCst);
+        Self
+    }
+}
+
+impl Drop for ActiveRenderPid {
+    fn drop(&mut self) {
+        ACTIVE_RENDER_PID.store(0, Ordering::SeqCst);
+    }
+}
+
+/// Terminate an `sd-cli` still rendering at shutdown.
+///
+/// Nothing else does. `SidecarManager` only ever tracked Ollama, tokio
+/// does not kill children on drop, and a Unix parent exiting does not
+/// take its children with it — so quitting mid-generation left sd-cli
+/// grinding through a render whose output nobody would collect, holding
+/// the GPU. The 15-minute render timeout is no help either: the task
+/// that owns it dies with the app.
+///
+/// Best-effort, and async so the grace period between the two signals
+/// does not park a runtime worker — the whole shutdown budget is 5
+/// seconds and every sidecar's grace has to fit inside it.
+pub async fn kill_active_render() {
+    let pid = ACTIVE_RENDER_PID.swap(0, Ordering::SeqCst);
+    if pid == 0 {
+        return;
+    }
+    tracing::warn!(pid, "terminating in-flight sd-cli render at shutdown");
+    signal_render(pid, false);
+    tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+    signal_render(pid, true);
+}
+
+#[cfg(unix)]
+fn signal_render(pid: u32, force: bool) {
+    let signal = if force { "-KILL" } else { "-TERM" };
+    let _ = std::process::Command::new("/bin/kill")
+        .args([signal, &pid.to_string()])
+        .status();
+}
+
+#[cfg(windows)]
+fn signal_render(pid: u32, force: bool) {
+    // Windows has no SIGTERM for a console child; the graceful pass is a
+    // no-op and the second call does the work.
+    if !force {
+        return;
+    }
+    let _ = std::process::Command::new("taskkill")
+        .args(["/PID", &pid.to_string(), "/T", "/F"])
+        .status();
+}
 
 /// Serializes weight downloads across models because manifests share encoder
 /// and VAE files. Concurrent `.part` writes are not safe.
@@ -934,6 +1016,11 @@ pub async fn generate(req: crate::image::ImageRequest) -> AppResult<crate::image
     use base64::Engine;
 
     let _render_slot = LOCAL_RENDER_LOCK.lock().await;
+    // Then the cross-subsystem slot: waits out any narration turn already
+    // generating, and holds off ones that would start under this render.
+    // Taken AFTER `LOCAL_RENDER_LOCK` everywhere, and narration never takes
+    // that lock, so the two can't be acquired in opposite orders.
+    let _compute_slot = crate::resource_gate::render_slot().await;
     // A request made while another render holds the slot must survive the
     // wait. Consume it only after acquiring the slot, before doing any work.
     if take_cancel_request(&IMAGE_CANCEL_REQUESTED) {
@@ -1032,6 +1119,8 @@ pub async fn generate(req: crate::image::ImageRequest) -> AppResult<crate::image
         .stderr(std::process::Stdio::piped())
         .spawn()
         .map_err(|e| AppError::Other(format!("sd-cli spawn failed: {e}")))?;
+    // Dropped on every return below, so the PID never outlives the child.
+    let _render_pid = ActiveRenderPid::publish(child.id());
     let pump_out = child.stdout.take().map(|p| tokio::spawn(pump_progress(p)));
     let pump_err = child.stderr.take().map(|p| tokio::spawn(pump_progress(p)));
     // A hung sd-cli holds LOCAL_RENDER_LOCK forever otherwise — every

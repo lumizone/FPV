@@ -142,7 +142,7 @@ export function PreferenceStep({ onContinue }: Props) {
                 }`}
               >
                 <span className={`text-[12px] font-medium ${active ? "text-[var(--color-label-primary)]" : "text-[var(--color-label-secondary)]"}`}>
-                  {opt.label}
+                  {t(`onboarding.prefs.${opt.key}`, opt.label)}
                 </span>
                 <span className="text-[10.5px] text-[var(--color-label-tertiary)]">
                   {opt.sub}

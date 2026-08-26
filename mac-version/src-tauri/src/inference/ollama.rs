@@ -46,6 +46,10 @@ impl OllamaClient {
     }
 
     pub async fn chat(&self, req: ChatRequest) -> AppResult<ChatResponse> {
+        // Admission control: a local render holds several GB and so does
+        // the model this call is about to make resident. See
+        // `crate::resource_gate`.
+        let _slot = crate::resource_gate::narration_slot().await;
         let url = format!("{}/api/chat", self.base_url);
         let resp = self
             .http
@@ -140,6 +144,10 @@ impl OllamaClient {
         F: FnMut(&str) + Send,
     {
         use futures_util::StreamExt;
+        // Admission control: a local render holds several GB and so does
+        // the model this call is about to make resident. See
+        // `crate::resource_gate`.
+        let _slot = crate::resource_gate::narration_slot().await;
         let url = format!("{}/api/chat", self.base_url);
         let body = stream_body(&req);
         // Long generations on big models can run past the client's 120 s
@@ -178,8 +186,7 @@ impl OllamaClient {
             buf.extend_from_slice(&chunk);
             if buf.len() > MAX_BUF_BYTES {
                 return Err(AppError::Ollama(format!(
-                    "stream: buffer exceeded {} bytes without newline (proxy/server issue)",
-                    MAX_BUF_BYTES
+                    "stream: buffer exceeded {MAX_BUF_BYTES} bytes without newline (proxy/server issue)"
                 )));
             }
             while let Some(idx) = buf.iter().position(|b| *b == b'\n') {
@@ -259,7 +266,9 @@ impl OllamaClient {
             let chunk = chunk?;
             buf.extend_from_slice(&chunk);
             if buf.len() > MAX_PULL_LINE_BYTES {
-                return Err(AppError::Ollama("pull NDJSON line exceeded size limit".into()));
+                return Err(AppError::Ollama(
+                    "pull NDJSON line exceeded size limit".into(),
+                ));
             }
             while let Some(idx) = buf.iter().position(|b| *b == b'\n') {
                 let line = buf.drain(..=idx).collect::<Vec<u8>>();
@@ -286,8 +295,12 @@ impl OllamaClient {
         if !buf.is_empty() {
             match parse_pull_line(&buf) {
                 PullLine::Progress(pp) => on_progress(pp),
-                PullLine::Error(msg) => return Err(AppError::Ollama(format!("pull failed: {msg}"))),
-                PullLine::Other => return Err(AppError::Ollama("pull returned malformed NDJSON".into())),
+                PullLine::Error(msg) => {
+                    return Err(AppError::Ollama(format!("pull failed: {msg}")))
+                }
+                PullLine::Other => {
+                    return Err(AppError::Ollama("pull returned malformed NDJSON".into()))
+                }
             }
         }
         Ok(())
@@ -324,6 +337,10 @@ impl OllamaClient {
     /// 600 s per-request override that `chat()` and `chat_stream()`
     /// already apply.
     pub async fn embed(&self, model: &str, prompt: &str) -> AppResult<Vec<f32>> {
+        // Admission control: a local render holds several GB and so does
+        // the model this call is about to make resident. See
+        // `crate::resource_gate`.
+        let _slot = crate::resource_gate::narration_slot().await;
         let url = format!("{}/api/embeddings", self.base_url);
         let body = serde_json::json!({ "model": model, "prompt": prompt });
         let resp = self

@@ -1,6 +1,7 @@
 //! FPV image generation — local stable-diffusion.cpp and optional OpenAI Images.
 //! Generates world covers and narrative scene illustrations.
 
+mod fal;
 pub mod flux;
 pub mod imagen;
 pub mod local;
@@ -18,7 +19,9 @@ pub(crate) async fn validate_public_image_url(url: &url::Url) -> AppResult<()> {
     use std::net::IpAddr;
 
     if url.scheme() != "https" || url.username() != "" || url.host_str().is_none() {
-        return Err(AppError::Other("image URL was not a safe public HTTPS URL".into()));
+        return Err(AppError::Other(
+            "image URL was not a safe public HTTPS URL".into(),
+        ));
     }
     let host = url.host_str().unwrap();
     let addresses = if let Ok(ip) = host.parse::<IpAddr>() {
@@ -30,16 +33,35 @@ pub(crate) async fn validate_public_image_url(url: &url::Url) -> AppResult<()> {
             .map(|address| address.ip())
             .collect()
     };
-    if addresses.is_empty() || addresses.iter().any(|ip| match ip {
-        IpAddr::V4(ip) => ip.is_private() || ip.is_loopback() || ip.is_link_local()
-            || ip.is_unspecified() || ip.is_broadcast() || ip.is_multicast(),
-        IpAddr::V6(ip) => ip.to_ipv4_mapped().is_some_and(|mapped| {
-            mapped.is_private() || mapped.is_loopback() || mapped.is_link_local()
-                || mapped.is_unspecified() || mapped.is_broadcast() || mapped.is_multicast()
-        }) || ip.is_loopback() || ip.is_unicast_link_local()
-            || ip.is_unique_local() || ip.is_unspecified() || ip.is_multicast(),
-    }) {
-        return Err(AppError::Other("image URL was not a safe public HTTPS URL".into()));
+    if addresses.is_empty()
+        || addresses.iter().any(|ip| match ip {
+            IpAddr::V4(ip) => {
+                ip.is_private()
+                    || ip.is_loopback()
+                    || ip.is_link_local()
+                    || ip.is_unspecified()
+                    || ip.is_broadcast()
+                    || ip.is_multicast()
+            }
+            IpAddr::V6(ip) => {
+                ip.to_ipv4_mapped().is_some_and(|mapped| {
+                    mapped.is_private()
+                        || mapped.is_loopback()
+                        || mapped.is_link_local()
+                        || mapped.is_unspecified()
+                        || mapped.is_broadcast()
+                        || mapped.is_multicast()
+                }) || ip.is_loopback()
+                    || ip.is_unicast_link_local()
+                    || ip.is_unique_local()
+                    || ip.is_unspecified()
+                    || ip.is_multicast()
+            }
+        })
+    {
+        return Err(AppError::Other(
+            "image URL was not a safe public HTTPS URL".into(),
+        ));
     }
     Ok(())
 }
@@ -78,26 +100,72 @@ pub(crate) fn validate_png_payload(bytes: &[u8], max_bytes: usize) -> AppResult<
         return Err(AppError::Config("payload is not a valid PNG".into()));
     }
     let ihdr_len = u32::from_be_bytes(bytes[8..12].try_into().unwrap());
-    if ihdr_len != 13 { return Err(AppError::Config("PNG IHDR is invalid".into())); }
+    if ihdr_len != 13 {
+        return Err(AppError::Config("PNG IHDR is invalid".into()));
+    }
     let width = u32::from_be_bytes(bytes[16..20].try_into().unwrap());
     let height = u32::from_be_bytes(bytes[20..24].try_into().unwrap());
-    if width == 0 || height == 0 || width > 8192 || height > 8192 { return Err(AppError::Config("PNG has invalid dimensions".into())); }
+    if width == 0 || height == 0 || width > 8192 || height > 8192 {
+        return Err(AppError::Config("PNG has invalid dimensions".into()));
+    }
     let mut offset = 8usize;
     let mut saw_ihdr = false;
     let mut saw_iend = false;
     while offset < bytes.len() {
-        if bytes.len() - offset < 12 { return Err(AppError::Config("PNG chunk is truncated".into())); }
-        let len = u32::from_be_bytes(bytes[offset..offset+4].try_into().unwrap()) as usize;
-        let end = offset.checked_add(12).and_then(|n| n.checked_add(len)).ok_or_else(|| AppError::Config("PNG chunk is too large".into()))?;
-        if end > bytes.len() { return Err(AppError::Config("PNG chunk is truncated".into())); }
-        let kind = &bytes[offset+4..offset+8];
-        if !saw_ihdr && kind != b"IHDR" { return Err(AppError::Config("PNG IHDR must be first".into())); }
-        if kind == b"IHDR" { if saw_ihdr || len != 13 { return Err(AppError::Config("PNG IHDR is invalid".into())); } saw_ihdr = true; }
-        if kind == b"IEND" { if len != 0 { return Err(AppError::Config("PNG IEND is invalid".into())); } saw_iend = true; if end != bytes.len() { return Err(AppError::Config("PNG has trailing data".into())); } break; }
+        if bytes.len() - offset < 12 {
+            return Err(AppError::Config("PNG chunk is truncated".into()));
+        }
+        let len = u32::from_be_bytes(bytes[offset..offset + 4].try_into().unwrap()) as usize;
+        let end = offset
+            .checked_add(12)
+            .and_then(|n| n.checked_add(len))
+            .ok_or_else(|| AppError::Config("PNG chunk is too large".into()))?;
+        if end > bytes.len() {
+            return Err(AppError::Config("PNG chunk is truncated".into()));
+        }
+        let kind = &bytes[offset + 4..offset + 8];
+        if !saw_ihdr && kind != b"IHDR" {
+            return Err(AppError::Config("PNG IHDR must be first".into()));
+        }
+        if kind == b"IHDR" {
+            if saw_ihdr || len != 13 {
+                return Err(AppError::Config("PNG IHDR is invalid".into()));
+            }
+            saw_ihdr = true;
+        }
+        if kind == b"IEND" {
+            if len != 0 {
+                return Err(AppError::Config("PNG IEND is invalid".into()));
+            }
+            saw_iend = true;
+            if end != bytes.len() {
+                return Err(AppError::Config("PNG has trailing data".into()));
+            }
+            break;
+        }
         offset = end;
     }
-    if !saw_ihdr || !saw_iend { return Err(AppError::Config("PNG is missing IEND".into())); }
+    if !saw_ihdr || !saw_iend {
+        return Err(AppError::Config("PNG is missing IEND".into()));
+    }
     Ok(())
+}
+
+/// Szerokość i wysokość z nagłówka IHDR, albo `None` gdy to nie jest PNG
+/// lub jest za krótki.
+///
+/// Istnieje, żeby providerzy, którzy nie raportują parametrów generowania
+/// (fal.ai), mogli zapisać PRAWDZIWE wymiary zamiast tych, o które prosili.
+/// Bez tego `ImageResult` niósłby to, co wysłaliśmy w żądaniu — a to nie
+/// to samo, jeśli endpoint zignorował rozmiar.
+pub(crate) fn png_dimensions(bytes: &[u8]) -> Option<(u32, u32)> {
+    const PNG_SIGNATURE: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
+    if bytes.len() < 24 || &bytes[..8] != PNG_SIGNATURE || &bytes[12..16] != b"IHDR" {
+        return None;
+    }
+    let width = u32::from_be_bytes(bytes[16..20].try_into().ok()?);
+    let height = u32::from_be_bytes(bytes[20..24].try_into().ok()?);
+    (width > 0 && height > 0).then_some((width, height))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -111,6 +179,7 @@ pub enum ImageProvider {
     CogView,
     Flux,
     Imagen,
+    Fal,
 }
 
 impl ImageProvider {
@@ -123,6 +192,7 @@ impl ImageProvider {
             "cogview" => Some(Self::CogView),
             "flux" => Some(Self::Flux),
             "imagen" => Some(Self::Imagen),
+            "fal" => Some(Self::Fal),
             _ => None,
         }
     }
@@ -136,6 +206,7 @@ impl ImageProvider {
             Self::CogView => "cogview",
             Self::Flux => "flux",
             Self::Imagen => "imagen",
+            Self::Fal => "fal",
         }
     }
 
@@ -145,7 +216,7 @@ impl ImageProvider {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct ImageRequest {
     pub prompt: String,
     pub style: ImageStyle,
@@ -235,6 +306,7 @@ pub async fn generate(
         }
         ImageProvider::Flux => flux::generate(req, model).await,
         ImageProvider::Imagen => imagen::generate(req, model).await,
+        ImageProvider::Fal => fal::generate(req, model).await,
     }
 }
 
@@ -252,6 +324,10 @@ pub fn default_cloud_model(provider: ImageProvider) -> &'static str {
         ImageProvider::CogView => "cogview-3-flash",
         ImageProvider::Flux => "flux-pro-1.1",
         ImageProvider::Imagen => "gemini-2.5-flash-image",
+        // Pusty celowo — endpoint fal JEST modelem i podaje go użytkownik.
+        // `fal::generate` odrzuca pustą wartość własnym komunikatem
+        // z instrukcją, zamiast wysyłać żądanie na zgadnięty endpoint.
+        ImageProvider::Fal => "",
     }
 }
 
@@ -265,6 +341,7 @@ pub fn meta_key_for_model(provider: ImageProvider) -> &'static str {
         ImageProvider::CogView => "image_model_cogview",
         ImageProvider::Flux => "image_model_flux",
         ImageProvider::Imagen => "image_model_imagen",
+        ImageProvider::Fal => "image_model_fal",
     }
 }
 
@@ -281,10 +358,7 @@ fn openai_compat_image_config(provider: ImageProvider) -> (&'static str, CloudPr
             "https://api.hunyuan.cloud.tencent.com/v1",
             CloudProvider::Hunyuan,
         ),
-        ImageProvider::CogView => (
-            "https://open.bigmodel.cn/api/paas/v4",
-            CloudProvider::Zhipu,
-        ),
+        ImageProvider::CogView => ("https://open.bigmodel.cn/api/paas/v4", CloudProvider::Zhipu),
         _ => unreachable!("only OpenAI-compatible image providers reach here"),
     }
 }
@@ -329,5 +403,38 @@ mod tests {
             Some(ImageProvider::Openai)
         );
         assert_eq!(ImageProvider::Openai.as_str(), "openai");
+    }
+
+    #[test]
+    fn fal_is_a_cloud_provider_with_no_pinned_default_model() {
+        assert_eq!(super::ImageProvider::Fal.as_str(), "fal");
+        assert_eq!(super::ImageProvider::from_str("fal"), Some(super::ImageProvider::Fal));
+        assert!(super::ImageProvider::Fal.is_cloud());
+        assert_eq!(super::meta_key_for_model(super::ImageProvider::Fal), "image_model_fal");
+        // Pusty string, NIE nazwa modelu: endpoint podaje użytkownik, a
+        // przypięta wartość zestarzałaby się cicho.
+        assert_eq!(super::default_cloud_model(super::ImageProvider::Fal), "");
+    }
+
+    #[test]
+    fn png_dimensions_reads_the_ihdr_header() {
+        // Minimalny prawidłowy nagłówek PNG: sygnatura + długość chunku (13)
+        // + "IHDR" + szerokość 640 + wysokość 480.
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"\x89PNG\r\n\x1a\n");
+        bytes.extend_from_slice(&13u32.to_be_bytes());
+        bytes.extend_from_slice(b"IHDR");
+        bytes.extend_from_slice(&640u32.to_be_bytes());
+        bytes.extend_from_slice(&480u32.to_be_bytes());
+        bytes.extend_from_slice(&[8, 6, 0, 0, 0]);
+        assert_eq!(super::png_dimensions(&bytes), Some((640, 480)));
+    }
+
+    #[test]
+    fn png_dimensions_refuses_anything_that_is_not_a_png() {
+        assert_eq!(super::png_dimensions(b"\xff\xd8\xff\xe0 jpeg"), None);
+        assert_eq!(super::png_dimensions(b""), None);
+        // Obcięty tuż przed polem wysokości — nie wolno tu spanikować.
+        assert_eq!(super::png_dimensions(b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00"), None);
     }
 }

@@ -49,12 +49,62 @@ pub fn images_dir() -> AppResult<PathBuf> {
 /// Private scratch space for short-lived renderer inputs and outputs. It is
 /// app-owned rather than the shared system temp directory because references
 /// can contain user portraits or other sensitive material.
+///
+/// "Private" is enforced, not just asserted: `create_dir_all` honours the
+/// process umask (usually 0755), which would leave these readable by every
+/// other local user. `secret_store` already tightens its own directory the
+/// same way and for the same reason.
 pub fn renderer_temp_dir() -> AppResult<PathBuf> {
     let p = app_data_dir()?.join("renderer-temp");
     if !p.exists() {
         std::fs::create_dir_all(&p)?;
     }
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if let Ok(metadata) = std::fs::metadata(&p) {
+            let mut perms = metadata.permissions();
+            if perms.mode() & 0o077 != 0 {
+                perms.set_mode(0o700);
+                let _ = std::fs::set_permissions(&p, perms);
+            }
+        }
+    }
     Ok(p)
+}
+
+/// Delete whatever a previous run left in the renderer scratch space.
+///
+/// The render path removes its own temp files on every normal exit, but a
+/// crash, a Force Quit or an OOM kill skips all of it — and what stays
+/// behind is exactly the sensitive material this directory exists to keep
+/// private: decoded reference portraits, kontext refs, and finished PNGs
+/// nobody collected. They were never cleaned up by anything, so they
+/// accumulated for the life of the install.
+///
+/// Safe to run at boot and only at boot: the single-instance plugin means
+/// no other copy of the app is rendering, and the orphan sweep has already
+/// killed any `sd-cli` left over from last time.
+pub fn sweep_renderer_temp() {
+    let Ok(dir) = renderer_temp_dir() else {
+        return;
+    };
+    let Ok(entries) = std::fs::read_dir(&dir) else {
+        return;
+    };
+    let mut removed = 0usize;
+    for entry in entries.flatten() {
+        // Files only. A directory here is not ours and not something to
+        // recurse into unprompted.
+        if entry.file_type().is_ok_and(|kind| kind.is_file())
+            && std::fs::remove_file(entry.path()).is_ok()
+        {
+            removed += 1;
+        }
+    }
+    if removed > 0 {
+        tracing::info!(removed, "swept renderer scratch files from a previous run");
+    }
 }
 
 /// App-owned Ollama model store. Before this, the bundled Ollama used

@@ -23,7 +23,14 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: 1.77.0
+          # Must stay at or above `rust-version` in src-tauri/Cargo.toml.
+          # The old pin was below it while the code already used APIs
+          # stabilised in 1.84 (the SSRF guard's Ipv6Addr helpers), so the
+          # very first CI run was going to fail at `cargo check` no matter
+          # what happened with billing. 1.88.0 is required by crates in the
+          # committed Cargo.lock (darling@0.23, icu@2.3) — keep the pin and
+          # Cargo.toml's rust-version in lockstep.
+          toolchain: 1.88.0
           components: clippy
 
       - name: Rust cache
@@ -55,13 +62,25 @@ jobs:
       - name: Static privacy check
         shell: pwsh
         run: |
-          $matches = rg -n 'supabase|SUPABASE_URL|createClient\(' src src-tauri/src
-          if ($LASTEXITCODE -eq 0) {
-            $matches
-            throw "External database references found in shipped source"
+          # ripgrep is NOT preinstalled on windows-latest runners, so use
+          # git grep (git is guaranteed present) with the same semantics:
+          # exit 0 = match found, 1 = no match, >1 = error.
+          # NB: `pwsh -Command` inherits $LASTEXITCODE from the last native
+          # command, so every branch ends with an explicit `exit` — a bare
+          # "PASS" Write-Host still made the step exit 1 (seen on CI).
+          $hits = git grep -n -E 'supabase|SUPABASE_URL|createClient\(' -- src src-tauri/src
+          $code = $LASTEXITCODE
+          if ($code -eq 0) {
+            $hits
+            Write-Error "External database references found in shipped source"
+            exit 1
           }
-          if ($LASTEXITCODE -gt 1) { throw "Privacy scan failed" }
+          if ($code -gt 1) {
+            Write-Error "Privacy scan failed"
+            exit 2
+          }
           Write-Host "PASS - no Supabase client or URL in shipped source"
+          exit 0
 
       - name: Build frontend
         run: npm run build
@@ -110,7 +129,8 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: 1.77.0
+          # Keep in sync with the check-windows job above.
+          toolchain: 1.88.0
 
       - name: Rust cache
         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2

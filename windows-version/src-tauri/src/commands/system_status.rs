@@ -44,8 +44,8 @@ pub async fn system_status(state: State<'_, AppState>) -> AppResult<SystemStatus
         crate::commands::image::read_local_model(&conn)
     };
     let (_, ram_gb) = crate::image::local::check();
-    let image_provider_ready =
-        ram_gb >= local_model.min_ram_gib() && crate::image::sdcpp::weights_ready_for(local_model);
+    let image_provider_ready = ram_gb >= local_model.min_ram_gib()
+        && crate::image::sdcpp::weights_ready_for_async(local_model).await;
 
     Ok(SystemStatus {
         ollama_up,

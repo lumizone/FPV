@@ -26,7 +26,7 @@ used = collections.Counter()
 for f in list(SRC.rglob("*.tsx")) + list(SRC.rglob("*.ts")):
     if "i18n/locales" in str(f):
         continue
-    for m in CALL.finditer(f.read_text()):
+    for m in CALL.finditer(f.read_text(encoding="utf-8")):
         used[m.group(1)] += 1
 
 def flat(o, p=""):
@@ -36,7 +36,7 @@ def flat(o, p=""):
         out.update(flat(v, n)) if isinstance(v, dict) else out.update({n: v})
     return out
 
-locales = {p.stem: flat(json.loads(p.read_text())) for p in sorted(LOC.glob("*.json"))}
+locales = {p.stem: flat(json.loads(p.read_text(encoding="utf-8"))) for p in sorted(LOC.glob("*.json"))}
 en = locales["en"]
 print(f"keys used in code: {len(used)}   keys in en.json: {len(en)}\n")
 

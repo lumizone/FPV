@@ -108,7 +108,7 @@ pub async fn gpu_runtime_retry_image(
                 crate::commands::image::read_local_model(&conn),
             )
         };
-        if !local || crate::image::local::weights_status_of(model) != Some(true) {
+        if !local || crate::image::local::weights_status_of_async(model).await != Some(true) {
             return Ok(());
         }
         crate::sidecars::gpu_runtime::fetch_gpu_runtime(&app).await

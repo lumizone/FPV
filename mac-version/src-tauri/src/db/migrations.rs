@@ -41,6 +41,7 @@ const MIGRATIONS: &[(&str, &str)] = &[
     ("v27_world_privacy_mode", super::schema::V27),
     ("v28_cloud_daily_spend_ledger", super::schema::V28),
     ("v29_story_state_history", super::schema::V29),
+    ("v30_drop_local_waifu_tables", super::schema::V30),
 ];
 
 pub fn run(conn: &Connection) -> AppResult<()> {
@@ -107,6 +108,71 @@ mod tests {
         assert_eq!(applied_again, applied);
     }
 
+    /// The dead Local Waifu tables are gone, the live FPV ones are not,
+    /// and the drops succeed with `foreign_keys` ON — which the in-memory
+    /// chain test above does not exercise, since enforcement is switched
+    /// on in `db::open_connection`, not by `run`. Get the drop order wrong
+    /// and this is what fails.
+    #[test]
+    fn v30_drops_every_local_waifu_table_with_foreign_keys_enforced() {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.pragma_update(None, "foreign_keys", "ON").unwrap();
+        run(&conn).unwrap();
+
+        let exists = |table: &str| -> bool {
+            conn.query_row(
+                "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?1)",
+                [table],
+                |r| r.get::<_, i64>(0),
+            )
+            .unwrap()
+                == 1
+        };
+
+        for dead in [
+            "anticipations",
+            "behavior_history",
+            "chat_messages",
+            "characters",
+            "conversations",
+            "entities",
+            "feedback_events",
+            "lorebook_entries",
+            "memories",
+            "memory_blocks",
+            "mood_state",
+            "open_threads",
+            "proactive_log",
+            "relations",
+            "relationship",
+            "relationship_milestones",
+            "surprisal_stats",
+        ] {
+            assert!(
+                !exists(dead),
+                "`{dead}` is Local Waifu's and must be dropped"
+            );
+        }
+
+        for live in [
+            "app_meta",
+            "worlds",
+            "sessions",
+            "messages",
+            "fpv_characters",
+            "fpv_story_state",
+            "fpv_story_state_history",
+            "codex_entries",
+            "story_memory_records",
+            "story_memory_fts",
+            "story_pinned_canon",
+            "world_visual_bibles",
+            "cloud_daily_spend_ledger",
+        ] {
+            assert!(exists(live), "`{live}` is FPV's own and must survive");
+        }
+    }
+
     #[test]
     fn full_chain_survives_file_database_reopen() {
         let dir = tempfile::tempdir().unwrap();
@@ -131,106 +197,14 @@ mod tests {
             .unwrap();
     }
 
-    #[test]
-    fn v15_migrates_saved_embed_pref_and_nulls_vectors() {
-        let conn = Connection::open_in_memory().unwrap();
-        run(&conn).unwrap();
-        // Seed a character + memory with a fake embedding + the old
-        // saved embed preference, then re-apply V15's body directly to
-        // confirm its effect (FK enforcement is on, so the character
-        // row is required first).
-        conn.execute(
-            "INSERT INTO characters (id, name, created_at, last_active_at) VALUES ('c1','Yumi',0,0)",
-            [],
-        )
-        .unwrap();
-        conn.execute(
-            "INSERT INTO memories (id, character_id, kind, content, importance, emotional_weight, embedding, created_at, ref_count)
-             VALUES ('m1','c1','fact','hi',0.5,0.0,X'00',0,0)",
-            [],
-        )
-        .unwrap();
-        conn.execute(
-            "INSERT INTO app_meta (key, value) VALUES ('user_embed_model','nomic-embed-text')",
-            [],
-        )
-        .unwrap();
+    // Local Waifu's own v15 / v17 backfill tests lived here. They seeded
+    // `characters`, `memories` and `chat_messages` and asserted on the
+    // result — tables v30 now drops at the end of the chain, so the
+    // assertions had nothing left to read. The backfills themselves still
+    // run on a fresh database and are covered by
+    // `full_chain_runs_and_is_idempotent`; what they produce is dropped
+    // immediately afterwards and is no longer observable in FPV.
 
-        conn.execute_batch(super::super::schema::V15).unwrap();
-
-        let emb: Option<Vec<u8>> = conn
-            .query_row("SELECT embedding FROM memories WHERE id='m1'", [], |r| {
-                r.get(0)
-            })
-            .unwrap();
-        assert!(emb.is_none(), "embedding should be nulled");
-        let pref: String = conn
-            .query_row(
-                "SELECT value FROM app_meta WHERE key='user_embed_model'",
-                [],
-                |r| r.get(0),
-            )
-            .unwrap();
-        assert_eq!(pref, "embeddinggemma");
-    }
-
-    #[test]
-    fn v17_backfills_one_conversation_per_character_and_adopts_messages() {
-        let conn = Connection::open_in_memory().unwrap();
-        run(&conn).unwrap();
-        // Two characters, each with a message, written the way the app
-        // wrote them BEFORE V17 (conversation_id left NULL).
-        for (cid, name) in [("c1", "Yumi"), ("c2", "Aki")] {
-            conn.execute(
-                "INSERT INTO characters (id, name, created_at, last_active_at) VALUES (?1, ?2, 0, 0)",
-                rusqlite::params![cid, name],
-            )
-            .unwrap();
-            conn.execute(
-                "INSERT INTO chat_messages (id, character_id, role, content, source, created_at, conversation_id)
-                 VALUES (?1, ?2, 'user', 'hi', 'app', 0, NULL)",
-                rusqlite::params![format!("m_{cid}"), cid],
-            )
-            .unwrap();
-        }
-        // Re-run just the (idempotent) backfill half of V17 directly to
-        // exercise it against the seeded rows (the initial run() already
-        // applied the one-shot schema-shape half + backfilled the empty
-        // DB; V17_SCHEMA's ALTER TABLE can't be re-run, but V17_BACKFILL
-        // is safe to re-run any number of times).
-        conn.execute_batch(super::super::schema::V17_BACKFILL)
-            .unwrap();
-
-        let conv_count: i64 = conn
-            .query_row("SELECT COUNT(*) FROM conversations", [], |r| r.get(0))
-            .unwrap();
-        assert_eq!(conv_count, 2);
-        let orphans: i64 = conn
-            .query_row(
-                "SELECT COUNT(*) FROM chat_messages WHERE conversation_id IS NULL",
-                [],
-                |r| r.get(0),
-            )
-            .unwrap();
-        assert_eq!(orphans, 0);
-        let mismatched: i64 = conn
-            .query_row(
-                "SELECT COUNT(*) FROM chat_messages m
-                 JOIN conversations c ON c.id = m.conversation_id
-                 WHERE c.character_id != m.character_id",
-                [],
-                |r| r.get(0),
-            )
-            .unwrap();
-        assert_eq!(mismatched, 0);
-    }
-
-    // Guard against silent drift between the registered migration body
-    // (`V17`) and the re-runnable backfill half (`V17_BACKFILL`). `V17`
-    // is `concat!(schema_shape, backfill)` — a textual copy of the
-    // backfill — so if someone edits `V17_BACKFILL` without updating
-    // `V17`'s copy, the real migration and the tested/repair backfill
-    // would diverge. This assertion keeps them locked together.
     #[test]
     fn v17_registered_body_contains_the_backfill_half() {
         assert!(

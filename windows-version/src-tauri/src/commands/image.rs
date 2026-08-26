@@ -42,7 +42,10 @@ pub async fn image_local_check(state: State<'_, AppState>) -> AppResult<ImageChe
             let conn = state.db.lock().await;
             read_local_model(&conn)
         };
-        (image::local::weights_status_of(model), model.min_ram_gib())
+        (
+            image::local::weights_status_of_async(model).await,
+            model.min_ram_gib(),
+        )
     } else {
         (None, image::local_min_ram_gb())
     };
@@ -81,7 +84,7 @@ pub async fn image_local_prewarm(
         let conn = state.db.lock().await;
         read_local_model(&conn)
     };
-    if image::local::weights_status_of(model) == Some(true) {
+    if image::local::weights_status_of_async(model).await == Some(true) {
         emit("done", Some(100), None);
         return Ok(());
     }
@@ -296,19 +299,23 @@ pub struct LocalModelChoice {
 pub async fn image_local_models(state: State<'_, AppState>) -> AppResult<Vec<LocalModelChoice>> {
     let _ = state;
     let ram_gb = image::local::check().1;
-    Ok(image::sdcpp::LocalModel::CHOICES
-        .into_iter()
-        .map(|m| LocalModelChoice {
+    let mut choices = Vec::with_capacity(image::sdcpp::LocalModel::CHOICES.len());
+    for m in image::sdcpp::LocalModel::CHOICES {
+        // Sequential rather than a `map`: `ready` hashes the weights on a
+        // cold cache and has to happen off the runtime.
+        let ready = image::sdcpp::weights_ready_for_async(m).await;
+        choices.push(LocalModelChoice {
             id: m.id().to_string(),
             download_gb: m.missing_download_gb(),
-            ready: image::sdcpp::weights_ready_for(m),
+            ready,
             large: m.is_large(),
             steps: m.step_choices(),
             default_steps: m.default_steps(),
             min_ram_gib: m.min_ram_gib(),
             ram_ok: ram_gb >= m.min_ram_gib(),
-        })
-        .collect())
+        });
+    }
+    Ok(choices)
 }
 
 #[tauri::command]
@@ -358,7 +365,15 @@ pub async fn image_local_model_delete(model: String, state: State<'_, AppState>)
     if let Some(reason) = image::sdcpp::weight_delete_block_reason(false, download_in_progress) {
         return Err(crate::error::AppError::Config(reason.into()));
     }
-    let safe_files = image::sdcpp::plan_weight_deletion(target, image::sdcpp::weights_ready_for);
+    // `plan_weight_deletion` asks "is this other model ready" for every
+    // shared file, so the readiness probe runs off the runtime here too.
+    let safe_files = {
+        tokio::task::spawn_blocking(move || {
+            image::sdcpp::plan_weight_deletion(target, image::sdcpp::weights_ready_for)
+        })
+        .await
+        .map_err(|e| crate::error::AppError::Other(format!("weight deletion plan failed: {e}")))?
+    };
     for filename in safe_files {
         let p = dir.join(filename);
         if p.exists() {
@@ -401,6 +416,7 @@ fn image_key_provider(provider: ImageProvider) -> crate::inference::cloud::Cloud
         ImageProvider::CogView => crate::inference::cloud::CloudProvider::Zhipu,
         ImageProvider::Flux => crate::inference::cloud::CloudProvider::Bfl,
         ImageProvider::Imagen => crate::inference::cloud::CloudProvider::Google,
+        ImageProvider::Fal => crate::inference::cloud::CloudProvider::Fal,
         ImageProvider::Local => unreachable!("local has no BYOK key"),
     }
 }
@@ -462,6 +478,13 @@ pub async fn image_cloud_models(
         ]);
     }
 
+    // fal nie ma katalogu modeli — pusta lista sprawia, że ImageModelTab
+    // pokazuje pole ręcznego wpisania ("No models returned — enter one
+    // manually below"), które jest tu jedyną poprawną drogą.
+    if provider == ImageProvider::Fal {
+        return Ok(vec![]);
+    }
+
     let key_provider = image_key_provider(provider);
     let key = match crate::byok::read(key_provider)? {
         Some(k) => k,
@@ -485,12 +508,10 @@ pub async fn image_cloud_models(
         }
     };
     let response = client.get(&url).send().await.map_err(|e| {
-        crate::error::AppError::Other(format!(
-            "cloud image model discovery request failed: {e}"
-        ))
+        crate::error::AppError::Other(format!("cloud image model discovery request failed: {e}"))
     })?;
     let status = response.status();
-    let body = response.text().await.unwrap_or_default();
+    let body = crate::inference::cloud_chat::bounded_body(response).await?;
     if !status.is_success() {
         return Err(crate::error::AppError::Other(format!(
             "cloud image model discovery failed ({status}): {}",
@@ -524,8 +545,7 @@ fn parse_image_models(provider: ImageProvider, body: &str) -> Vec<String> {
                             })
                             .unwrap_or(false);
                         let name = m["name"].as_str()?;
-                        (supported && name.contains("image"))
-                            .then(|| name.replace("models/", ""))
+                        (supported && name.contains("image")).then(|| name.replace("models/", ""))
                     })
                     .collect()
             })
@@ -568,10 +588,8 @@ pub async fn image_cloud_model_get(
         _ => return Ok("local".into()),
     };
     let conn = state.db.lock().await;
-    Ok(
-        read_cloud_image_model(&conn, provider)
-            .unwrap_or_else(|| image::default_cloud_model(provider).to_string()),
-    )
+    Ok(read_cloud_image_model(&conn, provider)
+        .unwrap_or_else(|| image::default_cloud_model(provider).to_string()))
 }
 
 /// Persist the user's cloud image model choice. Any non-empty name is

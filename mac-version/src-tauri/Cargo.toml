@@ -1,10 +1,14 @@
 [package]
 name = "fpv-desktop"
-version = "0.1.0"
+version = "1.0.0"
 description = "FPV desktop — interactive AI narrative engine"
 authors = ["Lumizone <lukasz.b@lumizone.pl>"]
 edition = "2021"
-rust-version = "1.77"
+# 1.84 for `Ipv6Addr::is_unique_local` / `is_unicast_link_local`, used by
+# the SSRF guard in `image::validate_public_image_url`. This said 1.77
+# and clippy flagged it (`incompatible_msrv`): the build simply failed
+# on any toolchain in 1.77..1.84.
+rust-version = "1.88"
 # Disable Cargo's autodetect of src/bin/*.rs as bin targets.
 autobins = false
 
@@ -48,17 +52,7 @@ bytemuck = "1"
 base64 = "0.22"
 sha2 = "0.10"
 url = "2"
-tiny_http = "0.12"
 bytes = "1.11.1"
-
-# audio I/O
-cpal = "0.17"
-
-# IOKit HID (legacy, unused in FPV)
-core-foundation = { version = "0.9", optional = true }
-core-foundation-sys = { version = "0.8", optional = true }
-io-kit-sys = { version = "0.4", optional = true }
-libc = { version = "0.2", optional = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 security-framework = "3"
@@ -66,15 +60,15 @@ security-framework-sys = "2"
 
 [features]
 default = []
-# Enable IOKit HID helper binary for precision slap detection.
-hid = ["dep:core-foundation", "dep:core-foundation-sys", "dep:io-kit-sys", "dep:libc"]
-# At-rest app.db encryption (SQLCipher). MARKER ONLY today: it flips
-# `db::encryption::encryption_active()` so the PRAGMA-key hook engages, but
-# it does NOT yet link SQLCipher (rusqlite's `sqlcipher` feature vs the
-# current `bundled` needs a supervised host with libsqlcipher — see
-# docs/superpowers/plans/DESIGN-sqlcipher-appdb.md). OFF by default; no live
-# data is ever migrated automatically.
-encrypt-db = []
+# No optional features. Two inherited from Local Waifu were removed here
+# because neither did anything in FPV:
+#   - `hid` (IOKit helper for precision slap detection) gated four deps for
+#     a companion-AI feature that was stripped with the rest of that surface.
+#   - `encrypt-db` claimed to flip `db::encryption::encryption_active()`, but
+#     FPV has no `db::encryption` module and the feature name appeared in no
+#     `#[cfg]` anywhere in the tree. It read as "app.db can be encrypted",
+#     which was never true here. Bring it back together with the module if
+#     at-rest encryption is actually implemented.
 
 # Main app binary. Tauri picks the last [[bin]] as "main app" and
 # tries to bundle every other one — `required-features` is ignored

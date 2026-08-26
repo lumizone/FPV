@@ -70,9 +70,10 @@ find "$REPO_ROOT/src-tauri/binaries" \( -name '*.dylib' -o -name '*.so' \) -prin
 #    removed, the app doesn't self-update — ship new versions as a
 #    fresh DMG.
 echo "[package] building tauri release (5-15 min)"
-# No feature flags needed: voice, Telegram, and the rest of the Local
-# Waifu companion-AI surface were stripped. `hid` is a separate,
-# still-live opt-in (precision slap detection) not needed for FPV.
+# No feature flags: voice, Telegram, and the rest of the Local Waifu
+# companion-AI surface were stripped, and the two optional features that
+# outlived it (`hid`, `encrypt-db`) were removed from Cargo.toml — neither
+# gated any code that still exists in FPV.
 FPV_KEYGEN_ACCOUNT_ID="${FPV_KEYGEN_ACCOUNT_ID:-}" \
 FPV_KEYGEN_PUBKEY_HEX="${FPV_KEYGEN_PUBKEY_HEX:-}" \
   npm run tauri build -- --target "$TARGET" --bundles app

@@ -264,14 +264,16 @@ mod model_delete_guard_tests {
     fn blocks_implicit_embed_fallback_when_no_pref() {
         // No explicit embed default: embeddinggemma is the implicit fallback
         // (commands/memory.rs) and must stay deletable-proof.
-        let reason = model_delete_block_reason("embeddinggemma", Some("gemma4:e4b"), None, "gemma4:e4b");
+        let reason =
+            model_delete_block_reason("embeddinggemma", Some("gemma4:e4b"), None, "gemma4:e4b");
         assert!(reason.is_some());
         assert!(reason.unwrap().contains("active embed model"));
     }
 
     #[test]
     fn blocks_explicit_chat_default() {
-        let reason = model_delete_block_reason("qwen3.5:9b", Some("qwen3.5:9b"), None, "gemma4:e4b");
+        let reason =
+            model_delete_block_reason("qwen3.5:9b", Some("qwen3.5:9b"), None, "gemma4:e4b");
         assert!(reason.is_some());
         assert!(reason.unwrap().contains("active chat model"));
     }
@@ -287,12 +289,8 @@ mod model_delete_guard_tests {
 
     #[test]
     fn blocks_explicit_embed_default() {
-        let reason = model_delete_block_reason(
-            "bge-m3",
-            Some("qwen3.5:9b"),
-            Some("bge-m3"),
-            "gemma4:e4b",
-        );
+        let reason =
+            model_delete_block_reason("bge-m3", Some("qwen3.5:9b"), Some("bge-m3"), "gemma4:e4b");
         assert!(reason.is_some());
     }
 
@@ -320,12 +318,8 @@ mod model_delete_guard_tests {
             "gemma4:e4b",
         );
         assert!(reason.is_none());
-        let fallback_protected = model_delete_block_reason(
-            "embeddinggemma",
-            Some("qwen3.5:9b"),
-            None,
-            "gemma4:e4b",
-        );
+        let fallback_protected =
+            model_delete_block_reason("embeddinggemma", Some("qwen3.5:9b"), None, "gemma4:e4b");
         assert!(fallback_protected.is_some());
     }
 
@@ -372,10 +366,7 @@ pub async fn model_set_default(
                 .iter()
                 .any(|item| item.name.strip_suffix(":latest").unwrap_or(&item.name) == normalized);
             if !present {
-                return Err(AppError::Config(format!(
-                    "model {} is not installed",
-                    model
-                )));
+                return Err(AppError::Config(format!("model {model} is not installed")));
             }
         }
     }
@@ -387,14 +378,11 @@ pub async fn model_set_default(
             state.ensure_ollama(&app).await?;
             let installed = state.ollama.list_models().await?;
             let normalized = model.strip_suffix(":latest").unwrap_or(model);
-            let present = installed.iter().any(|item| {
-                item.name.strip_suffix(":latest").unwrap_or(&item.name) == normalized
-            });
+            let present = installed
+                .iter()
+                .any(|item| item.name.strip_suffix(":latest").unwrap_or(&item.name) == normalized);
             if !present {
-                return Err(AppError::Config(format!(
-                    "embed model {} is not installed",
-                    model
-                )));
+                return Err(AppError::Config(format!("embed model {model} is not installed")));
             }
             save_embed_model_pref(&state.db, model).await
         }

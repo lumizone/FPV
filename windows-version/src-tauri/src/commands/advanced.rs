@@ -77,50 +77,58 @@ pub async fn reset_all_data(state: State<'_, AppState>) -> AppResult<()> {
     *conn_guard = crate::db::open_connection()?;
     drop(conn_guard);
 
-    // Delete legacy companion-AI character data, if any survives from
-    // before the FPV rebrand.
-    let chars_dir = storage::app_data_dir()?.join("characters");
-    if chars_dir.exists() {
-        std::fs::remove_dir_all(&chars_dir)?;
-    }
-
-    // Delete legacy voice clones (removed in Phase 1, clean up any
-    // old directory that may still exist on disk). Skip entirely if we
-    // can't resolve the home dir — unwrap_or_default() would otherwise
-    // resolve the join relative to the process's CWD, and remove_dir_all
-    // on an attacker- or CWD-controlled "./.fpvdesktop/voice_clones"
-    // is not a cleanup anyone asked for.
-    if let Some(home) = dirs::home_dir() {
-        let clone_dir = home.join(".fpvdesktop").join("voice_clones");
-        if clone_dir.exists() {
-            let _ = std::fs::remove_dir_all(&clone_dir);
+    // Everything below is bulk filesystem work — the Ollama model store
+    // alone is multi-GB — so it runs off the async runtime. Inline, a
+    // reset froze every other command for as long as the deletes took.
+    let app_data = storage::app_data_dir()?;
+    let home = dirs::home_dir();
+    tokio::task::spawn_blocking(move || -> AppResult<()> {
+        // Delete legacy companion-AI character data, if any survives from
+        // before the FPV rebrand.
+        let chars_dir = app_data.join("characters");
+        if chars_dir.exists() {
+            std::fs::remove_dir_all(&chars_dir)?;
         }
-    }
 
-    // Delete the app-owned Ollama model store (multi-GB blobs). Safe to
-    // nuke now that we relocated it under our data dir via OLLAMA_MODELS
-    // — it's no longer the shared ~/.ollama. The sidecar is killed on
-    // app exit; a re-pull repopulates this on next use.
-    if let Ok(models_dir) = storage::app_data_dir() {
-        let ollama_dir = models_dir.join("ollama");
+        // Delete legacy voice clones (removed in Phase 1, clean up any
+        // old directory that may still exist on disk). Skip entirely if we
+        // can't resolve the home dir — unwrap_or_default() would otherwise
+        // resolve the join relative to the process's CWD, and remove_dir_all
+        // on an attacker- or CWD-controlled "./.fpvdesktop/voice_clones"
+        // is not a cleanup anyone asked for.
+        if let Some(home) = home {
+            let clone_dir = home.join(".fpvdesktop").join("voice_clones");
+            if clone_dir.exists() {
+                let _ = std::fs::remove_dir_all(&clone_dir);
+            }
+        }
+
+        // Delete the app-owned Ollama model store (multi-GB blobs). Safe to
+        // nuke now that we relocated it under our data dir via OLLAMA_MODELS
+        // — it's no longer the shared ~/.ollama. The sidecar is killed on
+        // app exit; a re-pull repopulates this on next use.
+        let ollama_dir = app_data.join("ollama");
         if ollama_dir.exists() {
             let _ = std::fs::remove_dir_all(&ollama_dir);
         }
-    }
 
-    let app_data = storage::app_data_dir()?;
-    for dir in ["covers", "images", "portraits"] {
-        let path = app_data.join(dir);
-        if path.exists() {
-            std::fs::remove_dir_all(path)?;
+        for dir in ["covers", "images", "portraits", "renderer-temp"] {
+            let path = app_data.join(dir);
+            if path.exists() {
+                std::fs::remove_dir_all(path)?;
+            }
         }
-    }
-    for file in ["audit.log", "crash.log", "crash.log.old"] {
-        let path = app_data.join(file);
-        if path.exists() {
-            let _ = std::fs::remove_file(path);
+        for file in ["audit.log", "crash.log", "crash.log.old"] {
+            let path = app_data.join(file);
+            if path.exists() {
+                let _ = std::fs::remove_file(path);
+            }
         }
-    }
+        Ok(())
+    })
+    .await
+    .map_err(|e| crate::error::AppError::Other(format!("data reset task failed: {e}")))??;
+
     crate::secret_store::clear_all()?;
 
     Ok(())

@@ -44,6 +44,22 @@ pub async fn cloud_list_models(
         return Ok(vec![]);
     }
 
+    // Black Forest Labs is an image-only provider: it has no `/models`
+    // route at all (404 even on the live host, checked 2026-08-26) and its
+    // FLUX model ids are a fixed list hardcoded in `commands::image`. It was
+    // sitting in the chat-discovery group below, so asking for its chat
+    // models produced a 404 error instead of "this provider has none".
+    if p == CloudProvider::Bfl {
+        return Ok(vec![]);
+    }
+
+    // fal.ai publikuje żadnej listy modeli — endpoint JEST modelem i podaje
+    // go użytkownik. Nie ma też czatu. Pusta lista sprawia, że UI pokazuje
+    // pole ręcznego wpisania zamiast błędu 404.
+    if p == CloudProvider::Fal {
+        return Ok(vec![]);
+    }
+
     let key = match byok::read(p)? {
         Some(k) => k,
         None => return Ok(vec![]),
@@ -56,7 +72,7 @@ pub async fn cloud_list_models(
         .await
         .map_err(|e| AppError::Other(format!("cloud model discovery request failed: {e}")))?;
     let status = response.status();
-    let body = response.text().await.unwrap_or_default();
+    let body = crate::inference::cloud_chat::bounded_body(response).await?;
     if !status.is_success() {
         return Err(AppError::Other(format!(
             "cloud model discovery failed ({status}): {}",
@@ -105,8 +121,7 @@ fn build_models_client(p: CloudProvider, key: &str) -> AppResult<(String, reqwes
         | CloudProvider::Cohere
         | CloudProvider::Cerebras
         | CloudProvider::SambaNova
-        | CloudProvider::Venice
-        | CloudProvider::Bfl => {
+        | CloudProvider::Venice => {
             let base = crate::inference::cloud_chat::base_url_for(p)?;
             format!("{}/models", base.trim_end_matches('/'))
         }
@@ -120,13 +135,18 @@ fn build_models_client(p: CloudProvider, key: &str) -> AppResult<(String, reqwes
         // AI21 discovery is short-circuited in cloud_list_models (its model-list
         // endpoint is retired), so this arm is never reached.
         CloudProvider::Ai21 => unreachable!("AI21 model discovery is disabled"),
+        CloudProvider::Bfl => unreachable!("BFL is image-only; discovery is disabled"),
+        CloudProvider::Fal => unreachable!("fal has no model catalogue; discovery is disabled"),
     };
     Ok((url, client))
 }
 
 /// Auth headers for a provider's model-discovery GET (also reused by the
 /// image pipeline's `image_cloud_models` for the same wire shape).
-pub(crate) fn build_models_headers(p: CloudProvider, key: &str) -> AppResult<reqwest::header::HeaderMap> {
+pub(crate) fn build_models_headers(
+    p: CloudProvider,
+    key: &str,
+) -> AppResult<reqwest::header::HeaderMap> {
     let mut headers = reqwest::header::HeaderMap::new();
     if p == CloudProvider::Google {
         headers.insert(
@@ -147,7 +167,7 @@ pub(crate) fn build_models_headers(p: CloudProvider, key: &str) -> AppResult<req
     } else {
         headers.insert(
             reqwest::header::AUTHORIZATION,
-            reqwest::header::HeaderValue::from_str(&format!("Bearer {}", key))
+            reqwest::header::HeaderValue::from_str(&format!("Bearer {key}"))
                 .map_err(|_| crate::error::AppError::Config("invalid API key".into()))?,
         );
     }

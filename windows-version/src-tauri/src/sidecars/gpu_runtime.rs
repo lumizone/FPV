@@ -321,7 +321,9 @@ pub async fn fetch_gpu_runtime(app: &AppHandle) -> AppResult<()> {
     }
     let assets = assets_for(vendor);
     if assets.is_empty() {
-        tracing::info!("image GPU runtime: no prebuilt build for this GPU; keeping bundled CPU build");
+        tracing::info!(
+            "image GPU runtime: no prebuilt build for this GPU; keeping bundled CPU build"
+        );
         return Ok(());
     }
 
@@ -668,9 +670,7 @@ pub fn spawn_boot_provision(app: AppHandle, db: crate::db::DbHandle) {
     tauri::async_runtime::spawn(async move {
         match run_boot_provision(&app, &db).await {
             Ok(true) => {
-                tracing::info!(
-                    "image GPU runtime: boot provisioning ran and completed"
-                );
+                tracing::info!("image GPU runtime: boot provisioning ran and completed");
             }
             Ok(false) => {}
             Err(err) => {
@@ -724,7 +724,7 @@ async fn run_boot_provision(app: &AppHandle, db: &crate::db::DbHandle) -> AppRes
     if !provider_local {
         return Ok(false);
     }
-    if crate::image::local::weights_status_of(model) != Some(true) {
+    if crate::image::local::weights_status_of_async(model).await != Some(true) {
         return Ok(false);
     }
 
@@ -875,7 +875,11 @@ fn sha256_file(path: &Path) -> AppResult<String> {
     // Formatted byte-by-byte on purpose: the current RustCrypto digest
     // output type does not implement `LowerHex`, so `format!("{:x}", ..)`
     // does not compile against it.
-    Ok(hasher.finalize().iter().map(|b| format!("{b:02x}")).collect())
+    Ok(hasher
+        .finalize()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect())
 }
 
 /// Depth-first search for the directory directly containing `name`.
@@ -1158,7 +1162,9 @@ mod tests {
             return;
         };
         assert!(is_gpu_runtime_path(&dir.join(SD_EXE)));
-        assert!(!is_gpu_runtime_path(Path::new("C:\\Program Files\\FPV\\image-runtime\\sd-cli.exe")));
+        assert!(!is_gpu_runtime_path(Path::new(
+            "C:\\Program Files\\FPV\\image-runtime\\sd-cli.exe"
+        )));
     }
 
     #[test]
@@ -1203,7 +1209,10 @@ mod tests {
         // Simulates the crash window: `commit_staged_runtime` step 1
         // (retire) ran, step 2 (install) never did, so `live` is missing
         // and only the retired-but-working copy survives.
-        populate(&root.join("image-runtime-gpu.old-deadbeef"), "orphaned-good");
+        populate(
+            &root.join("image-runtime-gpu.old-deadbeef"),
+            "orphaned-good",
+        );
 
         recover_orphaned_runtime(&live);
 

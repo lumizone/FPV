@@ -113,7 +113,9 @@ pub fn complete(
         params![charged, now as i64, reservation.request_id],
     )?;
     if changed != 1 {
-        return Err(AppError::Other("cloud spend reservation was already settled or missing".into()));
+        return Err(AppError::Other(
+            "cloud spend reservation was already settled or missing".into(),
+        ));
     }
     Ok(())
 }
@@ -121,7 +123,15 @@ pub fn complete(
 /// Remove settled ledger rows older than `retention_days` so the table
 /// cannot grow without bound. Called at every startup. Settled rows no
 /// longer affect the daily cap (their day already passed), so pruning is
-/// safe; `reserved` rows are never touched.
+/// safe.
+///
+/// Stale `reserved` rows are swept too, but on a different rule. A crash
+/// between `reserve` and `complete` leaves a row stuck in `reserved`
+/// forever: it still counts against the cap for its own day (correctly —
+/// the request may well have been billed by the provider), but once that
+/// day is over it can never be settled and nothing ever removed it. Only
+/// rows from a day that has fully passed are swept, so a reservation for
+/// a request still in flight is never touched.
 pub fn prune_settled(conn: &Connection, now: u64) -> AppResult<()> {
     const RETENTION_DAYS: i64 = 30;
     let cutoff = now as i64 - RETENTION_DAYS * 86_400;
@@ -131,6 +141,12 @@ pub fn prune_settled(conn: &Connection, now: u64) -> AppResult<()> {
            AND settled_at IS NOT NULL
            AND settled_at < ?1",
         params![cutoff],
+    )?;
+    conn.execute(
+        "DELETE FROM cloud_daily_spend_ledger
+         WHERE status = 'reserved'
+           AND day_start < ?1",
+        params![day_start(now)],
     )?;
     Ok(())
 }
@@ -148,7 +164,9 @@ pub fn retain_reservation(
         params![status, now as i64, reservation.request_id],
     )?;
     if changed != 1 {
-        return Err(AppError::Other("cloud spend reservation was already settled or missing".into()));
+        return Err(AppError::Other(
+            "cloud spend reservation was already settled or missing".into(),
+        ));
     }
     Ok(())
 }
@@ -177,6 +195,35 @@ mod tests {
         let reservation = reserve(&mut conn, "one", "0.0002", 10, 10, 86_400).unwrap();
         complete(&conn, reservation, 1, 86_401).unwrap();
         assert!(reserve(&mut conn, "two", "0.0002", 10, 6, 86_402).is_ok());
+    }
+
+    #[test]
+    fn a_reservation_orphaned_by_a_crash_is_swept_once_its_day_is_over() {
+        let mut conn = setup();
+        // Reserved on day 1 and never settled — the app died mid-request.
+        reserve(&mut conn, "orphan", "1.00", 10, 10, 86_400).unwrap();
+        // Same day: still counted, because the provider may well have
+        // billed it. Nothing is swept.
+        prune_settled(&conn, 86_500).unwrap();
+        let same_day: i64 = conn
+            .query_row(
+                "SELECT COUNT(*) FROM cloud_daily_spend_ledger WHERE status = 'reserved'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(same_day, 1, "an in-flight reservation must not be swept");
+
+        // Next day: it can never be settled and stops mattering to any cap.
+        prune_settled(&conn, 86_400 * 2 + 10).unwrap();
+        let next_day: i64 = conn
+            .query_row(
+                "SELECT COUNT(*) FROM cloud_daily_spend_ledger WHERE status = 'reserved'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(next_day, 0, "a dead reservation was kept forever");
     }
 
     #[test]

@@ -99,11 +99,68 @@ fn descendant_pids_from_rows(parent: u32, rows: Vec<ProcessRow>) -> Vec<u32> {
     found
 }
 
-fn is_orphaned_fpv_process(row: &ProcessRow) -> bool {
+/// The directories whose contents are ours: the directory the app binary
+/// runs from (`Contents/MacOS` in a packaged `.app`, `target/<profile>`
+/// under `tauri dev`) and the app-data dir. Nothing else on the machine
+/// launches binaries out of either, which is what makes a path match
+/// proof of ownership.
+///
+/// Matching the DIRECTORY rather than a hardcoded `/FPV.app/` plus a
+/// list of binary names is what LW's `sidecars::reaper` does, and the
+/// reason is not tidiness: the old name whitelist covered `ollama` and
+/// `llama-server` only, so an `sd-cli` orphaned mid-render was never
+/// swept and kept a GPU busy until the user noticed it in Activity
+/// Monitor. The literal `/FPV.app/` also stopped matching the moment a
+/// user renamed the app, and never matched at all in a dev build.
+fn owned_roots() -> Vec<std::path::PathBuf> {
+    let mut roots = Vec::new();
+    if let Some(dir) = std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.parent().map(std::path::Path::to_path_buf))
+    {
+        roots.push(dir);
+    }
+    if let Ok(dir) = crate::storage::app_data_dir() {
+        roots.push(dir);
+    }
+    roots
+}
+
+/// Is this command line running something out of `root`?
+fn is_under(command: &str, root: &std::path::Path) -> bool {
+    let Some(root) = root.to_str() else {
+        return false;
+    };
+    command.starts_with(&format!("{root}/"))
+}
+
+/// Is `exe` the binary this command line runs? Compares the whole path
+/// rather than a bare prefix so a neighbour whose name merely starts
+/// with ours is not mistaken for it.
+fn is_exe(command: &str, exe: &std::path::Path) -> bool {
+    let Some(path) = exe.to_str() else {
+        return false;
+    };
+    command == path || command.starts_with(&format!("{path} "))
+}
+
+/// A process left behind by a previous run of this app.
+///
+/// Two rules keep it safe. `ppid == 1` means anything belonging to a
+/// *running* instance (which has that instance, or its server, as a
+/// parent) is never a candidate — only something already reparented to
+/// launchd is. And `self_exe` is excluded because the app binary lives
+/// in the swept directory and a normally-launched instance also has
+/// `ppid == 1`: without that, the sweep would kill a second running
+/// copy of the app, and on the way there, itself.
+fn is_orphaned_owned_process(
+    row: &ProcessRow,
+    roots: &[std::path::PathBuf],
+    self_exe: Option<&std::path::Path>,
+) -> bool {
     row.ppid == 1
-        && (row.command.contains("/FPV.app/Contents/MacOS/llama-server")
-            || (row.command.contains("/FPV.app/Contents/MacOS/ollama")
-                && row.command.ends_with(" serve")))
+        && roots.iter().any(|root| is_under(&row.command, root))
+        && !self_exe.is_some_and(|exe| is_exe(&row.command, exe))
 }
 
 fn signal_processes(pids: impl IntoIterator<Item = u32>, signal: &str) {
@@ -122,18 +179,52 @@ fn process_alive(pid: u32) -> bool {
         .is_ok_and(|status| status.success())
 }
 
-/// Remove only orphaned daemons/runners from FPV bundles. A user's system
-/// Ollama and processes attached to another live FPV tree are untouched.
-pub fn cleanup_orphaned_runners() {
-    let stale: Vec<u32> = process_rows()
-        .into_iter()
-        .filter(is_orphaned_fpv_process)
+/// Every process of ours left behind by a previous run, plus everything
+/// they in turn spawned.
+///
+/// Descendants are included because an orphaned Ollama *server* still
+/// owns live runners: killing it alone would reparent those to launchd,
+/// which is the exact bug this sweep exists to stop.
+fn orphan_pids(
+    rows: &[ProcessRow],
+    roots: &[std::path::PathBuf],
+    self_exe: Option<&std::path::Path>,
+) -> Vec<u32> {
+    let mut found: Vec<u32> = rows
+        .iter()
+        .filter(|row| is_orphaned_owned_process(row, roots, self_exe))
         .map(|row| row.pid)
         .collect();
+
+    let mut cursor = 0;
+    while cursor < found.len() {
+        let parent = found[cursor];
+        cursor += 1;
+        for row in rows.iter().filter(|row| row.ppid == parent) {
+            if !found.contains(&row.pid) {
+                found.push(row.pid);
+            }
+        }
+    }
+    found
+}
+
+/// Remove only orphaned processes launched out of this app's own
+/// directories — the Ollama daemon, its `llama-server` runners, and an
+/// `sd-cli` left grinding through a render nobody will collect. A
+/// user's system Ollama and processes attached to another live FPV tree
+/// are untouched.
+pub fn cleanup_orphaned_runners() {
+    let roots = owned_roots();
+    if roots.is_empty() {
+        return;
+    }
+    let self_exe = std::env::current_exe().ok();
+    let stale = orphan_pids(&process_rows(), &roots, self_exe.as_deref());
     if !stale.is_empty() {
         warn!(
             count = stale.len(),
-            "terminating orphaned FPV model runners"
+            "terminating orphaned FPV sidecar processes"
         );
         signal_processes(stale.iter().copied(), "-TERM");
         std::thread::sleep(Duration::from_millis(300));
@@ -143,7 +234,25 @@ pub fn cleanup_orphaned_runners() {
 
 #[cfg(test)]
 mod process_tests {
-    use super::{descendant_pids_from_rows, is_orphaned_fpv_process, ProcessRow};
+    use super::{descendant_pids_from_rows, orphan_pids, ProcessRow};
+    use std::path::{Path, PathBuf};
+
+    const BUNDLE: &str = "/Applications/FPV.app/Contents/MacOS";
+
+    fn roots() -> Vec<PathBuf> {
+        vec![PathBuf::from(BUNDLE)]
+    }
+
+    fn app_exe() -> PathBuf {
+        PathBuf::from(BUNDLE).join("fpv-desktop")
+    }
+
+    fn orphans(rows: Vec<ProcessRow>) -> Vec<u32> {
+        let exe = app_exe();
+        let mut found = orphan_pids(&rows, &roots(), Some(exe.as_path() as &Path));
+        found.sort_unstable();
+        found
+    }
 
     fn row(pid: u32, ppid: u32, command: &str) -> ProcessRow {
         ProcessRow {
@@ -169,27 +278,78 @@ mod process_tests {
     }
 
     #[test]
-    fn orphan_cleanup_is_restricted_to_fpv_bundle_processes() {
-        assert!(is_orphaned_fpv_process(&row(
-            20,
-            1,
-            "/Applications/FPV.app/Contents/MacOS/ollama serve"
-        )));
-        assert!(is_orphaned_fpv_process(&row(
-            21,
-            1,
-            "/Applications/FPV.app/Contents/MacOS/llama-server --port 50000"
-        )));
-        assert!(!is_orphaned_fpv_process(&row(
-            22,
-            1,
-            "/opt/homebrew/bin/ollama serve"
-        )));
-        assert!(!is_orphaned_fpv_process(&row(
-            23,
-            7,
-            "/Applications/FPV.app/Contents/MacOS/llama-server"
-        )));
+    fn orphan_cleanup_is_restricted_to_processes_from_our_own_directories() {
+        assert_eq!(
+            orphans(vec![
+                row(20, 1, "/Applications/FPV.app/Contents/MacOS/ollama serve"),
+                row(
+                    21,
+                    1,
+                    "/Applications/FPV.app/Contents/MacOS/llama-server --port 50000"
+                ),
+                row(22, 1, "/opt/homebrew/bin/ollama serve"),
+                row(23, 7, "/Applications/FPV.app/Contents/MacOS/llama-server"),
+            ]),
+            vec![20, 21],
+            "a user's own Ollama and a runner attached to a live tree must survive"
+        );
+    }
+
+    #[test]
+    fn an_sd_cli_left_mid_render_is_swept() {
+        // The whole reason this matcher works on directories instead of a
+        // list of binary names: sd-cli holds the GPU and nothing else was
+        // ever going to kill it.
+        assert_eq!(
+            orphans(vec![row(
+                30,
+                1,
+                "/Applications/FPV.app/Contents/MacOS/sd-cli --model x --steps 30"
+            )]),
+            vec![30]
+        );
+    }
+
+    #[test]
+    fn the_sweep_does_not_kill_another_running_copy_of_the_app() {
+        // A normally-launched instance also has ppid == 1 and lives in the
+        // swept directory. Without the self-exe exclusion this sweep would
+        // take it down — and, on the way, itself.
+        assert!(orphans(vec![
+            row(40, 1, "/Applications/FPV.app/Contents/MacOS/fpv-desktop"),
+            row(
+                41,
+                1,
+                "/Applications/FPV.app/Contents/MacOS/fpv-desktop --flag"
+            ),
+        ])
+        .is_empty());
+    }
+
+    #[test]
+    fn a_neighbour_whose_name_starts_with_ours_is_not_mistaken_for_the_app() {
+        assert_eq!(
+            orphans(vec![row(
+                50,
+                1,
+                "/Applications/FPV.app/Contents/MacOS/fpv-desktop-helper"
+            )]),
+            vec![50]
+        );
+    }
+
+    #[test]
+    fn children_of_an_orphaned_server_are_swept_with_it() {
+        // Killing an orphaned `ollama serve` on its own would reparent its
+        // runners to launchd — the exact bug the sweep exists to stop.
+        assert_eq!(
+            orphans(vec![
+                row(60, 1, "/Applications/FPV.app/Contents/MacOS/ollama serve"),
+                row(61, 60, "/Applications/FPV.app/Contents/MacOS/llama-server"),
+                row(62, 61, "worker"),
+            ]),
+            vec![60, 61, 62]
+        );
     }
 }
 

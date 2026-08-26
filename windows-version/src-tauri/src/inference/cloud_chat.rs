@@ -9,6 +9,34 @@
 //!   - Google Gemini `generateContent`.
 
 use crate::error::{AppError, AppResult};
+
+/// Ceiling on a fully-buffered provider response.
+///
+/// A non-streaming completion is at most a few hundred KB, and an error
+/// body gets truncated to 200 characters by `sanitize_error_body` anyway
+/// — but `resp.text()` buffers the WHOLE body first, with no limit. That
+/// matters most for `CloudProvider::Custom`, whose base URL the user
+/// supplies: a broken or hostile endpoint could stream until the app ran
+/// out of memory. Images already went through `read_response_limited`;
+/// the chat paths never did.
+const MAX_CLOUD_BODY_BYTES: usize = 8 * 1024 * 1024;
+
+/// Read a provider body with a ceiling.
+///
+/// Returns an error rather than a placeholder string when the ceiling is
+/// hit: several callers use the same buffer for both the error branch and
+/// the success branch, and handing a failure message to `serde_json` there
+/// would surface as "expected value" instead of what actually went wrong.
+pub(crate) async fn bounded_body(response: reqwest::Response) -> AppResult<String> {
+    let bytes = crate::image::read_response_limited(
+        response,
+        MAX_CLOUD_BODY_BYTES,
+        "cloud response exceeded size limit",
+    )
+    .await?;
+    Ok(String::from_utf8_lossy(&bytes).into_owned())
+}
+
 use crate::inference::cloud::CloudProvider;
 
 const OPENAI_BASE: &str = "https://api.openai.com/v1";
@@ -34,7 +62,10 @@ const XIAOMIMIMO_BASE: &str = "https://api.xiaomimimo.com/v1";
 const DOUBAO_BASE: &str = "https://ark.cn-beijing.volces.com/api/v3";
 const HUNYUAN_BASE: &str = "https://api.hunyuan.cloud.tencent.com/v1";
 const UPSTAGE_BASE: &str = "https://api.upstage.ai/v1";
-const YI_BASE: &str = "https://api.01.ai/v1";
+// 01.AI serves its OpenAI-compatible API from lingyiwanwu.com. The old
+// `api.01.ai` host has no DNS record at all (NXDOMAIN, checked
+// 2026-08-26), so every Yi request failed before it left the machine.
+const YI_BASE: &str = "https://api.lingyiwanwu.com/v1";
 const PLAMO_BASE: &str = "https://api.platform.preferredai.jp/v1";
 const NVIDIA_BASE: &str = "https://integrate.api.nvidia.com/v1";
 const COHERE_BASE: &str = "https://api.cohere.com/v1";
@@ -43,7 +74,50 @@ const SAMBANOVA_BASE: &str = "https://api.sambanova.ai/v1";
 const PERPLEXITY_BASE: &str = "https://api.perplexity.ai";
 const AI21_BASE: &str = "https://api.ai21.com/studio/v1";
 const VENICE_BASE: &str = "https://api.venice.ai/api/v1";
-const BFL_BASE: &str = "https://api.bfl.ml/v1";
+// Black Forest Labs moved off the `.ml` domain. `api.bfl.ml` still
+// resolves but refuses connections; `api.bfl.ai` answers (403 without
+// a key). Checked 2026-08-26.
+const BFL_BASE: &str = "https://api.bfl.ai/v1";
+
+/// Every provider base in one place, so the invariants below can be
+/// asserted over the whole set instead of whichever one somebody
+/// remembered to add to a test.
+#[cfg(test)]
+const ALL_BASES: &[(&str, &str)] = &[
+    ("OPENAI_BASE", OPENAI_BASE),
+    ("DEEPSEEK_BASE", DEEPSEEK_BASE),
+    ("OPENROUTER_BASE", OPENROUTER_BASE),
+    ("MISTRAL_BASE", MISTRAL_BASE),
+    ("GROQ_BASE", GROQ_BASE),
+    ("XAI_BASE", XAI_BASE),
+    ("ANTHROPIC_BASE", ANTHROPIC_BASE),
+    ("GOOGLE_BASE", GOOGLE_BASE),
+    ("TOGETHER_BASE", TOGETHER_BASE),
+    ("FIREWORKS_BASE", FIREWORKS_BASE),
+    ("NOVITA_BASE", NOVITA_BASE),
+    ("SILICONFLOW_BASE", SILICONFLOW_BASE),
+    ("MOONSHOT_BASE", MOONSHOT_BASE),
+    ("ZHIPU_BASE", ZHIPU_BASE),
+    ("QWEN_BASE", QWEN_BASE),
+    ("BAICHUAN_BASE", BAICHUAN_BASE),
+    ("MINIMAX_BASE", MINIMAX_BASE),
+    ("STEPFUN_BASE", STEPFUN_BASE),
+    ("MODELSCOPE_BASE", MODELSCOPE_BASE),
+    ("XIAOMIMIMO_BASE", XIAOMIMIMO_BASE),
+    ("DOUBAO_BASE", DOUBAO_BASE),
+    ("HUNYUAN_BASE", HUNYUAN_BASE),
+    ("UPSTAGE_BASE", UPSTAGE_BASE),
+    ("YI_BASE", YI_BASE),
+    ("PLAMO_BASE", PLAMO_BASE),
+    ("NVIDIA_BASE", NVIDIA_BASE),
+    ("COHERE_BASE", COHERE_BASE),
+    ("CEREBRAS_BASE", CEREBRAS_BASE),
+    ("SAMBANOVA_BASE", SAMBANOVA_BASE),
+    ("PERPLEXITY_BASE", PERPLEXITY_BASE),
+    ("AI21_BASE", AI21_BASE),
+    ("VENICE_BASE", VENICE_BASE),
+    ("BFL_BASE", BFL_BASE),
+];
 const MAX_SSE_BUFFER_BYTES: usize = 4 * 1024 * 1024;
 
 #[derive(Debug, Clone, Copy)]
@@ -126,6 +200,17 @@ pub fn base_url_for(provider: CloudProvider) -> AppResult<String> {
         CloudProvider::Ai21 => AI21_BASE.to_string(),
         CloudProvider::Venice => VENICE_BASE.to_string(),
         CloudProvider::Bfl => BFL_BASE.to_string(),
+        // fal.ai has no fixed base: it's image-only (excluded from chat/model
+        // discovery in commands/cloud.rs) and the endpoint the user pastes IS
+        // the model, not a host to append a path to. No current caller reaches
+        // this arm, but this crate builds release with `panic = "abort"`, so a
+        // future caller must get a normal error here instead of taking down
+        // the whole app — same guarantee as `unreachable!()`, no crash vector.
+        CloudProvider::Fal => {
+            return Err(AppError::Config(
+                "fal has no fixed base URL: the pasted endpoint is the model".into(),
+            ))
+        }
         CloudProvider::Custom => crate::byok::read_base_url()?
             .ok_or_else(|| AppError::Config("custom provider has no base URL saved".into()))?,
     };
@@ -177,9 +262,7 @@ pub async fn chat(
         CloudProvider::Google => {
             google_chat(&client, model, prompt, api_key, base_url, options).await
         }
-        _ => {
-            openai_compat_chat(&client, provider, model, prompt, api_key, base_url, options).await
-        }
+        _ => openai_compat_chat(&client, provider, model, prompt, api_key, base_url, options).await,
     }
 }
 
@@ -207,8 +290,10 @@ where
             google_chat_stream(model, prompt, api_key, base_url, options, on_token).await
         }
         _ => {
-            openai_compat_chat_stream(provider, model, prompt, api_key, base_url, options, on_token)
-                .await
+            openai_compat_chat_stream(
+                provider, model, prompt, api_key, base_url, options, on_token,
+            )
+            .await
         }
     }
 }
@@ -233,7 +318,7 @@ async fn openai_compat_chat(
         .map_err(|_| AppError::Other("cloud request failed".into()))?;
 
     let status = resp.status();
-    let text = resp.text().await.unwrap_or_else(|_| "".to_string());
+    let text = bounded_body(resp).await?;
     if !status.is_success() {
         return Err(AppError::Other(format!(
             "cloud provider {} error: {}",
@@ -297,7 +382,7 @@ where
         .map_err(|_| AppError::Other("cloud stream request failed".into()))?;
     let status = response.status();
     if !status.is_success() {
-        let text = response.text().await.unwrap_or_default();
+        let text = bounded_body(response).await?;
         return Err(AppError::Other(format!(
             "cloud provider {} error: {}",
             status,
@@ -321,7 +406,9 @@ where
             return Err(AppError::Other("cloud stream event exceeded 4 MiB".into()));
         }
         while let Some(newline) = buffer.iter().position(|b| *b == b'\n') {
-            let line = String::from_utf8_lossy(&buffer[..newline]).trim().to_string();
+            let line = String::from_utf8_lossy(&buffer[..newline])
+                .trim()
+                .to_string();
             buffer.drain(..=newline);
             process_openai_sse_line(&line, &mut on_token, &mut full, &mut saw_done)?;
         }
@@ -405,7 +492,7 @@ async fn anthropic_chat(
         .map_err(|_| AppError::Other("cloud request failed".into()))?;
 
     let status = resp.status();
-    let text = resp.text().await.unwrap_or_else(|_| "".to_string());
+    let text = bounded_body(resp).await?;
     if !status.is_success() {
         return Err(AppError::Other(format!(
             "anthropic error: {}",
@@ -468,7 +555,7 @@ async fn google_chat(
     _base_url: &str,
     options: GenerationOptions,
 ) -> AppResult<String> {
-    let url = format!("{}/v1beta/models/{}:generateContent", GOOGLE_BASE, model);
+    let url = format!("{GOOGLE_BASE}/v1beta/models/{model}:generateContent");
     let body = serde_json::json!({
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
@@ -486,7 +573,7 @@ async fn google_chat(
         .map_err(|_| AppError::Other("cloud request failed".into()))?;
 
     let status = resp.status();
-    let text = resp.text().await.unwrap_or_else(|_| "".to_string());
+    let text = bounded_body(resp).await?;
     if !status.is_success() {
         return Err(AppError::Other(format!(
             "google error: {}",
@@ -559,7 +646,7 @@ where
         .map_err(|_| AppError::Other("cloud stream request failed".into()))?;
     let status = response.status();
     if !status.is_success() {
-        let text = response.text().await.unwrap_or_default();
+        let text = bounded_body(response).await?;
         return Err(AppError::Other(format!(
             "cloud provider {} error: {}",
             status,
@@ -577,7 +664,9 @@ where
             return Err(AppError::Other("cloud stream event exceeded 4 MiB".into()));
         }
         while let Some(newline) = buffer.iter().position(|b| *b == b'\n') {
-            let line = String::from_utf8_lossy(&buffer[..newline]).trim().to_string();
+            let line = String::from_utf8_lossy(&buffer[..newline])
+                .trim()
+                .to_string();
             buffer.drain(..=newline);
             let Some(data) = line.strip_prefix("data:").map(str::trim) else {
                 continue;
@@ -619,29 +708,27 @@ where
                 AppError::Other("cloud stream ended with an incomplete SSE event".into())
             })?;
         if data.is_empty() { /* harmless final blank event */
+        } else if data == "[DONE]" {
+            completed = true;
         } else {
-            if data == "[DONE]" {
-                completed = true;
-            } else {
-                let payload: serde_json::Value = serde_json::from_str(data)
-                    .map_err(|_| AppError::Other("cloud stream returned invalid JSON".into()))?;
-                if let Some(token) = payload
-                    .pointer(text_pointer)
-                    .and_then(|value| value.as_str())
-                {
-                    on_token(token);
-                    full.push_str(token);
-                }
-                completed |= match completion {
-                    SseCompletion::Anthropic => {
-                        payload.get("type").and_then(|v| v.as_str()) == Some("message_stop")
-                    }
-                    SseCompletion::Google => payload
-                        .pointer("/candidates/0/finishReason")
-                        .and_then(|v| v.as_str())
-                        .is_some(),
-                };
+            let payload: serde_json::Value = serde_json::from_str(data)
+                .map_err(|_| AppError::Other("cloud stream returned invalid JSON".into()))?;
+            if let Some(token) = payload
+                .pointer(text_pointer)
+                .and_then(|value| value.as_str())
+            {
+                on_token(token);
+                full.push_str(token);
             }
+            completed |= match completion {
+                SseCompletion::Anthropic => {
+                    payload.get("type").and_then(|v| v.as_str()) == Some("message_stop")
+                }
+                SseCompletion::Google => payload
+                    .pointer("/candidates/0/finishReason")
+                    .and_then(|v| v.as_str())
+                    .is_some(),
+            };
         }
     }
     if !completed {
@@ -663,6 +750,33 @@ enum SseCompletion {
 
 #[cfg(test)]
 mod tests {
+    /// Dwa hosty w tej liście umarły w locie i nikt tego nie zauważył, bo
+    /// objawem jest błąd sieci u użytkownika, nie błąd kompilacji:
+    /// `api.01.ai` stracił rekord DNS, a `api.bfl.ml` przestał przyjmować
+    /// połączenia po przeprowadzce Black Forest Labs na `.ai`.
+    #[test]
+    fn retired_provider_hosts_do_not_come_back() {
+        for dead in ["api.01.ai", "api.bfl.ml"] {
+            assert!(
+                !YI_BASE.contains(dead) && !BFL_BASE.contains(dead),
+                "{dead} is a retired host — see the comments above these constants"
+            );
+        }
+        assert!(YI_BASE.starts_with("https://api.lingyiwanwu.com"));
+        assert!(BFL_BASE.starts_with("https://api.bfl.ai"));
+    }
+
+    /// Każda baza musi być absolutnym https bez końcowego ukośnika —
+    /// URL-e budujemy przez `format!("{base}/...")`, więc ukośnik dałby
+    /// podwójny separator, a http byłoby cichym downgrade'em.
+    #[test]
+    fn every_base_url_is_https_and_has_no_trailing_slash() {
+        for (name, base) in ALL_BASES {
+            assert!(base.starts_with("https://"), "{name} is not https: {base}");
+            assert!(!base.ends_with('/'), "{name} has a trailing slash: {base}");
+        }
+    }
+
     use super::*;
 
     #[test]
@@ -715,6 +829,16 @@ mod tests {
         );
     }
 
+    /// `base_url_for`'s `Fal` arm returns `AppError::Config` instead of
+    /// `unreachable!()` specifically because this crate builds release with
+    /// `panic = "abort"` — a future caller reaching this arm must get a
+    /// normal error, not take down the whole app. Nothing asserted that
+    /// behaviour until now.
+    #[test]
+    fn fal_base_url_errors_instead_of_panicking() {
+        assert!(base_url_for(CloudProvider::Fal).is_err());
+    }
+
     #[test]
     fn openai_final_buffered_event_is_processed() {
         let mut tokens = Vec::new();
@@ -739,7 +863,10 @@ mod tests {
             r#"{"choices":[{"message":{"content":"the answer","reasoning_content":"thinking..."}}]}"#,
         )
         .unwrap();
-        assert_eq!(extract_message_content(&parsed).as_deref(), Some("the answer"));
+        assert_eq!(
+            extract_message_content(&parsed).as_deref(),
+            Some("the answer")
+        );
     }
 
     #[test]
@@ -748,7 +875,10 @@ mod tests {
             r#"{"choices":[{"message":{"content":"","reasoning_content":"thinking..."}}]}"#,
         )
         .unwrap();
-        assert_eq!(extract_message_content(&parsed).as_deref(), Some("thinking..."));
+        assert_eq!(
+            extract_message_content(&parsed).as_deref(),
+            Some("thinking...")
+        );
 
         let parsed_null: serde_json::Value = serde_json::from_str(
             r#"{"choices":[{"message":{"content":null,"reasoning_content":"thinking..."}}]}"#,

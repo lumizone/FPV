@@ -375,7 +375,11 @@ fn verify_sha256(path: &Path, expected_hex: &str) -> AppResult<()> {
         }
         hasher.update(&buf[..n]);
     }
-    let digest: String = hasher.finalize().iter().map(|b| format!("{b:02x}")).collect();
+    let digest: String = hasher
+        .finalize()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect();
     if digest.eq_ignore_ascii_case(expected_hex) {
         Ok(())
     } else {
@@ -445,7 +449,9 @@ async fn extract_runtime(zip: &Path, dest: &Path) -> AppResult<()> {
     );
     if !run_powershell(&cmd)? {
         let _ = std::fs::remove_dir_all(&staging);
-        return Err(AppError::Other("ollama GPU runtime: Expand-Archive failed".into()));
+        return Err(AppError::Other(
+            "ollama GPU runtime: Expand-Archive failed".into(),
+        ));
     }
 
     let root = find_runtime_root(&staging).ok_or_else(|| {
@@ -587,7 +593,9 @@ fn nvidia_max_compute_cap() -> Option<f32> {
     )?;
     out.lines()
         .filter_map(|l| l.trim().parse::<f32>().ok())
-        .fold(None, |acc: Option<f32>, v| Some(acc.map_or(v, |a| a.max(v))))
+        .fold(None, |acc: Option<f32>, v| {
+            Some(acc.map_or(v, |a| a.max(v)))
+        })
 }
 
 fn command_output(program: &str, args: &[&str]) -> Option<String> {
@@ -655,7 +663,11 @@ mod tests {
 
         let mut hasher = Sha256::new();
         hasher.update(b"hello world");
-        let real: String = hasher.finalize().iter().map(|b| format!("{b:02x}")).collect();
+        let real: String = hasher
+            .finalize()
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect();
 
         assert!(verify_sha256(&f, &real).is_ok());
         assert!(verify_sha256(

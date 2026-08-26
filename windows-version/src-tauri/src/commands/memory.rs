@@ -115,7 +115,9 @@ pub async fn story_memory_index(
             |row| row.get(0),
         )?;
         if !owns_message {
-            return Err(AppError::Config("memory message does not belong to session".into()));
+            return Err(AppError::Config(
+                "memory message does not belong to session".into(),
+            ));
         }
     }
     state.ensure_ollama(&app).await?;

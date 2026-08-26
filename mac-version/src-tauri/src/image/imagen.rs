@@ -28,9 +28,8 @@ pub async fn generate(req: ImageRequest, model: &str) -> AppResult<ImageResult> 
         .build()
         .map_err(|_| AppError::Other("Google image HTTP client setup failed".into()))?;
 
-    let url = format!(
-        "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    );
+    let url =
+        format!("https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent");
     let response = client
         .post(&url)
         .query(&[("key", &api_key)])
@@ -41,8 +40,13 @@ pub async fn generate(req: ImageRequest, model: &str) -> AppResult<ImageResult> 
         .await
         .map_err(|_| AppError::Other("Google image request failed".into()))?;
     let status = response.status();
-    if response.content_length().is_some_and(|n| n > 40 * 1024 * 1024) {
-        return Err(AppError::Other("Google image response exceeded size limit".into()));
+    if response
+        .content_length()
+        .is_some_and(|n| n > 40 * 1024 * 1024)
+    {
+        return Err(AppError::Other(
+            "Google image response exceeded size limit".into(),
+        ));
     }
     let body = response
         .text()

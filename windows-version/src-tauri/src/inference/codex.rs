@@ -38,21 +38,18 @@ fn executable() -> String {
 }
 
 pub async fn status() -> bool {
-    tokio::time::timeout(
-        STARTUP_TIMEOUT,
+    tokio::time::timeout(STARTUP_TIMEOUT, {
+        let mut cmd = Command::new(executable());
+        cmd.args(["login", "status"])
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        #[cfg(windows)]
         {
-            let mut cmd = Command::new(executable());
-            cmd.args(["login", "status"])
-                .stdin(Stdio::null())
-                .stdout(Stdio::null())
-                .stderr(Stdio::null());
-            #[cfg(windows)]
-            {
-                cmd.creation_flags(CREATE_NO_WINDOW);
-            }
-            cmd.status()
-        },
-    )
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        cmd.status()
+    })
     .await
     .ok()
     .and_then(Result::ok)
@@ -72,12 +69,11 @@ pub fn start_login() -> AppResult<()> {
     {
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
-    let mut child = cmd.spawn()
-        .map_err(|err| {
-            AppError::Config(format!(
-                "Codex CLI is unavailable; install Codex before signing in: {err}"
-            ))
-        })?;
+    let mut child = cmd.spawn().map_err(|err| {
+        AppError::Config(format!(
+            "Codex CLI is unavailable; install Codex before signing in: {err}"
+        ))
+    })?;
     tokio::spawn(async move {
         let _ = child.wait().await;
     });
@@ -155,12 +151,11 @@ where
     {
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
-    let mut child = cmd.spawn()
-        .map_err(|err| {
-            AppError::Config(format!(
-                "Codex CLI is unavailable; install it and run `codex login`: {err}"
-            ))
-        })?;
+    let mut child = cmd.spawn().map_err(|err| {
+        AppError::Config(format!(
+            "Codex CLI is unavailable; install it and run `codex login`: {err}"
+        ))
+    })?;
     let mut stdin = child
         .stdin
         .take()

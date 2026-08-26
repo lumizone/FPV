@@ -37,10 +37,11 @@ fn ensure_writable(key: &str) -> AppResult<()> {
 /// return derived status, not the raw secret.
 const SECRET_READ_DENYLIST: &[&str] = &[
     "telegram_token",
-    "crypto_salt_hex",
     "hardware_uuid",
-    // Legacy license values may remain in databases created before the
-    // license module was removed; never expose them to the renderer.
+    // Legacy values that may remain in databases created before the
+    // license module was removed and before `crypto_salt_hex` stopped
+    // being written; never expose them to the renderer.
+    "crypto_salt_hex",
     "license_key",
     "license_activation_id",
 ];

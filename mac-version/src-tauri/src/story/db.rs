@@ -424,7 +424,7 @@ fn copy_session(
             append_message(conn, &new_id, &message.role, &message.content)?;
         }
         let state = get_story_state(conn, session_id)?;
-        set_story_state(conn, &new_id, &state)?;
+        set_story_state_in_txn(conn, &new_id, &state)?;
         for canon in list_pinned_canon(conn, session_id)? {
             add_pinned_canon(conn, &new_id, &canon.content)?;
         }
@@ -636,18 +636,29 @@ pub fn clear_regeneration_derived_data(
             "DELETE FROM story_memory_records WHERE session_id = ?1 AND message_id = ?2",
             params![session_id, message_id],
         )?;
-        conn.execute("DELETE FROM fpv_story_state WHERE session_id = ?1", params![session_id])?;
-        conn.execute("DELETE FROM fpv_story_state_history WHERE session_id = ?1", params![session_id])?;
+        conn.execute(
+            "DELETE FROM fpv_story_state WHERE session_id = ?1",
+            params![session_id],
+        )?;
+        conn.execute(
+            "DELETE FROM fpv_story_state_history WHERE session_id = ?1",
+            params![session_id],
+        )?;
         let changed = conn.execute(
             "UPDATE sessions SET summary = '', updated_at = datetime('now') WHERE id = ?1",
             params![session_id],
         )?;
-        if changed != 1 { return Err(rusqlite::Error::QueryReturnedNoRows); }
+        if changed != 1 {
+            return Err(rusqlite::Error::QueryReturnedNoRows);
+        }
         Ok(())
     })();
     match result {
         Ok(()) => conn.execute_batch("COMMIT"),
-        Err(error) => { let _ = conn.execute_batch("ROLLBACK"); Err(error) }
+        Err(error) => {
+            let _ = conn.execute_batch("ROLLBACK");
+            Err(error)
+        }
     }
 }
 
@@ -668,11 +679,44 @@ pub fn get_story_state(conn: &Connection, session_id: &str) -> Result<StoryState
     }
 }
 
+/// How many undo snapshots a session keeps.
+///
+/// Every turn writes one full state JSON here and nothing ever removed
+/// them, so a long story grew this table without bound — and it rides
+/// along in `project_export` and in every `backup_app_data`. 200 is far
+/// past any undo a person actually performs; the oldest snapshot beyond
+/// it is dropped in the same transaction that adds the new one.
+const STORY_STATE_HISTORY_DEPTH: i64 = 200;
+
+/// Transactional entry point. Callers that are ALREADY inside a
+/// transaction must use [`set_story_state_in_txn`] instead — SQLite has no
+/// nested `BEGIN`, and `copy_session` (branch / checkpoint / fork) runs
+/// exactly there.
 pub fn set_story_state(conn: &Connection, session_id: &str, state: &StoryState) -> Result<()> {
+    // Both writes in one transaction. Separately, a failure on the second
+    // left a snapshot in the history with no state change to match it —
+    // the next undo would then rewind one turn too far, silently.
+    conn.execute_batch("BEGIN IMMEDIATE")?;
+    match set_story_state_in_txn(conn, session_id, state) {
+        Ok(()) => {
+            conn.execute_batch("COMMIT")?;
+            Ok(())
+        }
+        Err(error) => {
+            let _ = conn.execute_batch("ROLLBACK");
+            Err(error)
+        }
+    }
+}
+
+/// The writes themselves, for callers that already hold a transaction.
+pub fn set_story_state_in_txn(
+    conn: &Connection,
+    session_id: &str,
+    state: &StoryState,
+) -> Result<()> {
     let json = serde_json::to_string(state)
         .map_err(|e| rusqlite::Error::ToSqlConversionFailure(Box::new(e)))?;
-    // Snapshot the previous state (if any) so "undo last turn" can restore
-    // it — fpv_story_state itself has no history (V29).
     // Snapshot the PREVIOUS state (default '{}' when none exists yet) so
     // multi-step undo can rewind all the way to the session start (V29).
     conn.execute(
@@ -682,6 +726,16 @@ pub fn set_story_state(conn: &Connection, session_id: &str, state: &StoryState) 
            '{}'
          )",
         params![session_id],
+    )?;
+    conn.execute(
+        "DELETE FROM fpv_story_state_history
+         WHERE session_id = ?1 AND rowid NOT IN (
+           SELECT rowid FROM fpv_story_state_history
+           WHERE session_id = ?1
+           ORDER BY saved_at DESC, rowid DESC
+           LIMIT ?2
+         )",
+        params![session_id, STORY_STATE_HISTORY_DEPTH],
     )?;
     conn.execute(
         "INSERT INTO fpv_story_state (session_id, state_json, updated_at)
@@ -1124,6 +1178,62 @@ mod tests {
         // Undo again pops "second" (a user message) and restores no-state.
         assert!(undo_last_turn(&conn, &session_id).unwrap().is_some());
         assert_eq!(get_story_state(&conn, &session_id).unwrap().turn, 0);
+    }
+
+    #[test]
+    fn story_state_history_stays_bounded_and_keeps_the_newest_snapshots() {
+        let conn = setup();
+        let world_id = create_world(
+            &conn,
+            &NewWorld {
+                name: "Bound".into(),
+                genre: "fantasy".into(),
+                description: None,
+                system_prompt: "You are a narrator.".into(),
+                accent_color: None,
+                is_nsfw: false,
+                cover_image_path: None,
+                source: "user".into(),
+            },
+        )
+        .unwrap();
+        let session_id = create_session(&conn, &world_id).unwrap();
+
+        // One snapshot per turn, well past the cap.
+        for turn in 0..(STORY_STATE_HISTORY_DEPTH + 50) {
+            let state = StoryState {
+                active_goals: vec![format!("turn-{turn}")],
+                ..StoryState::default()
+            };
+            set_story_state(&conn, &session_id, &state).unwrap();
+        }
+
+        let rows: i64 = conn
+            .query_row(
+                "SELECT COUNT(*) FROM fpv_story_state_history WHERE session_id = ?1",
+                params![session_id],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            rows, STORY_STATE_HISTORY_DEPTH,
+            "history grew past the cap — this table rides along in every backup"
+        );
+
+        // The cap must drop the OLDEST, so undo still rewinds one real turn.
+        let newest: String = conn
+            .query_row(
+                "SELECT state_json FROM fpv_story_state_history WHERE session_id = ?1
+                 ORDER BY saved_at DESC, rowid DESC LIMIT 1",
+                params![session_id],
+                |row| row.get(0),
+            )
+            .unwrap();
+        let expected = STORY_STATE_HISTORY_DEPTH + 48;
+        assert!(
+            newest.contains(&format!("turn-{expected}")),
+            "the newest snapshot was pruned instead of the oldest: {newest}"
+        );
     }
 
     #[test]

@@ -7,12 +7,22 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
-$Artifact = [IO.Path]::GetFullPath((Join-Path (Get-Location) $Artifact))
+# The workflow passes ABSOLUTE paths (Get-ChildItem.FullName); Join-Path
+# would blindly append them to the current directory ("D:\a\...\D:\a\..."),
+# which then makes GetFullPath throw "The given path's format is not
+# supported". Resolve absolute paths as-is, join only relative ones.
+if ([IO.Path]::IsPathRooted($Artifact)) {
+    $Artifact = [IO.Path]::GetFullPath($Artifact)
+} else {
+    $Artifact = [IO.Path]::GetFullPath((Join-Path (Get-Location) $Artifact))
+}
 if (-not (Test-Path -LiteralPath $Artifact -PathType Leaf)) {
     throw "Artifact does not exist: $Artifact"
 }
 if ([string]::IsNullOrWhiteSpace($Output)) {
     $Output = "$Artifact.release-manifest.json"
+} elseif ([IO.Path]::IsPathRooted($Output)) {
+    $Output = [IO.Path]::GetFullPath($Output)
 } else {
     $Output = [IO.Path]::GetFullPath((Join-Path (Get-Location) $Output))
 }

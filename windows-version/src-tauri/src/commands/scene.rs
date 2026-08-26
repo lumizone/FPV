@@ -29,7 +29,7 @@ fn count_scene_images(dir: &Path, replacing_message_id: &str) -> usize {
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn scene_image_save(
-    _state: State<'_, AppState>,
+    state: State<'_, AppState>,
     session_id: String,
     message_id: String,
     image_b64: String,
@@ -37,6 +37,19 @@ pub async fn scene_image_save(
 ) -> AppResult<String> {
     crate::storage::fs_safe_id(&session_id)?;
     crate::storage::fs_safe_id(&message_id)?;
+    {
+        let conn = state.db.lock().await;
+        let belongs: bool = conn.query_row(
+            "SELECT EXISTS(SELECT 1 FROM messages WHERE id = ?1 AND session_id = ?2)",
+            rusqlite::params![message_id, session_id],
+            |row| row.get(0),
+        )?;
+        if !belongs {
+            return Err(AppError::Config(
+                "message does not belong to session".into(),
+            ));
+        }
+    }
     if let Ok(base) = crate::storage::app_data_dir() {
         let dir = base.join("images").join("scenes").join(&session_id);
         let existing = count_scene_images(&dir, &message_id);

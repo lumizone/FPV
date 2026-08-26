@@ -3,9 +3,9 @@ use std::process::Command;
 
 use serde::Serialize;
 
-use crate::error::AppResult;
 #[cfg(not(windows))]
 use crate::error::AppError;
+use crate::error::AppResult;
 
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -77,9 +77,7 @@ pub fn detect() -> AppResult<HardwareInfo> {
         // Windows: no sysctl. RAM comes from GlobalMemoryStatusEx (same
         // call image/local.rs::system_ram_gb uses); the CPU label from the
         // PROCESSOR_IDENTIFIER environment variable Windows always sets.
-        use windows_sys::Win32::System::SystemInformation::{
-            GlobalMemoryStatusEx, MEMORYSTATUSEX,
-        };
+        use windows_sys::Win32::System::SystemInformation::{GlobalMemoryStatusEx, MEMORYSTATUSEX};
         let mut status: MEMORYSTATUSEX = unsafe { std::mem::zeroed() };
         status.dwLength = std::mem::size_of::<MEMORYSTATUSEX>() as u32;
         // SAFETY: zero-initialized struct with dwLength set — exactly the
@@ -96,8 +94,7 @@ pub fn detect() -> AppResult<HardwareInfo> {
         } else {
             0
         };
-        let chip = std::env::var("PROCESSOR_IDENTIFIER")
-            .unwrap_or_else(|_| "unknown".into());
+        let chip = std::env::var("PROCESSOR_IDENTIFIER").unwrap_or_else(|_| "unknown".into());
         let tier = Tier::from_ram_gb(ram_gb);
         Ok(HardwareInfo {
             chip,

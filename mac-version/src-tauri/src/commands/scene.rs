@@ -45,7 +45,9 @@ pub async fn scene_image_save(
             |row| row.get(0),
         )?;
         if !belongs {
-            return Err(AppError::Config("message does not belong to session".into()));
+            return Err(AppError::Config(
+                "message does not belong to session".into(),
+            ));
         }
     }
     if let Ok(base) = crate::storage::app_data_dir() {

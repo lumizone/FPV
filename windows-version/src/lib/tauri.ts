@@ -343,7 +343,7 @@ export function imageGenerate(input: { prompt: string; style?: string; quality?:
   return tauriInvoke("image_generate", { input });
 }
 
-export type ImageProviderId = "local" | "openai" | "seedream" | "hunyuan" | "cogview" | "flux" | "imagen";
+export type ImageProviderId = "local" | "openai" | "seedream" | "hunyuan" | "cogview" | "flux" | "imagen" | "fal";
 
 export function imageProviderGet(): Promise<ImageProviderId> {
   return tauriInvoke("image_provider_get");

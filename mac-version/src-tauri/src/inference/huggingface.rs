@@ -29,9 +29,25 @@ pub struct HfQuant {
     pub size: i64,
 }
 
+/// Ceiling on a HuggingFace JSON body. The tree of a large repo is tens
+/// of KB; 4 MB is far past anything legitimate and stops a broken or
+/// hostile response from being buffered without limit.
+const MAX_HF_JSON_BYTES: usize = 4 * 1024 * 1024;
+
+/// Every other HTTP client in this crate sets a timeout; these two were
+/// built with bare `Client::new()`, which has none — a connection that
+/// stalls mid-body left the model browser spinning forever with no way
+/// out but restarting the app.
+fn hf_client() -> AppResult<reqwest::Client> {
+    reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(20))
+        .build()
+        .map_err(|e| AppError::Other(format!("http client: {e}")))
+}
+
 /// Search GGUF models on HF, ordered by downloads.
 pub async fn search(query: &str) -> AppResult<Vec<HfModel>> {
-    let client = reqwest::Client::new();
+    let client = hf_client()?;
     let url = format!(
         "{HF_API}/models?search={}&filter=gguf&sort=downloads&direction=-1&limit=20",
         urlencode_query(query)
@@ -43,14 +59,19 @@ pub async fn search(query: &str) -> AppResult<Vec<HfModel>> {
             resp.status()
         )));
     }
-    resp.json::<Vec<HfModel>>()
-        .await
+    let body = crate::image::read_response_limited(
+        resp,
+        MAX_HF_JSON_BYTES,
+        "HuggingFace search response exceeded size limit",
+    )
+    .await?;
+    serde_json::from_slice::<Vec<HfModel>>(&body)
         .map_err(|e| AppError::Other(format!("HuggingFace parse: {e}")))
 }
 
 /// List the GGUF quants available for a repo (from the model file tree).
 pub async fn quants(repo: &str) -> AppResult<Vec<HfQuant>> {
-    let client = reqwest::Client::new();
+    let client = hf_client()?;
     let url = format!(
         "{HF_API}/models/{}/tree/main?expand=false&recursive=true",
         urlencode_path(repo)
@@ -71,9 +92,13 @@ pub async fn quants(repo: &str) -> AppResult<Vec<HfQuant>> {
         #[serde(default)]
         r#type: String,
     }
-    let entries: Vec<TreeEntry> = resp
-        .json()
-        .await
+    let body = crate::image::read_response_limited(
+        resp,
+        MAX_HF_JSON_BYTES,
+        "HuggingFace tree response exceeded size limit",
+    )
+    .await?;
+    let entries: Vec<TreeEntry> = serde_json::from_slice(&body)
         .map_err(|e| AppError::Other(format!("HuggingFace tree parse: {e}")))?;
     let mut quants: Vec<HfQuant> = entries
         .into_iter()

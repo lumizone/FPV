@@ -11,10 +11,10 @@ $Tauri = Join-Path $Root "src-tauri"
 $Lock = Join-Path $Tauri "binaries-win.lock"
 if (-not (Test-Path -LiteralPath $Lock -PathType Leaf)) { throw "Missing Windows binary manifest: $Lock" }
 $Manifest = Get-Content -LiteralPath $Lock -Raw
-if ($Manifest -match '(?im)^TARGET=(?!x86_64-pc-windows-msvc$)') { throw "Windows binary manifest has a non-Windows target" }
+if ($Manifest -match '(?im)^TARGET=(?!x86_64-pc-windows-msvc\r?$)') { throw "Windows binary manifest has a non-Windows target" }
 if ($Manifest -match '(?im)darwin|apple|\.dylib|ollama-darwin') { throw "Windows binary manifest contains Apple metadata" }
-if ($Manifest -notmatch '(?im)^OLLAMA_URL=https://[^\r\n]*ollama-windows-amd64\.zip$') { throw "Windows manifest must pin the Ollama x64 archive URL" }
-if ($Manifest -notmatch '(?im)^SD_CLI_URL=https://[^\r\n]*win-cpu-x64\.zip$') { throw "Windows manifest must pin the sd.cpp x64 archive URL" }
+if ($Manifest -notmatch '(?im)^OLLAMA_URL=https://[^\r\n]*ollama-windows-amd64\.zip\r?$') { throw "Windows manifest must pin the Ollama x64 archive URL" }
+if ($Manifest -notmatch '(?im)^SD_CLI_URL=https://[^\r\n]*win-cpu-x64\.zip\r?$') { throw "Windows manifest must pin the sd.cpp x64 archive URL" }
 
 if ($ManifestOnly) {
     Write-Host "[binaries] Windows manifest valid: x86_64-pc-windows-msvc"

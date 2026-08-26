@@ -36,14 +36,10 @@
       "assetProtocol": {
         "enable": true,
         "scope": [
-          "$APPDATA/portraits/*",
-          "$DATA/com.lumizone.fpvdesktop/portraits/*",
-          "$APPDATA/images/*",
-          "$DATA/com.lumizone.fpvdesktop/images/*",
-          "$APPDATA/images/covers/*",
-          "$DATA/com.lumizone.fpvdesktop/images/covers/*",
           "$APPDATA/covers/*",
-          "$DATA/com.lumizone.fpvdesktop/covers/*"
+          "$DATA/com.lumizone.fpvdesktop/covers/*",
+          "$APPDATA/images/**",
+          "$DATA/com.lumizone.fpvdesktop/images/**"
         ]
       }
     }

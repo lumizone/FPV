@@ -3,9 +3,9 @@
 //! the sidecar finishes booting and watch the first message fail.
 
 use serde::Serialize;
-use tauri::State;
 #[cfg(target_os = "macos")]
 use std::process::Command;
+use tauri::State;
 #[cfg(windows)]
 use windows_sys::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
 

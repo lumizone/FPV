@@ -9,13 +9,13 @@ pub mod gpu_runtime;
 /// Manager kill. See the module's own header for the full rationale.
 #[cfg(windows)]
 pub mod job_object;
+pub mod ollama;
 /// Windows-only provisioning of the accelerated Ollama GPU runner (CUDA
 /// v13 for Blackwell NVIDIA, or AMD ROCm) — a separate concern from
 /// `gpu_runtime`, which provisions the image-generation backend. See the
 /// module's own header for the full rationale.
 #[cfg(windows)]
 pub mod ollama_gpu_runtime;
-pub mod ollama;
 
 use std::sync::Arc;
 
@@ -51,6 +51,9 @@ impl SidecarManager {
     }
 
     pub async fn shutdown_all(&self, client: &OllamaClient) -> AppResult<()> {
+        // Before Ollama, because it is the one with a grace period: an
+        // sd-cli render left running here outlives the app entirely.
+        crate::image::sdcpp::kill_active_render().await;
         if let Some(o) = self.ollama.lock().await.take() {
             if let Err(err) = o.kill(client).await {
                 warn!(?err, "ollama kill failed");

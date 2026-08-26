@@ -51,13 +51,10 @@ fi
 
 "$REPO_ROOT/scripts/validate-binaries.sh"
 
-# 2. Pre-sign every dylib + .so the bundled sidecars depend on.
-#    Without runtime + timestamp on these, the .app's deep verify fails
-#    later and Apple notarization rejects the DMG.
-echo "[package] codesigning bundled libs"
-find "$REPO_ROOT/src-tauri/binaries" \( -name '*.dylib' -o -name '*.so' \) -print0 \
-  | xargs -0 -I{} codesign --force --options runtime --timestamp \
-      --sign "$APPLE_DEV_ID_APP" "{}"
+# 2. Leave the verified download cache untouched. Signing files in
+#    src-tauri/binaries/ would change their locked SHA-256 and make a
+#    retry fail validation. The copied files are signed after staging
+#    inside the .app below.
 
 # 3. Build the Tauri app. Cargo features here are the production set.
 #    `--bundles app` skips Tauri's built-in DMG bundler — that one

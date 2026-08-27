@@ -1,6 +1,6 @@
 [package]
 name = "fpv-desktop"
-version = "0.1.0"
+version = "1.0.0"
 description = "FPV desktop — interactive AI narrative engine"
 authors = ["Lumizone <lukasz.b@lumizone.pl>"]
 edition = "2021"

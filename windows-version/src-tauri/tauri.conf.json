@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "FPV",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "identifier": "com.lumizone.fpvdesktop",
   "build": {
     "beforeDevCommand": "bash scripts/compile-helpers.sh && npm run dev",

@@ -40,7 +40,7 @@ FPV is built around ownership: your stories live on your computer, local play ne
 | Platform | Source | Download |
 | --- | --- | --- |
 | **macOS** | Included | [v1.0.0 — Apple Silicon DMG](https://github.com/lumizone/FPV/releases/tag/v1.0.0), Developer ID signed; notarization pending |
-| **Windows** | Included | [v0.1.0 — x64 NSIS installer](https://github.com/lumizone/FPV/releases/tag/v0.1.0), unsigned |
+| **Windows** | Included | [v1.0.0 — x64 NSIS installer](https://github.com/lumizone/FPV/releases/tag/v1.0.0), unsigned |
 
 Both platform installers and their SHA-256 manifests are published in GitHub Releases. The macOS artifact may require a manual Gatekeeper approval until notarization is added.
 

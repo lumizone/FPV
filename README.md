@@ -10,7 +10,7 @@
   [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-d9ff72?style=flat-square&labelColor=111111)](LICENSE)
   ![Local-first](https://img.shields.io/badge/Local--first-Your%20machine%2C%20your%20story-71d9ca?style=flat-square&labelColor=111111)
   ![Platforms](https://img.shields.io/badge/Platforms-macOS%20%2B%20Windows-d9ff72?style=flat-square&labelColor=111111)
-  ![Status](https://img.shields.io/badge/Status-v0.1.0-3fb950?style=flat-square&labelColor=111111)
+  ![Status](https://img.shields.io/badge/Status-Releases%20live-3fb950?style=flat-square&labelColor=111111)
 </div>
 
 ![First Person Viewpoint — Your choices move the story forward. Local-first interactive fiction for desktop. Open source. Local play, no account required.](.github/assets/fpv-worldlines-banner.svg)
@@ -37,12 +37,12 @@ FPV is built around ownership: your stories live on your computer, local play ne
 
 ## Release status
 
-| Platform | Source | First downloadable release |
+| Platform | Source | Download |
 | --- | --- | --- |
-| **macOS** | Included | v0.0.1 will be Developer ID signed and notarized by Apple before publication. |
-| **Windows** | Included | Packaging follows next; the initial Windows build will be unsigned. |
+| **macOS** | Included | [v1.0.0 — Apple Silicon DMG](https://github.com/lumizone/FPV/releases/tag/v1.0.0), Developer ID signed; notarization pending |
+| **Windows** | Included | [v0.1.0 — x64 NSIS installer](https://github.com/lumizone/FPV/releases/tag/v0.1.0), unsigned |
 
-There are no release binaries in this repository yet. Downloads will be published only after the platform-specific verification is complete.
+Both platform installers and their SHA-256 manifests are published in GitHub Releases. The macOS artifact may require a manual Gatekeeper approval until notarization is added.
 
 ## Included in the source
 
@@ -99,7 +99,7 @@ Windows packaging requires a Windows release environment. The bundled runtimes a
 
 Never commit `.env` files, Apple signing credentials, provider API keys, or downloaded runtime binaries. The root `.gitignore` excludes them by default.
 
-The macOS artifact will be signed and notarized before it is offered publicly. Windows signing is planned after the initial release.
+The macOS v1.0.0 artifact is Developer ID signed but not notarized/stapled yet; Gatekeeper may ask for manual approval. The Windows v0.1.0 installer is unsigned; Windows signing is planned for a later release.
 
 ## License
 
